@@ -1,0 +1,53 @@
+from src.auth import auth_register_v1, auth_login_v1
+from src.channels import channels_create_v1
+from src.channel import channel_invite_v1, channel_details_v1
+from src.data_store import data_store
+import pytest
+
+'''
+channel return structure
+{
+    channel_id: 1
+}
+'''
+
+def test_channel_create_working():
+    data = data_store.get()
+
+    first_auth_user_id = auth_register_v1("unswisgreat@unsw.edu.au", "unswisgreat123", "Tony", "Stark")
+    first_auth_user_id = auth_login_v1("unswisgreat@unsw.edu.au", "unswisgreat123")
+    first_user_id = first_auth_user_id["auth_user_id"]
+
+    created_channel_id = channels_create_v1(first_user_id, "Tony_channel", True).get("channel_id")
+
+    # check the channel id and name stored in data
+    # -1 means the newly created channel always located in the last place in data
+    check_user = data["users"][first_user_id]
+    assert data["channels"][-1]["c_id"] == created_channel_id
+    assert data["channels"][-1]["name"] == "Tony_channel"
+    assert data["channels"][-1]["is_public"] == True
+    assert data["channels"][-1]["owner_members"][0] == {
+            'u_id': check_user["u_id"],
+            'email': check_user["email"],
+            'name_first': check_user["name_first"],
+            'name_last': check_user["name_last"],
+        }
+    assert data["channels"][-1]["all_members"][0] == {
+            'u_id': check_user["u_id"],
+            'email': check_user["email"],
+            'name_first': check_user["name_first"],
+            'name_last': check_user["name_last"],
+        }
+
+def test_channel_create_inputError():
+    first_auth_user_id = auth_register_v1("unswisgreat@unsw.edu.au", "unswisgreat123", "Tony", "Stark")
+    first_auth_user_id = auth_login_v1("unswisgreat@unsw.edu.au", "unswisgreat123")
+    first_user_id = first_auth_user_id["auth_user_id"]
+
+    # length of name is less than 1
+    with pytest.raises(InputError):
+        channels_create_v1(first_user_id, "", True)
+
+    # length of name is more than 20
+    with pytest.raises(InputError):
+        channels_create_v1(first_user_id, "hahahahahaahahahahahamustbemorethantwentyletters", True)

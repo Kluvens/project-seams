@@ -290,7 +290,7 @@ def test_is_first_name_valid():
         auth_register_v1(
             "k.z2991@gmail.com", "a1233ggsrrq2rhhbdrf", 
             "Jafgasdfg222344fdgadhfdhfhkefgdfhdferwtrwqreqfreggsdfgdfh", "Smith"
-    )
+        )
 
 # First name length is less than the permitted lower bound 
 def test_is_first_name_valid():    
@@ -298,14 +298,14 @@ def test_is_first_name_valid():
         auth_register_v1(
             "k.z2991@gmail.com", "a1233ggsrrq2rhhbdrf", 
             "", "Smith"
-    )
+        )
 
 # Last name length is less than the permitted lower bound 
 def test_is_first_name_valid():    
     with pytest.raises(InputError):
         auth_register_v1(
             "k.z2991@gmail.com", "a1233ggsrrq2rhhbdrf", "John", ""
-    )
+        )
 
 # Last name exceeds the 50 character upper bound
 def test_is_last_name_valid():

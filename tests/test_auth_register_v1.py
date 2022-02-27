@@ -121,6 +121,7 @@ def test_long_username_handle1():
     assert(data['users'][uid]['handle'] == "hubertwolfeschlegels")
 
 def test_long_username_handle2():
+    clear_v1()
     uid = auth_register_v1("kakarot999@gmail.com", "powerlevelover9000", "SonGuko", "SuperSayianGodSuperSayianKaioKenX20")
     data = data_store.get()
     assert(data['users'][uid]['handle'] == "songukosupersayiansu")
@@ -169,8 +170,8 @@ def test_taken_handle_long1():
     assert(data['users'][uid2]['handle'] == "hubertwolfeschlegels0")
     assert(data['users'][uid3]['handle'] == "hubertwolfeschlegels1")
 
-    clear_v1()
 def test_taken_handle_long2():
+    clear_v1()
     uid1 = auth_register_v1("i_hate_tests123@gmail.com", "Hubert", "Wolfeschlegelsteinhausenbergredroff123345dsfa")
     uid2 = auth_register_v1("i_hate_tests1234@gmail.com", "Hubert", "Wolfeschlegelsteinhausenbergredroffgsdg")
     data = data_store.get()

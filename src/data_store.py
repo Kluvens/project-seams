@@ -24,9 +24,13 @@ Example usage:
     data_store.set(store)
 '''
 
-## YOU SHOULD MODIFY THIS OBJECT BELOW
+## YOU SHOULD MODIFY THIS OBJECT BELOW <----
+
+
 initial_object = {
-    'users': [],
+    'users': [
+        
+    ]
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 

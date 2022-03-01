@@ -1,21 +1,29 @@
 
-from src.data_store import data_store
-from src.error import InputError
+#from src.data_store import data_store
+#from src.error import InputError
 import re
 
-#from data_store import data_store
-#from error import InputError
+from data_store import data_store
+from error import InputError
 
-'''
-STILL UNDER CONSTRUCTION
+
 def auth_login_v1(email, password):
     users_list = data_store.get()['users']
-    for user_position, user in enumerate(users_list):
+    # Email does not exist in database
+    if is_email_already_registered(users_list, email) is False:
+        raise InputError("The email you entered does not belong to a user")
+
+    # Check Password is correct
+    if is_password_correct(users_list, email, password) is False:
+        raise InputError("The password you entered is not correct")
+
+    for user_index, user in enumerate(users_list):
         if (user['email'] == email):
-            return user_position
-    uid = user_position + 1 
+            break
+
+    uid = user_index + 1 
     return {'auth_user_id': uid}
-'''
+
 
 def auth_register_v1(email, password, name_first, name_last):
     users_list = data_store.get()['users']
@@ -123,6 +131,18 @@ def generate_handle(users_list, name_first, name_last):
 
     return handle
 
+# Can access database globally, but chose to pass it
+# as an argument
+def is_password_correct(users_list, email, password):
+    for user_index, user in enumerate(users_list):
+        if user['email'] == email:
+            if users_list[user_index]['password'] == password:
+                return True
+            else:
+                return False
+    return False
+
+        
 
 if __name__ == "__main__":
     pass

@@ -51,7 +51,7 @@ def test_simple_handle1():
 
     data = data_store.get()
     uid = uid_dict['auth_user_id']
-    assert data['users'][uid  - 1]['handle'] == "kaisalzubaidi"
+    assert data['users'][uid]['handle'] == "kaisalzubaidi"
 
 
 
@@ -67,7 +67,7 @@ def test_simple_handle2():
 
     data = data_store.get()
     uid = uid_dict['auth_user_id']
-    assert data['users'][uid  - 1]['handle'] == "kaisalzubaidi"
+    assert data['users'][uid]['handle'] == "kaisalzubaidi"
 
 # First and last names contain a mix of alphanumeric characters
 def test_simple_handle3():
@@ -81,7 +81,7 @@ def test_simple_handle3():
 
     data = data_store.get()
     uid = uid_dict['auth_user_id']
-    assert data['users'][uid  - 1]['handle'] == "kais12alzubaidi92190"
+    assert data['users'][uid]['handle'] == "kais12alzubaidi92190"
 
 
 
@@ -93,7 +93,7 @@ def test_simple_handle4():
     data = data_store.get()
 
     uid = uid_dict['auth_user_id']
-    assert data['users'][uid  - 1]['handle'] == "kz"
+    assert data['users'][uid]['handle'] == "kz"
 
 
 # ======================== SET 2 =================================
@@ -113,7 +113,7 @@ def test_long_username_handle1():
 
     data = data_store.get()
     uid = uid_dict['auth_user_id']
-    assert data['users'][uid  - 1]['handle'] == "hubertwolfeschlegels"
+    assert data['users'][uid]['handle'] == "hubertwolfeschlegels"
 
 # Testing handle generation for long user name that
 # contains a mix of alphanumeric characters
@@ -128,7 +128,7 @@ def test_long_username_handle2():
 
     data = data_store.get()
     uid = uid_dict['auth_user_id']
-    assert data['users'][uid  - 1]['handle'] == "songukosupersayiango"
+    assert data['users'][uid]['handle'] == "songukosupersayiango"
 
 
 # ======================== SET 3 =================================
@@ -154,8 +154,8 @@ def test_taken_handle_simple1():
     data = data_store.get()
     uid1 = uid1_dict['auth_user_id']
     uid2 = uid2_dict['auth_user_id']
-    assert data['users'][uid1  - 1]['handle'] == "kaisalzubaidi"
-    assert data['users'][uid2  - 1]['handle'] == "kaisalzubaidi0"
+    assert data['users'][uid1]['handle'] == "kaisalzubaidi"
+    assert data['users'][uid2]['handle'] == "kaisalzubaidi0"
 
 
 # Test handle generation for multiple users where the concatenation
@@ -202,10 +202,10 @@ def test_taken_handle_simple2():
     uid2 = uid2_dict['auth_user_id']
     uid4 = uid4_dict['auth_user_id']
     uid5 = uid5_dict['auth_user_id']
-    assert data['users'][uid1  - 1]['handle'] == "kaisalzubaidi"
-    assert data['users'][uid2  - 1]['handle'] == "kaisalzubaidi0"
-    assert data['users'][uid4  - 1]['handle'] == "kaisalzubaidi1"
-    assert data['users'][uid5  - 1]['handle'] == "kaisalzubaidi2"
+    assert data['users'][uid1]['handle'] == "kaisalzubaidi"
+    assert data['users'][uid2]['handle'] == "kaisalzubaidi0"
+    assert data['users'][uid4]['handle'] == "kaisalzubaidi1"
+    assert data['users'][uid5]['handle'] == "kaisalzubaidi2"
 
 
 
@@ -239,9 +239,9 @@ def test_taken_handle_long1():
     uid2 = uid2_dict['auth_user_id']
     uid3 = uid3_dict['auth_user_id']
 
-    assert data['users'][uid1  - 1]['handle'] == "hubertwolfeschlegels"
-    assert data['users'][uid2  - 1]['handle'] == "hubertwolfeschlegels0"
-    assert data['users'][uid3  - 1]['handle'] == "hubertwolfeschlegels1"
+    assert data['users'][uid1]['handle'] == "hubertwolfeschlegels"
+    assert data['users'][uid2]['handle'] == "hubertwolfeschlegels0"
+    assert data['users'][uid3]['handle'] == "hubertwolfeschlegels1"
 
 
 # Testing handle generation for existing user with long first and last names.
@@ -263,8 +263,8 @@ def test_taken_handle_long2():
     data = data_store.get()
     uid1 = uid1_dict['auth_user_id']
     uid2 = uid2_dict['auth_user_id']
-    assert data['users'][uid1  - 1]['handle'] == "hubertwolfeschlegels"
-    assert data['users'][uid2  - 1]['handle'] == "hubertwolfeschlegels0"
+    assert data['users'][uid1]['handle'] == "hubertwolfeschlegels"
+    assert data['users'][uid2]['handle'] == "hubertwolfeschlegels0"
 
 
 # ======================== SET 4 =================================
@@ -281,11 +281,11 @@ def test_user_auth_register1():
 
     data = data_store.get()
     uid = uid_dict['auth_user_id']
-    assert data['users'][uid - 1]['email'] == "k.z123@gmail.com"
-    assert data['users'][uid - 1]['password'] == "a1b2c3d4e5"
-    assert data['users'][uid - 1]['name_first'] == "kais"
-    assert data['users'][uid - 1]['name_last'] == "alzubaidi"
-    assert data['users'][uid - 1]['handle'] == "kaisalzubaidi"
+    assert data['users'][uid]['email'] == "k.z123@gmail.com"
+    assert data['users'][uid]['password'] == "a1b2c3d4e5"
+    assert data['users'][uid]['name_first'] == "kais"
+    assert data['users'][uid]['name_last'] == "alzubaidi"
+    assert data['users'][uid]['handle'] == "kaisalzubaidi"
 
 
 ## 
@@ -318,17 +318,17 @@ def test_multiple_users_auth_register2():
 
     uid2 = uid2_dict['auth_user_id']
     uid4 = uid4_dict['auth_user_id']
-    assert data['users'][uid2 - 1]['email'] == "k.z1234@gmail.com"
-    assert data['users'][uid2 - 1]['password'] == "a1b2c3d4e5"
-    assert data['users'][uid2 - 1]['name_first'] == "KaIS12"
-    assert data['users'][uid2 - 1]['name_last'] == "AlzuBaidI92190"
-    assert data['users'][uid2 - 1]['handle'] == "kais12alzubaidi92190"
+    assert data['users'][uid2]['email'] == "k.z1234@gmail.com"
+    assert data['users'][uid2]['password'] == "a1b2c3d4e5"
+    assert data['users'][uid2]['name_first'] == "KaIS12"
+    assert data['users'][uid2]['name_last'] == "AlzuBaidI92190"
+    assert data['users'][uid2]['handle'] == "kais12alzubaidi92190"
 
-    assert data['users'][uid4 - 1]['email'] == "onepunchman1111@gmail.com"
-    assert data['users'][uid4 - 1]['password'] == "a1b2c3d4e5d6e7AAAA"
-    assert data['users'][uid4 - 1]['name_first'] == "Ryan_22"
-    assert data['users'][uid4 - 1]['name_last'] == "Saitama"
-    assert data['users'][uid4 - 1]['handle'] == "ryan22saitama"
+    assert data['users'][uid4]['email'] == "onepunchman1111@gmail.com"
+    assert data['users'][uid4]['password'] == "a1b2c3d4e5d6e7AAAA"
+    assert data['users'][uid4]['name_first'] == "Ryan_22"
+    assert data['users'][uid4]['name_last'] == "Saitama"
+    assert data['users'][uid4]['handle'] == "ryan22saitama"
 
 # ======================== SET 5 =================================
 # These tests will be added or discarded after

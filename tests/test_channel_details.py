@@ -16,12 +16,12 @@ def test_channel_details_working():
 
     # first create two users
     first_auth_user = auth_register_v1("unswisgreat@unsw.edu.au", "unswisgreat123", "Tony", "Stark")
-    first_u_id = data["users"][-1]["u_id"]
+    first_u_id = data["users"][-1]["uid"]
     first_auth_user = auth_login_v1("unswisgreat@unsw.edu.au", "unswisgreat123")
     first_auth_user_id = first_auth_user["auth_user_id"]
 
     second_auth_user = auth_register_v1("hellounsw@gmail.com", "UNSWisgreat125", "Bruce", "Banner")
-    second_u_id = data["users"][-1]["u_id"]
+    second_u_id = data["users"][-1]["uid"]
     second_auth_user = auth_login_v1("hellounsw@gmail.com", "UNSWisgreat125")
     second_auth_user_id = second_auth_user["auth_user_id"]
 
@@ -38,24 +38,24 @@ def test_channel_details_working():
     get_channel_details = channel_details(first_auth_user_id, created_channel_id)
 
     # check the details
-    assert get_channel_details[name] == "Tony_channel"
-    assert get_channel_details[is_public] == True
-    assert get_channel_details[owner_members] == [
+    assert get_channel_details["name"] == "Tony_channel"
+    assert get_channel_details["is_public"] == True
+    assert get_channel_details["owner_members"] == [
         {
-            'u_id': first_u_id,
+            'uid': first_u_id,
             'email': "unswisgreat@unsw.edu.au",
             'name_first': 'Tony',
             'name_last': 'Stark',
         }
     ]
-    assert get_channel_details[all_members][0] == {
-            'u_id': first_u_id,
+    assert get_channel_details["all_members"][0] == {
+            'uid': first_u_id,
             'email': "unswisgreat@unsw.edu.au",
             'name_first': 'Tony',
             'name_last': 'Stark',
         }
-    assert get_channel_details[all_members][1] == {
-            'u_id': second_u_id,
+    assert get_channel_details["all_members"][1] == {
+            'uid': second_u_id,
             'email': "hellounsw@gmail.com",
             'name_first': 'Bruce',
             'name_last': 'Banner',
@@ -65,12 +65,12 @@ def test_channel_details_invalid_channel_id():
     clear_v1()
     # first create two users
     first_auth_user = auth_register_v1("unswisgreat@unsw.edu.au", "unswisgreat123", "Tony", "Stark")
-    first_u_id = data["users"][-1]["u_id"]
+    first_u_id = data["users"][-1]["uid"]
     first_auth_user = auth_login_v1("unswisgreat@unsw.edu.au", "unswisgreat123")
     first_auth_user_id = first_auth_user["auth_user_id"]
 
     second_auth_user = auth_register_v1("hellounsw@gmail.com", "UNSWisgreat125", "Bruce", "Banner")
-    second_u_id = data["users"][-1]["u_id"]
+    second_u_id = data["users"][-1]["uid"]
     second_auth_user = auth_login_v1("hellounsw@gmail.com", "UNSWisgreat125")
     second_auth_user_id = second_auth_user["auth_user_id"]
 
@@ -91,12 +91,12 @@ def test_channel_details_invalid_auth_id():
     clear_v1()
     # first create two users
     first_auth_user = auth_register_v1("unswisgreat@unsw.edu.au", "unswisgreat123", "Tony", "Stark")
-    first_u_id = data["users"][-1]["u_id"]
+    first_u_id = data["users"][-1]["uid"]
     first_auth_user = auth_login_v1("unswisgreat@unsw.edu.au", "unswisgreat123")
     first_auth_user_id = first_auth_user["auth_user_id"]
 
     second_auth_user = auth_register_v1("hellounsw@gmail.com", "UNSWisgreat125", "Bruce", "Banner")
-    second_u_id = data["users"][-1]["u_id"]
+    second_u_id = data["users"][-1]["uid"]
     second_auth_user = auth_login_v1("hellounsw@gmail.com", "UNSWisgreat125")
     second_auth_user_id = second_auth_user["auth_user_id"]
 

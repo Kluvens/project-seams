@@ -1,12 +1,13 @@
 
-#from src.data_store import data_store
-#from src.error import InputError
+from src.data_store import data_store
+from src.error import InputError
 import re
 
-from data_store import data_store
-from error import InputError
+#from data_store import data_store
+#from error import InputError
 
 
+# Further function documentation will be added later.
 def auth_login_v1(email, password):
     users_list = data_store.get()['users']
     # Email does not exist in database
@@ -21,10 +22,12 @@ def auth_login_v1(email, password):
         if (user['email'] == email):
             break
 
-    uid = user_index + 1 
+    uid = user_index + 1
     return {'auth_user_id': uid}
 
 
+## Second part of the feature
+# Registering a new user. Further details will be added later
 def auth_register_v1(email, password, name_first, name_last):
     users_list = data_store.get()['users']
 
@@ -89,7 +92,7 @@ def is_email_already_registered(users_list, email):
 def is_valid_email(email):
     # Using regex module
     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-    
+
     if (re.fullmatch(regex, email)):
         return True
     else:
@@ -111,8 +114,8 @@ def is_valid_name(name):
         return False
 
 
-# Generating a unique alphanumeric handle for a new user. 
-# More details can be found in the details spec
+# Generating a unique alphanumeric handle for a new user.
+# More details can be found in the details spec.
 def generate_handle(users_list, name_first, name_last):
     naive_handle = ''.join([name_first, name_last])
     naive_handle = ''.join(ch for ch in naive_handle if ch.isalnum())
@@ -142,7 +145,7 @@ def is_password_correct(users_list, email, password):
                 return False
     return False
 
-        
+
 
 if __name__ == "__main__":
     pass

@@ -19,18 +19,18 @@ def test_channel_join_InputError():
     user2 = auth_register_v1('user2@test.com', '0000002', 'Ben', 'Bens')
 
     # Global Owner creates public channel
-    channel_id_public = channels_create_v1(user1['auth_user_id'], 'public test channel', True) 
+    channel_id_public = channels_create_v1(user1['uid'], 'public test channel', True) 
 
     # Join invalid channel
     with pytest.raises(InputError) as error:
-        channel_join_v1(user1['auth_user_id'],'this is not a channel')
+        channel_join_v1(user1['uid'],'this is not a channel')
     assert error.type == InputError
 
     # Join channel that user has already joined
-    channel_join_v1(user2['auth_user_id'],channel_id_public['channel_id'])
+    channel_join_v1(user2['uid'],channel_id_public['cid'])
 
     with pytest.raises(InputError) as error:
-        channel_join_v1(user2['auth_user_id'],channel_id_public['channel_id'])
+        channel_join_v1(user2['uid'],channel_id_public['cid'])
     assert error.type == InputError
 
 def test_channel_join_AccessError():
@@ -44,10 +44,10 @@ def test_channel_join_AccessError():
     user2 = auth_register_v1('user2@test.com', '0000002', 'Ben', 'Bens')
 
     # Global Owner creates private channel
-    channel_id_private = channels_create_v1(user1['auth_user_id'], 'private test channel', False) 
+    channel_id_private = channels_create_v1(user1['uid'], 'private test channel', False) 
 
     with pytest.raises(AccessError) as error:
-        channel_join_v1(user2['auth_user_id'],channel_id_private['channel_id'])
+        channel_join_v1(user2['uid'],channel_id_private['cid'])
     assert error.type == AccessError
 
 def test_channel_join_Success():
@@ -60,38 +60,38 @@ def test_channel_join_Success():
     user2 = auth_register_v1('user2@test.com', '0000002', 'Ben', 'Bens')
 
     # Global Owner creates public channel
-    channel_id_public = channels_create_v1(user1['auth_user_id'], 'public test channel', True) 
+    channel_id_public = channels_create_v1(user1['uid'], 'public test channel', True) 
 
     # Global Member creates private channel
-    channel_id_private = channels_create_v1(user2['auth_user_id'], 'private test channel', False) 
+    channel_id_private = channels_create_v1(user2['uid'], 'private test channel', False) 
 
     # Global owner joins private channel
-    channel_join_v1(user1['auth_user_id'],channel_id_private['channel_id'])
+    channel_join_v1(user1['uid'],channel_id_private['cid'])
     
     # Check global owner has joined private channel successfully 
     store = data_store.get()
     channels = store['channels']
 
     for channel in channels:
-        if channel['channel_id'] == channel_id_private['channel_id']:
+        if channel['cid'] == channel_id_private['cid']:
             users = channel['users']
             user_exists = False
             for user in users:
-                if user['auth_user_id'] == user1["auth_user_id"]:
+                if user['uid'] == user1['uid']:
                     user_exists = True
                     break
             assert user_exists == True 
             break
 
     # Global member joins public channel 
-    channel_join_v1(user2['auth_user_id'],channel_id_public['channel_id'])
+    channel_join_v1(user2['uid'],channel_id_public['cid'])
 
     for channel in channels:
-        if channel['channel_id'] == channel_id_public['channel_id']:
+        if channel['cid'] == channel_id_public['cid']:
             users = channel['users']
             user_exists = False
             for user in users:
-                if user['auth_user_id'] == user2["auth_user_id"]:
+                if user['uid'] == user2["uid"]:
                     user_exists = True
                     break
             assert user_exists == True 

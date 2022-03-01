@@ -22,7 +22,7 @@ def auth_login_v1(email, password):
         if (user['email'] == email):
             break
 
-    uid = user_index + 1
+    uid = user_index
     return {'auth_user_id': uid}
 
 
@@ -65,10 +65,10 @@ def auth_register_v1(email, password, name_first, name_last):
     handle = generate_handle(users_list, name_first, name_last)
     
     # Populating the 'users' list with a new user's dictionary
-    uid = len(users_list) + 1
+    uid = len(users_list)
     curr_user = {}
     users_list.append(curr_user)
-    curr_user = users_list[uid - 1]
+    curr_user = users_list[uid]
     curr_user['uid'] = uid
     curr_user['email'] = email
     curr_user['password'] = password

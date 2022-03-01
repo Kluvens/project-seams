@@ -110,3 +110,4 @@ def test_channel_details_invalid_auth_id():
     # tests when channel_id is invalid
     with pytest.raises(AccessError):
         channel_details(first_auth_user_id + "unsw", created_channel_id)
+        

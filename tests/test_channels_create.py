@@ -56,3 +56,4 @@ def test_channel_create_inputError():
     # length of name is more than 20
     with pytest.raises(InputError):
         channels_create_v1(first_auth_user_id, "hahahahahaahahahahahamustbemorethantwentyletters", True)
+        

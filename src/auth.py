@@ -1,11 +1,13 @@
 
 from src.data_store import data_store
 from src.error import InputError
+import re
 
 #from data_store import data_store
 #from error import InputError
 
 '''
+STILL UNDER CONSTRUCTION
 def auth_login_v1(email, password):
     users_list = data_store.get()['users']
     for user_position, user in enumerate(users_list):
@@ -18,37 +20,40 @@ def auth_login_v1(email, password):
 def auth_register_v1(email, password, name_first, name_last):
     users_list = data_store.get()['users']
 
-    if is_email_already_registered(users_list, email) == True:
-        raise InputError("The email you entered is already used by a"
-            "by a registered user.")
+    # Check if email is already in the database
+    # Emails ARE assumed to be case sensitive
+    if is_email_already_registered(users_list, email) is True:
+        raise InputError(
+            "The email you entered is already used "
+            "by a by a registered user.")
 
-    if is_valid_email(email) == False:
+    if is_valid_email(email) is False:
         raise InputError("The email you entered is invalid.")
 
     # Validate password
-    if is_valid_password(password) == False:
+    if is_valid_password(password) is False:
         raise InputError(
-                "The password you entered is invalid.\n"
-                "Your password must have at least 6 ASCII characters.")
+            "The password you entered is invalid.\n"
+            "Your password must have at least 6 ASCII characters.")
 
-    # validate first_name
-    if is_valid_name(name_first) == False:
+    # Validate first_name
+    if is_valid_name(name_first) is False:
         raise InputError(
             "The first name you entered is invalid.\n"
-            "Your first name must be consist of ASCII only"
+            "Your first name must be consist of ASCII only "
             "characters and between 1 and 50 characters inclusive.")
     
-    # validate last_name
-    if is_valid_name(name_last) == False:
+    # Validate last_name
+    if is_valid_name(name_last) is False:
         raise InputError(
             "The first name you entered is invalid.\n"
             "Your first name must be consist of ASCII only"
             "characters and between 1 and 50 characters inclusive.")
-
     
     # Generate Handle
     handle = generate_handle(users_list, name_first, name_last)
     
+    # Populating the 'users' list with a new user's dictionary
     uid = len(users_list) + 1
     curr_user = {}
     users_list.append(curr_user)
@@ -64,28 +69,42 @@ def auth_register_v1(email, password, name_first, name_last):
 
 # ============================= HELPER FUNCTIONS ========================
 
+# Checking if email inputted belong to an existing user
 def is_email_already_registered(users_list, email):
     for user in users_list:
         if user['email'] == email:
             return True
     return False
 
+# Checking whether email contains invalid characters
+# see regex below
 def is_valid_email(email):
-    # Use regex module
-    pass
+    # Using regex module
+    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    
+    if (re.fullmatch(regex, email)):
+        return True
+    else:
+        return False
 
+
+# Checking password string has less than 6 characters
 def is_valid_password(password):
     if len(password) < 6:
+        return False
+    else:
         return True
 
+# Checking if name is in between 1 and 50 characters inc
 def is_valid_name(name):
     if len(name) >= 1 and len(name) <= 50:
         return True
     else:
         return False
 
-# still need to get rid of non alpha numeric characters 
-# and lowercase the whole thing
+
+# Generating a unique alphanumeric handle for a new user. 
+# More details can be found in the details spec
 def generate_handle(users_list, name_first, name_last):
     naive_handle = ''.join([name_first, name_last])
     naive_handle = ''.join(ch for ch in naive_handle if ch.isalnum())
@@ -101,7 +120,9 @@ def generate_handle(users_list, name_first, name_last):
         handle = ''.join(handle_with_suffix)
     else:
         handle = naive_handle
+
     return handle
+
 
 if __name__ == "__main__":
     pass

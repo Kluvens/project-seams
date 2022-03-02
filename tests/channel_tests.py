@@ -1,11 +1,10 @@
 # Import 
 import pytest
-from channel import channel_details_v1, channel_join_v1 
-from error import InputError, AccessError
-from auth import auth_register_v1
-from other import clear_v1
-from channels import channels_create_v1
-from data_store import data_store
+from src.channel import channel_details_v1, channel_join_v1 
+from src.error import InputError, AccessError
+from src.auth import auth_register_v1
+from src.other import clear_v1
+from src.channels import channels_create_v1
 
 # channel join tests
 def test_channel_join_InputError(): 
@@ -72,7 +71,7 @@ def test_channel_join_Success():
     members_list_private = channel_details_v1(user1['auth_user_id'],channel_id_private['channel_id'])
 
     user_exists1 = False 
-    for member in members_list:
+    for member in members_list_private:
         if member['u_id'] == user1['auth_user_id']:
             user_exists1 = True
             break
@@ -86,7 +85,7 @@ def test_channel_join_Success():
     members_list_public = channel_details_v1(user2['auth_user_id'],channel_id_public['channel_id'])
 
     user_exists2 = False
-    for member in members_list:
+    for member in members_list_public:
         if member['u_id'] == user2['auth_user_id']:
             user_exists2 = True
             break

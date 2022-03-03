@@ -22,20 +22,20 @@ def channels_listall_v1(auth_user_id):
     data = data_store.get()
 
     channels = data['channels']
-    cid_list = []
+    channel_id_list = []
     name_list = []
 
     for x in range(len(channels)):
         for y in range(len(channels[x]['all_members'])):
-            cidv = (channels[x]['cid'])
-            cid_list.append(cidv)
+            channel_idv = (channels[x]['channel_id'])
+            channel_id_list.append(channel_idv)
             namev = (channels[x]['name'])
             name_list.append(namev)
 
     return {
         'channels': [
         	{
-        		'channel_id': [cid_list],
+        		'channel_id': [channel_id_list],
         		'name': [name_list],
         	}
         ],

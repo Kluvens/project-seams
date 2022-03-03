@@ -7,66 +7,64 @@
 data = {
     'users': [
         {
-            'uid': 1,
-            'email': "email.com1",
+            'u_id': 0,
+            'email': "email1@gmail.com",
             'name_first': "name_first",
             'name_last': "name_last",
             'password': "password",
+            'handle_str' : "namefirstnamelast"
         },
         {
-            'uid': 2,
-            'email': "email.com2",
+            'u_id': 1,
+            'email': "email2@gmail.com",
             'name_first': "name_first",
             'name_last': "name_last",
             'password': "password",
+            'handle_str' : "namefirstnamelast0"
         },
     ],
-    'channels': [
+        'channels': [
         {
-            'cid': 1,
+            'channel_id': 0,
+            'name' : 'channel0',
+            'is_public': True,
+            'owner_members': [
+                {
+                    'u_id': 0,
+                }
+            ],
+            'all_members': [
+                {
+                    'u_id': 1,
+                }
+            ],
+            'messages': [
+                {
+                    'message_id': 0,
+                    'u_id': 0,
+                }
+            ]
+        },
+        {
+            'channel_id': 1,
             'name' : 'channel1',
             'is_public': True,
             'owner_members': [
                 {
-                    'uid': 1,
-                    'email': 'example@gmail.com',
-                    'name_first': 'Hayden',
-                    'name_last': 'Jacobs',
-                    'handle_str': 'haydenjacobs',
+                    'u_id': 0,
                 }
             ],
             'all_members': [
                 {
-                    'uid': 1,
-                    'email': 'example@gmail.com',
-                    'name_first': 'Hayden',
-                    'name_last': 'Jacobs',
-                    'handle_str': 'haydenjacobs',
+                    'u_id': 0,
                 }
             ],
-        },
-        {
-            'cid': 2,
-            'name' : 'channel2',
-            'is_public': True,
-            'owner_members': [
+            'messages': [
                 {
-                    'uid': 1,
-                    'email': 'example@gmail.com',
-                    'name_first': 'Hayden',
-                    'name_last': 'Jacobs',
-                    'handle_str': 'haydenjacobs',
+                    'message_id': 0,
+                    'u_id': 0,
                 }
-            ],
-            'all_members': [
-                {
-                    'uid': 1,
-                    'email': 'example@gmail.com',
-                    'name_first': 'Hayden',
-                    'name_last': 'Jacobs',
-                    'handle_str': 'haydenjacobs',
-                }
-            ],
+            ]
         },
     ],
 }

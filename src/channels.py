@@ -18,20 +18,6 @@ def channels_list_v1(auth_user_id):
                 namev = (channels[x]['name'])
                 name_list.append(namev)
 
-    """
-    print(cid_list)
-    print(name_list)
-    
-    dic = {}
-    for cid in cid_list:
-        for name in name_list:
-            dic[cid] = name
-            name_list.remove(name)
-            break  
-    
-    print(dic)
-    """
-
     return {
         'channels': [
         	{
@@ -40,32 +26,17 @@ def channels_list_v1(auth_user_id):
         	}
         ],
     }
-    
+
 def channels_listall_v1(auth_user_id):
-
-    # if auth_user_id doesnt exist return AccessError
-
-    data = data_store.get()
-
-    channels = data['channels']
-    cid_list = []
-    name_list = []
-
-    for x in range(len(channels)):
-        for y in range(len(channels[x]['all_members'])):
-            cidv = (channels[x]['cid'])
-            cid_list.append(cidv)
-            namev = (channels[x]['name'])
-            name_list.append(namev)
-
     return {
         'channels': [
         	{
-        		'channel_id': [cid_list],
-        		'name': [name_list],
+        		'channel_id': 1,
+        		'name': 'My Channel',
         	}
         ],
     }
+
 
 def channels_create_v1(auth_user_id, name, is_public):
     return {

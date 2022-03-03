@@ -70,32 +70,10 @@ def test_user_join_some_public():
     channel_join_v1(uid2, cid1)
 
     assert channels_list_v1(uid2['auth_user_id']) == [['ch1']]
-    assert channels_list_v1(uid2['auth_user_id']) == [['ch2']]
+    assert channels_list_v1(uid2['auth_user_id']) != [['ch2']]
 
-# invalid input
-def invalid_listall_input():
-    clear_v1()
-    with pytest.raises(AccessError):
-        channels_listall_v1('BOBbob')
-
+# invalid input error testing
 def invalid_list_input():
     clear_v1()
     with pytest.raises(AccessError):
         channels_list_v1('BOBbob')
-
-# test if listall func displays all channels including public and private
-def listall_public_and_private():
-    clear_v1()
-
-    # create user
-    uid1 = auth_register_v1("e1@gmail.com", "abcdefg123", "James", "Cai")
-
-    # create channels 
-    cid1 = channels_create_v1(uid1['auth_user_id'], "ch1", True)
-    cid2 = channels_create_v1(uid1['auth_user_id'], "ch2", False)
-
-    listall = channels_listall_v1(uid1['auth_user_id'])
-
-    assert listall['channels'][uid1['auth_user_id']] == [['ch1']]
-    assert listall['channels'][uid1['auth_user_id']] == [['ch2']]
-

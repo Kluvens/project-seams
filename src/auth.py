@@ -1,4 +1,3 @@
-
 from src.data_store import data_store
 from src.error import InputError
 import re
@@ -9,7 +8,8 @@ import re
 
 # Further function documentation will be added later.
 def auth_login_v1(email, password):
-    users_list = data_store.get()['users']
+    data = data_store.get()
+    users_list = data['users']
 
     # Email does not exist in database
     if is_email_already_registered(users_list, email) is False:
@@ -24,13 +24,16 @@ def auth_login_v1(email, password):
             break
 
     u_id = user_index
+    data_store.set(data)
     return {'auth_user_id': u_id}
 
 
 ## Second part of the feature
 # Registering a new user. Further details will be added later
 def auth_register_v1(email, password, name_first, name_last):
-    users_list = data_store.get()['users']
+    
+    data = data_store.get()
+    users_list = data['users']
 
     # Check if email is already in the database
     # Emails ARE assumed to be case sensitive
@@ -79,6 +82,7 @@ def auth_register_v1(email, password, name_first, name_last):
     curr_user['name_last'] = name_last
     curr_user['handle_str'] = handle
 
+    data_store.set(data)
     return { 'auth_user_id': u_id }
 
 
@@ -157,4 +161,4 @@ def is_password_correct(users_list, email, password):
 
 
 if __name__ == "__main__":
-    pass    
+    pass

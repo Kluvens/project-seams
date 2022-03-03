@@ -27,6 +27,7 @@ Example usage:
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
     'users': [],
+    'channels' : []
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
@@ -47,3 +48,78 @@ print('Loading Datastore...')
 
 global data_store
 data_store = Datastore()
+
+data = {
+    'users': [
+        {
+            'uid': 1,
+            'email': "email.com1",
+            'name_first': "name_first",
+            'name_last': "name_last",
+            'password': "password",
+        },
+        {
+            'uid': 2,
+            'email': "email.com2",
+            'name_first': "name_first",
+            'name_last': "name_last",
+            'password': "password",
+        },
+    ],
+    'channels': [
+        {
+            'cid': 1,
+            'name' : 'channel1',
+            'is_public': True,
+            'messages': [
+                {
+                    'message_id': 1,
+                    'u_id': 1,
+                    'message': 'Hello world',
+                    'time_created': 1582426789,
+                },
+            ],
+            'owner_members': [
+                {
+                    'uid': 1,
+                    'email': 'example@gmail.com',
+                    'name_first': 'Hayden',
+                    'name_last': 'Jacobs',
+                    'handle_str': 'haydenjacobs',
+                }
+            ],
+            'all_members': [
+                {
+                    'uid': 1,
+                    'email': 'example@gmail.com',
+                    'name_first': 'Hayden',
+                    'name_last': 'Jacobs',
+                    'handle_str': 'haydenjacobs',
+                }
+            ],
+        },
+        {
+            'cid': 2,
+            'name' : 'channel2',
+            'is_public': True,
+            'owner_members': [
+                {
+                    'uid': 1,
+                    'email': 'example@gmail.com',
+                    'name_first': 'Hayden',
+                    'name_last': 'Jacobs',
+                    'handle_str': 'haydenjacobs',
+                }
+            ],
+            'all_members': [
+                {
+                    'uid': 1,
+                    'email': 'example@gmail.com',
+                    'name_first': 'Hayden',
+                    'name_last': 'Jacobs',
+                    'handle_str': 'haydenjacobs',
+                }
+            ],
+        },
+    ],
+}

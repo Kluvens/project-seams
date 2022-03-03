@@ -7,21 +7,6 @@ from src.other import clear_v1
 
 from src.error import InputError, AccessError
 
-'''
-def channel_messages_v1(auth_user_id, channel_id, start):
-    return {
-        'messages': [
-            {
-                'message_id': 1,
-                'u_id': 1,
-                'message': 'Hello world',
-                'time_created': 1582426789,
-            }
-        ],
-        'start': 0,
-        'end': 50,
-    }
-'''
 def test_channel_messages_InputError():
     clear_v1()
 

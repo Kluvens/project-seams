@@ -14,15 +14,3 @@ def test_clear_valid():
     clear_v1()
     assert users_data['users'] == []
     assert users_data['channels'] == []
-
-
-
-# Empty
-def test_clear_valid2():
-
-
-    assert data['channels'] == []
-
-# Multiple users/multiple channels
-def test_clear_complex_database():
-    pass

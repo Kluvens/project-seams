@@ -81,10 +81,9 @@ def auth_register_v1(email, password, name_first, name_last):
     curr_user['name_last'] = name_last
     curr_user['handle_str'] = handle
 
-    data["users"].append(curr_user)
     data_store.set(data)
-
     return { 'auth_user_id': u_id }
+
 
 # ============================= HELPER FUNCTIONS ========================
 

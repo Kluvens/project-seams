@@ -31,11 +31,19 @@ data = {
             'owner_members': [
                 {
                     'u_id': 0,
+                    'email': 'example@gmail.com',
+                    'name_first': 'Hayden',
+                    'name_last': 'Jacobs',
+                    'handle_str': 'haydenjacobs',
                 }
             ],
             'all_members': [
                 {
                     'u_id': 1,
+                    'email': 'example@gmail.com',
+                    'name_first': 'Hayden',
+                    'name_last': 'Jacobs',
+                    'handle_str': 'haydenjacobs',
                 }
             ],
             'messages': [
@@ -52,11 +60,19 @@ data = {
             'owner_members': [
                 {
                     'u_id': 0,
+                    'email': 'example@gmail.com',
+                    'name_first': 'Hayden',
+                    'name_last': 'Jacobs',
+                    'handle_str': 'haydenjacobs',
                 }
             ],
             'all_members': [
                 {
                     'u_id': 0,
+                    'email': 'example@gmail.com',
+                    'name_first': 'Hayden',
+                    'name_last': 'Jacobs',
+                    'handle_str': 'haydenjacobs',
                 }
             ],
             'messages': [

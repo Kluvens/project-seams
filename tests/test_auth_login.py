@@ -1,14 +1,13 @@
+'''
+Note to self: Add some documentation here
+'''
+
 from src.error import InputError
 from src.auth import auth_login_v1
 from src.auth import auth_register_v1
 from src.other import clear_v1
 
 import pytest
-
-
-#Version 1.1: Tests for auth_login_v1
-# Kais.Al
-
 
 # =============================TESTING CORRECTNESS=============================
 
@@ -48,6 +47,7 @@ def test_login_existing_user3():
 
     return_uid = auth_login_v1(email, password)
     assert return_uid == uid
+
 
 # ============================ TESTING EXCEPTIONS =============================
 

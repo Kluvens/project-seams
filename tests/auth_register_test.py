@@ -1,9 +1,9 @@
 '''
+Description:
 This module contains tests for the auth_register_v1 function
 based on the black box testing model
 
-Kais Alzubaidi z5246721
-
+iteration1 : Kais Alzubaidi 
 
 '''
 
@@ -51,6 +51,7 @@ def test_return_is_not_empty():
         
     assert register_return_val_usr1 != {}
 
+
 # Checking that auth_register returns the correct uid
 # for multiple users
 def test_return_id_multiple_users():
@@ -88,8 +89,86 @@ def test_return_id_multiple_users():
     assert register_return_val_usr3 == login_return_val_usr3
     assert register_return_val_usr4 == login_return_val_usr4
 
+
+
+
+# ================================================================
+#                        Test Exceptions
+# Each set addresses one type of InputError as per the project requirments
+
+
+# ======================== SET 1 =================================
+# Test if an InputError exceptipn is rasied for invalid email input
+
+def test_is_email_valid1():
+    with pytest.raises(InputError):
+        auth_register_v1("invaild email", "a1b2c3d4e5", "Kais", "Alzubaidi")
+
+# Note to self: Look for better regex "@99.com" is not spotted
+def test_is_email_valid2():
+    with pytest.raises(InputError):
+        auth_register_v1(
+            "emaildoesnotexit99.com",
+            "a1b2c3d4e5",
+            "Kais",
+            "Alzubaidi"
+        )
+
 # ======================== SET 2 =================================
-# Testing if is exception is raised for invalid first name and last name inputs
+# Test if exception is raised when an attempting to add an existing email
+
+def test_is_email_registered1():
+    clear_v1()
+    auth_register_v1("k.z2991@gmail.com", "aqwregjh123", "Sonia", "something")
+    with pytest.raises(InputError):
+        auth_register_v1("k.z2991@gmail.com", "a1b2c3d4e5", "Jake", "O'conor")
+
+def test_is_email_registered2():
+    clear_v1()
+    auth_register_v1("ka.z2991@gmail.com", "aqwreg123", "Sonia", "something")
+    auth_register_v1("ka1.z2991@gmail.com", "aqwreg123", "Sonia", "something")
+    auth_register_v1("kai1.z2991@gmail.com", "aqwre123", "Sonia", "something")
+    with pytest.raises(InputError):
+        auth_register_v1("ka1.z2991@gmail.com", "a1b2c3d4", "Kai", "Renz")
+
+
+# Multiple users exist, testing the function's ability 
+# to detect existing email when it's "randomly" placed in
+# the database and raises an InputError
+def test_is_email_registered3():
+    clear_v1()
+    auth_register_v1("ka.z2991@gmail.com", "aqwreg123", "Sonia", "something")
+    auth_register_v1("ka1.z2991@gmail.com", "aqwreg123", "Sonia", "something")
+    auth_register_v1("kai.z2991@gmail.com", "aqwreg123", "Sonia", "something")
+    auth_register_v1("ka2.z2991@gmail.com", "aqwreh123", "Sonia", "something")
+    auth_register_v1("kai1.z2991@gmail.com", "aqwre123", "Sonia", "something")
+
+    with pytest.raises(InputError):
+        auth_register_v1("ka2.z2991@gmail.com", "a1b2c3d4", "Kai", "Renz")
+
+
+# ======================== SET 3 =================================
+
+# Testing if exception is raised when password is less than 6 characters
+
+def test_is_password_valid1():
+    with pytest.raises(InputError):
+        auth_register_v1("k.z2991@gmail.com", "a12", "Jake", "O'Conor")
+
+
+def test_is_password_valid2():
+    with pytest.raises(InputError):
+        auth_register_v1("k.z2991@gmail.com", "aaa11", "Jake", "O'Conor")
+
+
+def test_is_password_valid3():
+    with pytest.raises(InputError):
+        auth_register_v1("k.z2991@gmail.com", "", "Jake", "O'Conor")
+
+
+
+# ======================== SET 4 =================================
+# Testing if an exception is raised for invalid first name and last name inputs
 
 # First name exceeds the 50 character upper bound
 def test_is_first_name_valid1():

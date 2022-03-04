@@ -52,14 +52,14 @@ data_store = Datastore()
 data = {
     'users': [
         {
-            'uid': 1,
+            'u_id': 0,
             'email': "email.com1",
             'name_first': "name_first",
             'name_last': "name_last",
             'password': "password",
         },
         {
-            'uid': 2,
+            'u_id': 1,
             'email': "email.com2",
             'name_first': "name_first",
             'name_last': "name_last",
@@ -68,20 +68,20 @@ data = {
     ],
     'channels': [
         {
-            'cid': 1,
-            'name' : 'channel1',
+            'channel_id': 0,
+            'name' : 'channel0',
             'is_public': True,
             'messages': [
                 {
-                    'message_id': 1,
-                    'u_id': 1,
+                    'message_id': 0,
+                    'u_id': 0,
                     'message': 'Hello world',
-                    'time_created': 1582426789,
+                    'time_sent': 1582426789,
                 },
             ],
             'owner_members': [
                 {
-                    'uid': 1,
+                    'u_id': 0,
                     'email': 'example@gmail.com',
                     'name_first': 'Hayden',
                     'name_last': 'Jacobs',
@@ -90,7 +90,7 @@ data = {
             ],
             'all_members': [
                 {
-                    'uid': 1,
+                    'u_id': 0,
                     'email': 'example@gmail.com',
                     'name_first': 'Hayden',
                     'name_last': 'Jacobs',
@@ -99,12 +99,12 @@ data = {
             ],
         },
         {
-            'cid': 2,
-            'name' : 'channel2',
+            'channel_id': 1,
+            'name' : 'channel1',
             'is_public': True,
             'owner_members': [
                 {
-                    'uid': 1,
+                    'u_id': 0,
                     'email': 'example@gmail.com',
                     'name_first': 'Hayden',
                     'name_last': 'Jacobs',
@@ -113,12 +113,20 @@ data = {
             ],
             'all_members': [
                 {
-                    'uid': 1,
+                    'u_id': 0,
                     'email': 'example@gmail.com',
                     'name_first': 'Hayden',
                     'name_last': 'Jacobs',
                     'handle_str': 'haydenjacobs',
                 }
+            ],
+            'messages': [
+                {
+                    'message_id': 0,
+                    'u_id': 0,
+                    'message': 'Bye world',
+                    'time_sent': 1582426790,
+                },
             ],
         },
     ],

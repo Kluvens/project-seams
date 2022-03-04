@@ -33,27 +33,25 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     # Check whether channel_id exist in the database
     channel_exist = 0
     for channel in data['channels']:
-        if channel['id'] == channel_id:
+        if channel['channel_id'] == channel_id:
             channel_exist = 1
     if channel_exist == 0:
         raise InputError(description = "Error occurred channel_id is not in database")
-    
-    u_id = auth_user_id['auth_user_id']
     
     # Check user is a member in channel_id
     authorised_user = 0
     for channel in data['channels']:
         for member in channel['all_members']:
-            if member['u_id'] == u_id:
+            if member['u_id'] == auth_user_id:
                 authorised_user = 1
     if authorised_user == 0:
         raise AccessError(description = "Error occurred authorised user is not a member of channel_id")
 
     # Retrieves all messages and also number of messages
     for channel in data['channels']:
-        if channel['id'] == channel_id:
-            messages = list(channel['messages'])
-            num_messages = len(messages)
+        if channel['channel_id'] == channel_id:
+            found_messages = channel['messages']
+            num_messages = len(found_messages)
     
     # When there is no messages
     if num_messages == 0 and start == 0:
@@ -76,10 +74,10 @@ def channel_messages_v1(auth_user_id, channel_id, start):
             break
 
         message_array.append({
-            'message_id': messages[index].get('message_id'),
-            'u_id': messages[index].get('u_id'),
-            'message': messages[index].get('message'),
-            'time_created': messages[index].get('time_created'),
+            'message_id': found_messages[index].get('message_id'),
+            'u_id': found_messages[index].get('u_id'),
+            'message': found_messages[index].get('message'),
+            'time_sent': found_messages[index].get('time_sent'),
         })
     
     if num < 50:

@@ -11,12 +11,14 @@ def channels_list_v1(auth_user_id):
     except:
         raise AccessError
 
+    # initialise data_store
     data = data_store.get()
 
     channels = data['channels']
     channel_id_list = []
-    name_list = []
+    name_list = []  
 
+    # loop through data store and find channels matching to user id
     for x in range(len(channels)):
         for y in range(len(channels[x]['all_members'])):
             if channels[x]['all_members'][y]['u_id'] == auth_user_id:
@@ -48,7 +50,6 @@ def channels_listall_v1(auth_user_id):
     }
 
 def channels_create_v1(auth_user_id, name, is_public):
-
     return {
         'channel_id': 1,
     }

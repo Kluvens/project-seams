@@ -16,9 +16,8 @@ def channels_list_v1(auth_user_id):
 
     channels = data['channels']
     channel_id_list = []
-    name_list = []  
+    name_list = []
 
-    # loop through data store and find channels matching to user id
     for x in range(len(channels)):
         for y in range(len(channels[x]['all_members'])):
             if channels[x]['all_members'][y]['u_id'] == auth_user_id:
@@ -27,13 +26,17 @@ def channels_list_v1(auth_user_id):
                 namev = (channels[x]['name'])
                 name_list.append(namev)
 
+    # convert list to string
+    listToStrc = ', '.join([str(elem) for elem in channel_id_list])
+    listToStrn = ', '.join([str(elem) for elem in name_list])
+
     data_store.set(data)
 
     return {
         'channels': [
             {
-                'channel_id': channel_id_list,
-                'name': name_list,
+                'channel_id': listToStrc,
+                'name': listToStrn,
             }
         ],
     }

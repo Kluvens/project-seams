@@ -1,4 +1,6 @@
 from src.data_store import data_store
+from src.error import InputError
+from src.error import AccessError
 
 def channels_list_v1(auth_user_id):
     return {
@@ -22,12 +24,9 @@ def channels_listall_v1(auth_user_id):
 
 def channels_create_v1(auth_user_id, channel_name, is_public):
     data = data_store.get()
-    print(data)
-    print(auth_user_id)
-    print(channel_name)
     
     host_info = data["users"][auth_user_id]
-    # print(host_info)
+
     channel_id = len(data["channels"])
 
     # error
@@ -37,7 +36,7 @@ def channels_create_v1(auth_user_id, channel_name, is_public):
     data["channels"].append(
         {
             'channel_id': channel_id,
-            'name': cahnnel_name,
+            'name': channel_name,
             'is_public': is_public,
             'owner_members': [
                 {
@@ -66,4 +65,3 @@ def channels_create_v1(auth_user_id, channel_name, is_public):
         'channel_id': channel_id,
     }
 
-channels_create_v1(1, "Tony_channel", True)

@@ -9,51 +9,116 @@ from src.error import AccessError
 
 import pytest
 
-
-def test_channel_create_working():
+'''
+testing when a single user wants to create a channel and channel_id is valid
+'''
+def test_channel_create_working_single_user():
     clear_v1()
 
-    data = data_store.get()
-
+    # register and login for a user
     first_auth_user = auth_register_v1("unswisgreat@unsw.edu.au", "unswisgreat123", "Tony", "Stark")
-    first_u_id = data["users"][-1]["uid"]
     first_auth_user = auth_login_v1("unswisgreat@unsw.edu.au", "unswisgreat123")
-    first_auth_user_id = first_auth_user["auth_user_id"]
+    first_u_id = first_auth_user["auth_user_id"]
 
-    created_channel_id = channels_create_v1(first_auth_user_id, "Tony_channel", True).get("channel_id")
+    created_channel_id = channels_create_v1(first_u_id, "Tony_channel", True).get("channel_id")
 
-    # check the channel id and name stored in data
-    # -1 means the newly created channel always located in the last place in data
-    check_user = data["users"][first_u_id]
-    assert data["channels"][-1]["cid"] == created_channel_id
-    assert data["channels"][-1]["name"] == "Tony_channel"
-    assert data["channels"][-1]["is_public"] == True
-    assert data["channels"][-1]["owner_members"][0] == {
-        'uid': check_user["uid"],
-        'email': check_user["email"],
-        'name_first': check_user["name_first"],
-        'name_last': check_user["name_last"],
+    first_channel_details = channel_details_v1(first_u_id, created_channel_id)
+
+    # testing
+    assert first_channel_details["name"] == "Tony_channel"
+    assert first_channel_details["is_public"] == True
+    assert first_channel_details["owner_members"][0] == {
+        "u_id": first_u_id,
+        "email": "unswisgreat@unsw.edu.au",
+        "name_first": "Tony",
+        "name_last": "Stark",
+        "handle_str": "tonystark",
     }
-    assert data["channels"][-1]["all_members"][0] == {
-        'uid': check_user["uid"],
-        'email': check_user["email"],
-        'name_first': check_user["name_first"],
-        'name_last': check_user["name_last"],
+    assert first_channel_details["all_members"][0] == {
+        "u_id": first_u_id,
+        "email": "unswisgreat@unsw.edu.au",
+        "name_first": "Tony",
+        "name_last": "Stark",
+        "handle_str": "tonystark",
     }
 
-def test_channel_create_inputError():
+'''
+testing when a user created a channel and invite others to join, the channel_id is always valid
+'''
+def test_channel_create_working_many_user():
     clear_v1()
 
+    # register and login for users
     first_auth_user = auth_register_v1("unswisgreat@unsw.edu.au", "unswisgreat123", "Tony", "Stark")
-    first_u_id = data["users"][-1]["uid"]
     first_auth_user = auth_login_v1("unswisgreat@unsw.edu.au", "unswisgreat123")
-    first_auth_user_id = first_auth_user["auth_user_id"]
+    first_u_id = first_auth_user["auth_user_id"]
+
+    second_auth_user = auth_register_v1("hellounsw@gmail.com", "UNSWisgreat125", "Bruce", "Banner")
+    second_auth_user = auth_login_v1("unswisgreat@unsw.edu.au", "unswisgreat123")
+    second_u_id = second_auth_user["auth_user_id"]
+
+    # create a channel
+    created_channel_id = channels_create_v1(first_u_id, "Tony_channel", True).get("channel_id")
+
+    # invite other people to join the current channel
+    channel_invite(first_u_id,created_channel_id,second_u_id)
+
+    # get channel details
+    get_channel_details = channel_details(first_u_id, created_channel_id)
+
+    # testing
+    assert first_channel_details["name"] == "Tony_channel"
+    assert first_channel_details["is_public"] == True
+    assert first_channel_details["owner_members"][0] == {
+        "u_id": first_u_id,
+        "email": "unswisgreat@unsw.edu.au",
+        "name_first": "Tony",
+        "name_last": "Stark",
+        "handle_str": "tonystark",
+    }
+    assert first_channel_details["all_members"][0] == {
+        "u_id": first_u_id,
+        "email": "unswisgreat@unsw.edu.au",
+        "name_first": "Tony",
+        "name_last": "Stark",
+        "handle_str": "tonystark",
+    }
+    assert first_channel_details["all_members"][1] == {
+        "u_id": second_u_id,
+        "email": "hellounsw@gmail.com",
+        "name_first": "Bruce",
+        "name_last": "Banner",
+        "handle_str": "brucebanner",
+    }
+
+'''
+we only problems on specification can happen
+testing when user_id is valid but channel name is none
+'''
+def test_channel_create_inputError_less_than_1():
+    clear_v1()
+
+    # register and login for a user
+    first_auth_user = auth_register_v1("unswisgreat@unsw.edu.au", "unswisgreat123", "Tony", "Stark")
+    first_auth_user = auth_login_v1("unswisgreat@unsw.edu.au", "unswisgreat123")
+    first_u_id = first_auth_user["auth_user_id"]
 
     # length of name is less than 1
     with pytest.raises(InputError):
-        channels_create_v1(first_auth_user_id, "", True)
+        channels_create_v1(first_u_id, "", True)
 
+'''
+testing when user id is valid but channel name is more than 20 characters
+'''
+def test_channel_create_inputError_more_than_20():
+    clear_v1()
+
+    # register and login for a user
+    first_auth_user = auth_register_v1("unswisgreat@unsw.edu.au", "unswisgreat123", "Tony", "Stark")
+    first_auth_user = auth_login_v1("unswisgreat@unsw.edu.au", "unswisgreat123")
+    first_u_id = first_auth_user["auth_user_id"]
+    
     # length of name is more than 20
     with pytest.raises(InputError):
-        channels_create_v1(first_auth_user_id, "hahahahahaahahahahahamustbemorethantwentyletters", True)
+        channels_create_v1(first_u_id, "hahahahahaahahahahahamustbemorethantwentyletters", True)
         

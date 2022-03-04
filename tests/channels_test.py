@@ -93,7 +93,7 @@ def test_user_join_some_channels_public():
     listv1 = channels_list_v1(u_id1['auth_user_id'])
 
     # assert user 1 is part of ch1 and ch2
-    assert listv1['channels'][u_id1['auth_user_id']] == {'channel_id': [[0, 1]], 'name': [['ch1', 'ch2']]}
+    assert listv1['channels'][u_id1['auth_user_id']] == {'channel_id': [0, 1], 'name': ['ch1', 'ch2']}
 
 def test_user_join_some_channels_private():
     clear_v1()
@@ -111,7 +111,7 @@ def test_user_join_some_channels_private():
     listv1 = channels_list_v1(u_id1['auth_user_id'])
 
     # assert user 1 is part of ch1 and ch2
-    assert listv1['channels'][u_id1['auth_user_id']] == {'channel_id': [[0, 1]], 'name': [['ch1', 'ch2']]}
+    assert listv1['channels'][u_id1['auth_user_id']] == {'channel_id': [0, 1], 'name': ['ch1', 'ch2']}
 
 # =============================TESTING ERRORS================================
 

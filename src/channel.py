@@ -49,32 +49,28 @@ def channel_join_v1(auth_user_id, channel_id):
     store = data_store.get()
     channels = store['channels']
     users = store['users']
-    # Get user data from user list for given auth_user_id
-    user_data_append = users[auth_user_id]
-    
     
     #Check if channel exists, is public, is global owner, is already a member 
     channel_access = False 
     user_in_channel = False
     channel_to_join = None
 
-    for channel in channels:
-
-        # Check if channel exists and save correct channel
-        if channel['cid'] == channel_id:
-            channel_to_join = channel
-
-            # If channel exists, check if it is public 
-            if channel['is_public'] == True:
-                channel_access = True 
+    # Check channel exists and save channel
+    channel_list = [channel for channel in channels if channel['channel_id'] == channel_id]
+    channel_len = len(channel_to_join)
+    if channel_len != 0:
+        channel_join = channel_list[0]
         
-            # If channel exists, check if user is already in channel 
-            users = channel['users']
-            for user in users:
-                if user['uid'] == auth_user_id:
-                    user_in_channel = True
-                break
-            break 
+    # If channel exists
+    if channel_join != 0:
+        # Check if user exists in channel already
+        users = channel_to_join['all_members']
+        u_id_list = [user['u_id'] for user in users]
+        if auth_user_id in u_id_list:
+            user_in_channel = True
+        # Check if the channel is public 
+        if channel_to_join['is_public'] == True:
+            channel_access = True 
 
     # Check if user is a global owner 
     if auth_user_id == 0:
@@ -85,7 +81,7 @@ def channel_join_v1(auth_user_id, channel_id):
         raise error.AccessError ("ERROR: You do not have access to this private channel")
     
     # Input error 
-    if channel_to_join == None:
+    if channel_len == 0:
         raise error.InputError ("ERROR: Channel does not exist")
 
     if user_in_channel == True:
@@ -94,7 +90,8 @@ def channel_join_v1(auth_user_id, channel_id):
     # Append member if all conditions met
     if channel_to_join != None and channel_access == True and user_in_channel == False:
         member_list = channel_to_join['all_members']
-        member_list.append(user_data_append)
+        new_member = {auth_user_id}
+        member_list.append(new_member)
 
     
     

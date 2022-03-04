@@ -1,9 +1,12 @@
+'''
+Header comments and function docstrigns will
+be added after tests and implementation have
+been push to master with a passing pipline.
+'''
+
 from src.data_store import data_store
 from src.error import InputError
 import re
-
-#from data_store import data_store
-#from error import InputError
 
 
 # Further function documentation will be added later.

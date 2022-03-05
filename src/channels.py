@@ -3,6 +3,8 @@ from src.error import AccessError
 from src.other import clear_v1
 from src.auth import auth_register_v1
 
+# Assumption
+# when invalid auth_user_id is input throw an AccessError
 def channels_list_v1(auth_user_id):
 
     # if auth_user_id doesnt exist return AccessError
@@ -11,38 +13,24 @@ def channels_list_v1(auth_user_id):
     except:
         raise AccessError
 
-    # initialise data_store
+    # initiliase datastore and dicts
     data = data_store.get()
+    channels_list = data['channels']
+    channels_dict = {'channels' : []}
+    
+    # loop through data_store and if u_id is in channel
+    # add channels and names to dict
+    for channel in channels_list:
+        for member in channel['all_members']:
+            if auth_user_id == member['u_id']:
+                channel_id = channel['channel_id']
+                name = channel['name']
+                channels_dict['channels'].append({'channel_id' : channel_id, 'name' : name})
 
-    channels = data['channels']
-    channel_id_list = []
-    name_list = []
-
-    for x in range(len(channels)):
-        for y in range(len(channels[x]['all_members'])):
-            if channels[x]['all_members'][y]['u_id'] == auth_user_id:
-                channel_idv = (channels[x]['channel_id'])
-                channel_id_list.append(channel_idv)
-                namev = (channels[x]['name'])
-                name_list.append(namev)
-
-    # convert list to string
-    listToStrc = ', '.join([str(elem) for elem in channel_id_list])
-    listToStrn = ', '.join([str(elem) for elem in name_list])
-
-    data_store.set(data)
-
-    return {
-        'channels': [
-            {
-                'channel_id': listToStrc,
-                'name': listToStrn,
-            }
-        ],
-    }
-
+    return channels_dict
 
 def channels_listall_v1(auth_user_id):
+
     return {
         'channels': [
             {
@@ -52,7 +40,9 @@ def channels_listall_v1(auth_user_id):
         ],
     }
 
-def channels_create_v1(auth_user_id, name, is_public):
+
+def channels_create_v1(auth_user_id, channel_name, is_public):
     return {
         'channel_id': 1,
     }
+

@@ -73,8 +73,8 @@ def find_channel_index(channel_id):
     return None
 
 def is_in_channel(auth_user_id, right_channel):
-    for channel in right_channel["all_members"]:
-        if auth_user_id == channel["u_id"]:
+    for member in right_channel["all_members"]:
+        if auth_user_id == member["u_id"]:
             return True
 
     return False
@@ -86,7 +86,7 @@ def channel_details_v1(auth_user_id, channel_id):
     right_channel_index = find_channel_index(channel_id)
 
     # error
-    if right_channel_index == None:
+    if right_channel_index is None:
         raise InputError("channel_id does not refer to a valid channel")
 
     right_channel = data["channels"][right_channel_index]

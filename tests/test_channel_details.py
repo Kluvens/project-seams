@@ -112,11 +112,11 @@ def test_channel_details_invalid_channel_id():
     created_channel_id = channels_create_v1(first_u_id, "Tony_channel", True).get("channel_id")
 
     # invite other people to join the current channel
-    channel_invite_v1(first_u_id,created_channel_id,second_u_id)
+    channel_invite_v1(first_u_id, created_channel_id, second_u_id)
 
     # tests when channel_id is invalid
     with pytest.raises(InputError):
-        channel_details_v1(first_u_id, str(created_channel_id) + "unsw")
+        channel_details_v1(first_u_id, created_channel_id + 1)
 
 
 '''
@@ -134,15 +134,19 @@ def test_channel_details_invalid_auth_id():
     second_auth_user = auth_login_v1("hellounsw@gmail.com", "UNSWisgreat125")
     second_u_id = second_auth_user["auth_user_id"]
 
+    third_auth_user = auth_register_v1("heyhellounsw@gmail.com", "UNSWisgreat1251", "Bruces", "Banners")
+    third_auth_user = auth_login_v1("heyhellounsw@gmail.com", "UNSWisgreat1251")
+    third_u_id = third_auth_user["auth_user_id"]
+
     # create the channel and the host is the first user
     # name is the given name
     created_channel_id = channels_create_v1(first_u_id, "Tony_channel", True).get("channel_id")
 
     # invite other people to join the current channel
-    channel_invite_v1(first_u_id,created_channel_id,second_u_id)
+    channel_invite_v1(first_u_id, created_channel_id, second_u_id)
 
-    # tests when channel_id is invalid
+    # tests when auth_user_id is invalid
     with pytest.raises(AccessError):
-        channel_details_v1(str(first_u_id) + "unsw", created_channel_id)
+        channel_details_v1(third_u_id, created_channel_id)
 
         

@@ -22,8 +22,8 @@ def test_listall_public_and_private():
     listall = channels_listall_v1(u_id['auth_user_id'])
 
     # assert listall returns filled dict
-    assert listall['channels'][u_id['auth_user_id']] == {'channel_id': '0, 1', 'name': 'ch1, ch2'}
-
+    assert listall == {'channels': [{'channel_id': 0, 'name': 'ch1'}, {'channel_id': 1, 'name': 'ch2'}]}
+    
 # test listall func when no channels exist
 def test_listall_no_channels():
     clear_v1()
@@ -34,7 +34,7 @@ def test_listall_no_channels():
     listall = channels_listall_v1(u_id['auth_user_id'])
 
     # assert listall returns empty dict
-    assert listall['channels'][u_id['auth_user_id']] == {'channel_id': '', 'name': ''}
+    assert listall == {'channels': []}
 
 # =============================TESTING ERRORS================================
 

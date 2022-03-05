@@ -91,8 +91,6 @@ def test_return_id_multiple_users():
     assert register_return_val_usr4 == login_return_val_usr4
 
 
-
-
 # ================================================================
 #                        Test Exceptions
 # Each set addresses one type of InputError as per the project requirments

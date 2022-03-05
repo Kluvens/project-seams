@@ -34,9 +34,8 @@ def auth_login_v1(email, password):
 ## Second part of the feature
 # Registering a new user. Further details will be added later
 def auth_register_v1(email, password, name_first, name_last):
-    
     data = data_store.get()
-    users_list = data['users']
+    users_list = data["users"]
 
     # Check if email is already in the database
     # Emails ARE assumed to be case sensitive
@@ -160,8 +159,6 @@ def is_password_correct(users_list, email, password):
             else:
                 return False
     return False
-
-
 
 if __name__ == "__main__":
     pass

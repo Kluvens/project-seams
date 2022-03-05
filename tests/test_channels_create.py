@@ -1,3 +1,5 @@
+# Jiapeng Yang(Justin) z5339252
+
 from src.auth import auth_register_v1, auth_login_v1
 from src.channels import channels_create_v1
 from src.channel import channel_invite_v1, channel_details_v1
@@ -54,17 +56,17 @@ def test_channel_create_working_many_user():
     first_u_id = first_auth_user["auth_user_id"]
 
     second_auth_user = auth_register_v1("hellounsw@gmail.com", "UNSWisgreat125", "Bruce", "Banner")
-    second_auth_user = auth_login_v1("unswisgreat@unsw.edu.au", "unswisgreat123")
+    second_auth_user = auth_login_v1("hellounsw@gmail.com", "UNSWisgreat125")
     second_u_id = second_auth_user["auth_user_id"]
 
     # create a channel
     created_channel_id = channels_create_v1(first_u_id, "Tony_channel", True).get("channel_id")
 
     # invite other people to join the current channel
-    channel_invite(first_u_id,created_channel_id,second_u_id)
+    channel_invite_v1(first_u_id,created_channel_id,second_u_id)
 
     # get channel details
-    get_channel_details = channel_details(first_u_id, created_channel_id)
+    first_channel_details = channel_details_v1(first_u_id, created_channel_id)
 
     # testing
     assert first_channel_details["name"] == "Tony_channel"

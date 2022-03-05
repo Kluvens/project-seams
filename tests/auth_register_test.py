@@ -55,6 +55,7 @@ def test_return_is_not_empty():
 # Checking that auth_register returns the correct uid
 # for multiple users
 def test_return_id_multiple_users():
+    clear_v1()
     register_return_val_usr1 = auth_register_v1(
             "k.z1@gmail.com",
             "a1b2c3d4e5",
@@ -90,8 +91,6 @@ def test_return_id_multiple_users():
     assert register_return_val_usr4 == login_return_val_usr4
 
 
-
-
 # ================================================================
 #                        Test Exceptions
 # Each set addresses one type of InputError as per the project requirments
@@ -101,6 +100,7 @@ def test_return_id_multiple_users():
 # Test if an InputError exceptipn is rasied for invalid email input
 
 def test_is_email_valid1():
+    clear_v1()
     with pytest.raises(InputError):
         auth_register_v1("invaild email", "a1b2c3d4e5", "Kais", "Alzubaidi")
 

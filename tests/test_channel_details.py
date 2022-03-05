@@ -56,17 +56,17 @@ def test_channel_details_working_multiple_members():
     first_u_id = first_auth_user["auth_user_id"]
 
     second_auth_user = auth_register_v1("hellounsw@gmail.com", "UNSWisgreat125", "Bruce", "Banner")
-    second_auth_user = auth_login_v1("unswisgreat@unsw.edu.au", "unswisgreat123")
+    second_auth_user = auth_login_v1("hellounsw@gmail.com", "UNSWisgreat125")
     second_u_id = second_auth_user["auth_user_id"]
 
     # create a channel
     created_channel_id = channels_create_v1(first_u_id, "Tony_channel", True).get("channel_id")
 
     # invite other people to join the current channel
-    channel_invite(first_u_id,created_channel_id,second_u_id)
+    channel_invite_v1(first_u_id,created_channel_id,second_u_id)
 
     # get channel details
-    get_channel_details = channel_details(first_u_id, created_channel_id)
+    first_channel_details = channel_details_v1(first_u_id, created_channel_id)
 
     # testing
     assert first_channel_details["name"] == "Tony_channel"
@@ -105,7 +105,7 @@ def test_channel_details_invalid_channel_id():
     first_u_id = first_auth_user["auth_user_id"]
 
     second_auth_user = auth_register_v1("hellounsw@gmail.com", "UNSWisgreat125", "Bruce", "Banner")
-    second_auth_user = auth_login_v1("unswisgreat@unsw.edu.au", "unswisgreat123")
+    second_auth_user = auth_login_v1("hellounsw@gmail.com", "UNSWisgreat125")
     second_u_id = second_auth_user["auth_user_id"]
 
     # create the channel and the host is the first user
@@ -113,11 +113,11 @@ def test_channel_details_invalid_channel_id():
     created_channel_id = channels_create_v1(first_u_id, "Tony_channel", True).get("channel_id")
 
     # invite other people to join the current channel
-    channel_invite(first_u_id,created_channel_id,second_u_id)
+    channel_invite_v1(first_u_id,created_channel_id,second_u_id)
 
     # tests when channel_id is invalid
     with pytest.raises(InputError):
-        channel_details(first_u_id, created_channel_id + "unsw")
+        channel_details_v1(first_u_id, str(created_channel_id) + "unsw")
 
 
 '''
@@ -132,7 +132,7 @@ def test_channel_details_invalid_auth_id():
     first_u_id = first_auth_user["auth_user_id"]
 
     second_auth_user = auth_register_v1("hellounsw@gmail.com", "UNSWisgreat125", "Bruce", "Banner")
-    second_auth_user = auth_login_v1("unswisgreat@unsw.edu.au", "unswisgreat123")
+    second_auth_user = auth_login_v1("hellounsw@gmail.com", "UNSWisgreat125")
     second_u_id = second_auth_user["auth_user_id"]
 
     # create the channel and the host is the first user
@@ -140,9 +140,10 @@ def test_channel_details_invalid_auth_id():
     created_channel_id = channels_create_v1(first_u_id, "Tony_channel", True).get("channel_id")
 
     # invite other people to join the current channel
-    channel_invite(first_u_id,created_channel_id,second_u_id)
+    channel_invite_v1(first_u_id,created_channel_id,second_u_id)
 
     # tests when channel_id is invalid
     with pytest.raises(AccessError):
-        channel_details(first_u_id + "unsw", created_channel_id)
+        channel_details_v1(str(first_u_id) + "unsw", created_channel_id)
+
         

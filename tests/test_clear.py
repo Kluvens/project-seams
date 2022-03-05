@@ -1,6 +1,7 @@
 import pytest
 from src.auth import auth_register_v1
 from src.data_store import data_store
+from src.channel import channel_messages_v1
 
 # This function tests if users field is cleared 
 # after calling auth-_register_V1()

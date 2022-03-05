@@ -106,6 +106,7 @@ def test_is_email_valid1():
 
 # Note to self: Look for better regex "@99.com" is not spotted
 def test_is_email_valid2():
+    clear_v1()
     with pytest.raises(InputError):
         auth_register_v1(
             "emaildoesnotexit99.com",
@@ -152,16 +153,19 @@ def test_is_email_registered3():
 # Testing if exception is raised when password is less than 6 characters
 
 def test_is_password_valid1():
+    clear_v1()
     with pytest.raises(InputError):
         auth_register_v1("k.z2991@gmail.com", "a12", "Jake", "O'Conor")
 
 
 def test_is_password_valid2():
+    clear_v1()
     with pytest.raises(InputError):
         auth_register_v1("k.z2991@gmail.com", "aaa11", "Jake", "O'Conor")
 
 
 def test_is_password_valid3():
+    clear_v1()
     with pytest.raises(InputError):
         auth_register_v1("k.z2991@gmail.com", "", "Jake", "O'Conor")
 
@@ -172,6 +176,7 @@ def test_is_password_valid3():
 
 # First name exceeds the 50 character upper bound
 def test_is_first_name_valid1():
+    clear_v1()
     with pytest.raises(InputError):
         auth_register_v1(
             "k.z2991@gmail.com",
@@ -182,6 +187,7 @@ def test_is_first_name_valid1():
 
 # First name length is less than the permitted lower bound
 def test_is_first_name_valid2():
+    clear_v1()
     with pytest.raises(InputError):
         auth_register_v1(
             "k.z2991@gmail.com",
@@ -192,6 +198,7 @@ def test_is_first_name_valid2():
 
 # Last name length is less than the permitted lower bound
 def test_is_last_name_valid1():
+    clear_v1()
     with pytest.raises(InputError):
         auth_register_v1(
             "k.z2991@gmail.com", "a1233ggsrrq2rhhbdrf", "John", ""
@@ -199,6 +206,7 @@ def test_is_last_name_valid1():
 
 # Last name exceeds the 50 character upper bound
 def test_is_last_name_valid2():
+    clear_v1()
     with pytest.raises(InputError):
         auth_register_v1(
             "k.z2991@gmail.com",

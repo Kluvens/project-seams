@@ -1,6 +1,6 @@
 # This module will imported by other functions 
 # and an instnace of the class defined below
-# will be used to store user/channel data 
+# will be used to store data 
 
 # Blueprint of standard data strucutre:
 '''

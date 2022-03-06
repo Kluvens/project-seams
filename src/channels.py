@@ -39,8 +39,6 @@ def channels_list_v1(auth_user_id):
                 channel_id = channel['channel_id']
                 name = channel['name']
                 channels_dict['channels'].append({'channel_id' : channel_id, 'name' : name})
-    
-    if (channels_dict)
 
     return channels_dict
 

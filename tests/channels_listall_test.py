@@ -1,9 +1,9 @@
 import pytest
 
-from src.channels import channels_list_v1, channels_listall_v1, channels_create_v1
+from src.channels import channels_listall_v1, channels_create_v1
 from src.other import clear_v1
 from src.data_store import data_store
-from src.error import InputError, AccessError
+from src.error import InputError
 from src.auth import auth_register_v1
 
 # =============================TESTING CORRECTNESS============================
@@ -40,5 +40,5 @@ def test_listall_no_channels():
 
 def test_invalid_listall_input():
     clear_v1()
-    with pytest.raises(AccessError):
+    with pytest.raises(InputError):
         channels_listall_v1('BOBbob')

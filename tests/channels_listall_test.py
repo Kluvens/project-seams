@@ -88,6 +88,7 @@ def test_multiple_users_and_channels():
     assert listall['channels'] == [{'channel_id': ch1["channel_id"], 'name': 'ch1'},
                                 {'channel_id': ch2["channel_id"], 'name': 'ch2'},
                                 {'channel_id': ch3["channel_id"], 'name': 'ch3'}]
+                                
 # =============================TESTING ERRORS================================
 
 def test_invalid_input_string():

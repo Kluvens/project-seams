@@ -170,12 +170,3 @@ def test_channel_join_Success():
             break
 
     assert user_exists2 is True 
-
-    
-        
-
-
-
-
-
-

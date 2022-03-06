@@ -1,5 +1,5 @@
 from src.data_store import data_store
-from src.error import InputError
+from src.error import InputError, AccessError
 
 def channels_list_v1(auth_user_id):
 
@@ -94,4 +94,3 @@ def channels_create_v1(auth_user_id, channel_name, is_public):
     return {
         'channel_id': channel_id,
     }
-

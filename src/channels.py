@@ -1,5 +1,5 @@
 from src.data_store import data_store
-from src.error import InputError
+from src.error import AccessError, InputError
 from src.other import clear_v1
 from src.auth import auth_register_v1
 
@@ -15,18 +15,18 @@ def channels_list_v1(auth_user_id):
                                 registered
         
     Exceptions:
-        InputError  - Occurs when invalid auth_user_id
+        AccessError  - Occurs when invalid auth_user_id
 
     Return Value:
         Returns {channels} which contains a list of dictionaries {channel_id, name} when
         (auth_user_id) is input
     '''
 
-    # if auth_user_id doesnt exist return InputError
+    # if auth_user_id doesnt exist return AccessError
     try:
         auth_user_id + 1 - 1
     except:
-        raise InputError
+        raise AccessError
 
     # initiliase datastore and dicts
     data = data_store.get()
@@ -37,7 +37,7 @@ def channels_list_v1(auth_user_id):
     # add channels and names to dict
     for channel in channels_list:
         for member in channel['all_members']:
-            if auth_user_id == member['u_id']:
+            if auth_user_id is member['u_id']:
                 channel_id = channel['channel_id']
                 name = channel['name']
                 channels_dict['channels'].append({'channel_id' : channel_id, 'name' : name})

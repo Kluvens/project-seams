@@ -24,6 +24,8 @@ def test_channel_join_InputError():
         channel_join_v1(user1['auth_user_id'],'this is not a channel')
     assert error.type == InputError
 
+    # join channel
+    channel_join_v1(user2['auth_user_id'],channel_id_public['channel_id'])
     # Join channel that user has already joined
     with pytest.raises(InputError) as error:
         channel_join_v1(user2['auth_user_id'],channel_id_public['channel_id'])
@@ -65,7 +67,7 @@ def test_channel_join_Success():
     channel_join_v1(user1['auth_user_id'],channel_id_private['channel_id'])
     
     # Check global owner has joined private channel successfully 
-    members_list_private = channel_details_v1(user1['auth_user_id'],channel_id_private['channel_id'])
+    members_list_private = channel_details_v1(user1['auth_user_id'],channel_id_private['channel_id'])["all_members"]
 
     user_exists1 = False 
     for member in members_list_private:
@@ -87,7 +89,7 @@ def test_channel_join_Success():
             user_exists2 = True
             break
 
-    assert user_exists2 == True 
+    assert user_exists2 is True 
 
 
 

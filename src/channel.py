@@ -8,6 +8,7 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 
 # ==================================================== JUSTINS CODE ==========================================
 
+
 def find_channel_index(channel_id):
     data = data_store.get()
 
@@ -89,31 +90,29 @@ def channel_join_v1(auth_user_id, channel_id):
         if auth_user_id in u_id_list:
             user_in_channel = True
         # Check if the channel is public 
-        if channel_to_join['is_public'] == True:
+        if channel_to_join['is_public']:
             channel_access = True 
-            print (channel_to_join['is_public'])
 
     # Check if user is a global owner 
     if auth_user_id == 0:
         channel_access = True   
 
     # Access error 
-    if channel_access == False:
+    if not channel_access:
         raise AccessError ("ERROR: You do not have access to this private channel")
     
     # Input error 
     if channel_list == []:
         raise InputError ("ERROR: Channel does not exist")
 
-    if user_in_channel == True:
+    if user_in_channel:
         raise InputError ("ERROR: You have already joined this channel")         
         
     # Append member if all conditions met
     if channel_to_join != None and channel_access == True and user_in_channel == False:
         member_list = channel_to_join['all_members']
-        new_member = {'u_id':auth_user_id}
+        new_member = {
+            'u_id':auth_user_id,
+            }
         member_list.append(new_member)
-
-    
-    
     return {}

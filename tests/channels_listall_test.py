@@ -2,7 +2,7 @@ import pytest
 
 from src.channels import channels_list_v1, channels_listall_v1, channels_create_v1
 from src.other import clear_v1
-from src.error import AccessError
+from src.error import InputError
 from src.auth import auth_register_v1
 
 # =============================TESTING CORRECTNESS============================
@@ -117,5 +117,5 @@ def test_user_join_some_channels_private():
 
 def test_invalid_list_input():
     clear_v1()
-    with pytest.raises(AccessError):
+    with pytest.raises(InputError):
         channels_list_v1('BOBbob')

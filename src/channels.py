@@ -1,5 +1,5 @@
 from src.data_store import data_store
-from src.error import AccessError
+from src.error import InputError
 from src.other import clear_v1
 from src.auth import auth_register_v1
 
@@ -15,11 +15,11 @@ def channels_list_v1(auth_user_id):
 
 def channels_listall_v1(auth_user_id):
 
-    # if auth_user_id doesnt exist return AccessError
+    # if auth_user_id doesnt exist return InputError
     try:
         auth_user_id + 1 - 1
     except:
-        raise AccessError
+        raise InputError
 
     data = data_store.get()
     channels_list = data['channels']

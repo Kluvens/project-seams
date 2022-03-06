@@ -116,7 +116,13 @@ def test_user_join_some_channels_public():
 
 # =============================TESTING ERRORS================================
 
-def test_invalid_list_input():
+def test_invalid_input_string():
     clear_v1()
     with pytest.raises(AccessError):
         channels_list_v1('BOBbob')
+
+def test_invalid_input_invalid_user_id():
+    clear_v1()
+    with pytest.raises(AccessError):
+        channels_list_v1(10)
+

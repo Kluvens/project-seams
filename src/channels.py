@@ -29,14 +29,25 @@ def channels_list_v1(auth_user_id):
 
 def channels_listall_v1(auth_user_id):
 
-    return {
-        'channels': [
-        	{
-        		'channel_id': 1,
-        		'name': 'My Channel',
-        	}
-        ],
-    }
+    # if auth_user_id doesnt exist return InputError
+    try:
+        auth_user_id + 1 - 1
+    except:
+        raise InputError
+
+    data = data_store.get()
+    channels_list = data['channels']
+    channels_dict = {'channels' : []}
+    
+    # loop through and grab all channel and name variables
+    for channel in channels_list:
+        channel_id = channel['channel_id']
+        name = channel['name']
+        channels_dict['channels'].append({'channel_id' : channel_id, 'name' : name})
+
+    data_store.set(data)
+
+    return channels_dict
 
 def channels_create_v1(auth_user_id, channel_name, is_public):
     data = data_store.get()

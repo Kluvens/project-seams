@@ -3,8 +3,6 @@ Description:
 This module contains tests for the auth_register_v1 function
 based on the black box testing model
 
-iteration1 : Kais Alzubaidi 
-
 '''
 
 import pytest

@@ -102,6 +102,24 @@ def channel_details_v1(auth_user_id, channel_id):
     }
 
 def channel_messages_v1(auth_user_id, channel_id, start):
+    '''
+    channel_messages_v1
+
+    This function outputs upto 50 messages between index start and start + 50.
+
+    Arguments
+    auth_user_id (integer) - This is the user id of an authorised user who is either an owner or member of the channel.
+    channel_id (integer) - This is the channel id of the channel that the authorised user would like to see the messages of.
+    start (integer) - The start index of the messages array which will be returned.
+
+    Exceptions:
+    InputError - An input error is raised when the channel id or either the start is greater than the total number of messages in the channel
+    AccessError - An access error is raised when the authorised user is not a global owner or an existing member of the channel
+
+    Return Value:
+    This function returns the messages array from the channel, the start index and the end index.
+    
+    '''
     data = data_store.get()
     assert "channels" in data
 

@@ -19,10 +19,10 @@ def test_channel_messages_InputError():
         channel_messages_v1(uid['auth_user_id'], new_channel['channel_id'] + 1, start_number)
     # assert error.type == InputError
 
-    # # Input invalid start number
-    # with pytest.raises(InputError):
-    #     channel_messages_v1(uid['auth_user_id'], "my_channel", 99999999)
-    # # assert error.type == InputError
+    # Input invalid start number
+    with pytest.raises(InputError):
+        channel_messages_v1(uid['auth_user_id'], "my_channel", 99999999)
+    # assert error.type == InputError
 
 def test_channel_invite_AccessError():
     clear_v1()
@@ -35,7 +35,7 @@ def test_channel_invite_AccessError():
 
     # uid_two is not a member of the channel
     with pytest.raises(AccessError):
-        channel_messages_v1(uid_two['auth_user_id'], "my_channel", start_number)
+        channel_messages_v1(uid_two['auth_user_id'], new_channel['channel_id'], start_number)
     # assert error.type == AccessError
 
 
@@ -46,7 +46,7 @@ def test_channel_messages_working():
     new_channel = channels_create_v1(uid['auth_user_id'], "my_channel", True)
     start_number = 0
 
-    messages_output = channel_messages_v1(uid['auth_user_id'], "my_channel", start_number)
+    messages_output = channel_messages_v1(uid['auth_user_id'], new_channel['channel_id'], start_number)
 
     assert messages_output['start'] == start_number
     assert messages_output['messages'] == []

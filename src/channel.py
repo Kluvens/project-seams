@@ -1,5 +1,4 @@
 from src.data_store import data_store
-from src.other import clear_v1
 from src.error import InputError, AccessError
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
@@ -41,7 +40,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     if channel_exist == 0:
         raise InputError("Error occurred channel_id is not in database")
     
-    Check user is a member in channel_id
+    # Check user is a member in channel_id
     authorised_user = 0
     for channel in data['channels']:
         for member in channel['all_members']:

@@ -32,9 +32,9 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
                     auth_user_authorized = True 
                 if member['u_id'] == u_id:
                     u_id_member = True
-            
+
     # Input errors 
-    if u_id_valid == False:
+    if not u_id_valid:
         raise InputError ("ERROR: The user you are trying to add does not exist.")
 
     if channel_to_join == None:
@@ -71,6 +71,7 @@ def find_channel_index(channel_id):
         else:
             i += 1
     return None
+
 
 def is_in_channel(auth_user_id, right_channel):
     for member in right_channel["all_members"]:

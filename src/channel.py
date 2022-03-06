@@ -6,51 +6,15 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     return {
     }
 
-# ==================================================== JUSTINS CODE ==========================================
-
-
-def find_channel_index(channel_id):
-    data = data_store.get()
-
-    i = 0
-    for channel in data["channels"]:
-        if channel["channel_id"] == channel_id:
-            return i
-        else:
-            i += 1
-    return None
-
-def is_in_channel(auth_user_id, right_channel):
-    for channel in right_channel["all_members"]:
-        if auth_user_id == channel["u_id"]:
-            return True
-
-    return False
-
-
 def channel_details_v1(auth_user_id, channel_id):
-    data = data_store.get()
-    users = data["users"]
-
-    right_channel_index = find_channel_index(channel_id)
-
-    # error
-    if right_channel_index == None:
-        raise InputError("channel_id does not refer to a valid channel")
-
-    right_channel = data["channels"][right_channel_index]
-
-    if not is_in_channel(auth_user_id, right_channel):
-        raise AccessError("channel_id is valid and the authorised user is not a member of the channel")
 
     return {
-        'name': right_channel["name"],
-        'is_public': right_channel["is_public"],
-        'owner_members': right_channel['owner_members'],
-        'all_members': right_channel['all_members'],
+        'name',
+        'is_public',
+        'owner_members',
+        'all_members',
     }
 
-# ================================ JUSTINS CODE ==================================
 
 def channel_messages_v1(auth_user_id, channel_id, start):
     return {
@@ -66,6 +30,22 @@ def channel_messages_v1(auth_user_id, channel_id, start):
         'end': 50,
     }
 
+'''
+channel_join.py
+
+This function allows given user to join a given channel.
+
+Arguments:
+auth_user_id (integer) - This is the user id of the user that would like to join the channel.
+channel_id (integer) - This is the channel id of the channel that the user would like to join.
+
+Exceptions:
+InputError - An input error is raised when the channel id is invalid (i.e. the channel doesn't exist) or if the user already exists in the channel
+AccessError - An access error is raised when a non authorized user tries to join a private channel (ie. not a global owner and not already in the channel)
+
+Return Value:
+This function does not return anything
+'''
 def channel_join_v1(auth_user_id, channel_id):
 
     # Access channel and user lists
@@ -97,16 +77,16 @@ def channel_join_v1(auth_user_id, channel_id):
     if auth_user_id == 0:
         channel_access = True   
 
-    # Access error 
-    if not channel_access:
-        raise AccessError ("ERROR: You do not have access to this private channel")
-    
     # Input error 
     if channel_list == []:
         raise InputError ("ERROR: Channel does not exist")
 
     if user_in_channel:
         raise InputError ("ERROR: You have already joined this channel")         
+
+    # Access error 
+    if not channel_access:
+        raise AccessError ("ERROR: You do not have access to this private channel")
         
     # Append member if all conditions met
     if channel_to_join != None and channel_access == True and user_in_channel == False:

@@ -113,6 +113,10 @@ def channel_join_v1(auth_user_id, channel_id):
         member_list = channel_to_join['all_members']
         new_member = {
             'u_id':auth_user_id,
+            'email': users[auth_user_id]["email"],
+            'name_first': users[auth_user_id]["name_first"],
+            'name_last': users[auth_user_id]["name_last"],
+            'handle_str': users[auth_user_id]["handle_str"]
             }
         member_list.append(new_member)
     return {}

@@ -22,7 +22,8 @@ def test_listall_public_and_private():
     listall = channels_listall_v1(u_id['auth_user_id'])
 
     # assert listall returns filled dict
-    assert listall['channels'] == [{'channel_id': ch1["channel_id"], 'name': 'ch1'}, {'channel_id': ch2["channel_id"], 'name': 'ch2'}]
+    assert listall['channels'] == [{'channel_id': ch1["channel_id"], 'name': 'ch1'}, 
+                                {'channel_id': ch2["channel_id"], 'name': 'ch2'}]
 
 def test_listall_public_only():
     clear_v1()
@@ -37,7 +38,8 @@ def test_listall_public_only():
     listall = channels_listall_v1(u_id['auth_user_id'])
 
     # assert listall returns filled dict
-    assert listall['channels'] == [{'channel_id': ch1["channel_id"], 'name': 'ch1'}, {'channel_id': ch2["channel_id"], 'name': 'ch2'}]
+    assert listall['channels'] == [{'channel_id': ch1["channel_id"], 'name': 'ch1'}, 
+                                {'channel_id': ch2["channel_id"], 'name': 'ch2'}]
 
 def test_listall_private_only():
     clear_v1()
@@ -52,7 +54,8 @@ def test_listall_private_only():
     listall = channels_listall_v1(u_id['auth_user_id'])
 
     # assert listall returns filled dict
-    assert listall['channels'] == [{'channel_id': ch1["channel_id"], 'name': 'ch1'}, {'channel_id': ch2["channel_id"], 'name': 'ch2'}]
+    assert listall['channels'] == [{'channel_id': ch1["channel_id"], 'name': 'ch1'}, 
+                                {'channel_id': ch2["channel_id"], 'name': 'ch2'}]
     
 # test listall func when no channels exist
 def test_listall_no_channels():
@@ -82,7 +85,9 @@ def test_multiple_users_and_channels():
     listall = channels_listall_v1(u_id1['auth_user_id'])
 
     # assert listall returns filled dict
-    assert listall['channels'] == [{'channel_id': ch1["channel_id"], 'name': 'ch1'}, {'channel_id': ch2["channel_id"], 'name': 'ch2'}, {'channel_id': ch3["channel_id"], 'name': 'ch3'}]
+    assert listall['channels'] == [{'channel_id': ch1["channel_id"], 'name': 'ch1'},
+                                {'channel_id': ch2["channel_id"], 'name': 'ch2'},
+                                {'channel_id': ch3["channel_id"], 'name': 'ch3'}]
 # =============================TESTING ERRORS================================
 
 def test_invalid_listall_input():

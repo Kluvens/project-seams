@@ -9,13 +9,17 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     This function allows an authorized user to invite another user into a given channel.
 
     Arguments:
-    auth_user_id (integer) - This is the user id of the user authorized to invite other users. This means they are a member themselves, and/or are an owner.
-    channel_id (integer) - This is the channel id of the channel that the authorized user would like to invite the other user to.
+    auth_user_id (integer) - This is the user id of the user authorized to invite other users. 
+    This means they are a member themselves, and/or are an owner.
+    channel_id (integer) - This is the channel id of the channel that the authorized user 
+    would like to invite the other user to.
     u_id (integer) - This is the user id of the user to be invited to the given channel.
 
     Exceptions:
-    InputError - An input error is raised when the channel id or either user is invalid or if the user already exists in the channel
-    AccessError - An access error is raised when the authorizing user is not a global owner or an existing member of the channel
+    InputError - An input error is raised when the channel id or either user is invalid or 
+    if the user already exists in the channel
+    AccessError - An access error is raised when the authorizing user is not a global owner 
+    or an existing member of the channel
 
     Return Value:
     This function does not return anything
@@ -27,7 +31,8 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     channels = store['channels']
     users = store['users']
 
-    # Check u_id is valid, channel is valid, auth_user is a channel member and u_id is not already a member of channel
+    # Check u_id is valid, channel is valid, auth_user is a channel member and u_id is not 
+    already a member of channel
     channel_to_join = None
     u_id_valid = False
     auth_user_authorized = False
@@ -59,14 +64,17 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
         raise InputError ("ERROR: This channel does not exist.")
 
     if u_id_member == True:
-        raise InputError ("ERROR: The user you are trying to add already exists in the channel")
+        raise InputError 
+            ("ERROR: The user you are trying to add already exists in the channel")
 
     # Access errors
     if auth_user_authorized == False:
-        raise AccessError ("ERROR: You are not authorized to invite users to this channel.")
+        raise AccessError 
+            ("ERROR: You are not authorized to invite users to this channel.")
 
     # If all conditions are met, append user to members list for given channel
-    if u_id_valid == True and channel_to_join != None and u_id_member == False and auth_user_authorized == True:
+    if u_id_valid == True and channel_to_join != None 
+        and u_id_member == False and auth_user_authorized == True:
         member_list = channel_to_join['all_members']
         new_member = {
             'u_id': u_id,
@@ -113,7 +121,8 @@ def channel_details_v1(auth_user_id, channel_id):
 
     Return Value:
     the function will return a dictionary containing the name of the channel,
-    whether the channel is public, the list of all owner members and a list of all members of the channel
+    whether the channel is public, the list of all owner members and a list of all members 
+    of the channel
 
     '''
 
@@ -129,7 +138,8 @@ def channel_details_v1(auth_user_id, channel_id):
     right_channel = data["channels"][right_channel_index]
 
     if not is_in_channel(auth_user_id, right_channel):
-        raise AccessError("channel_id is valid and the authorised user is not a member of the channel")
+        raise 
+        AccessError("channel_id is valid and the authorised user is not a member of the channel")
 
     return {
         'name': right_channel["name"],
@@ -146,13 +156,17 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     This function outputs upto 50 messages between index start and start + 50.
 
     Arguments
-    auth_user_id (integer) - This is the user id of an authorised user who is either an owner or member of the channel.
-    channel_id (integer) - This is the channel id of the channel that the authorised user would like to see the messages of.
+    auth_user_id (integer) - This is the user id of an authorised user who is either an owner 
+    or member of the channel.
+    channel_id (integer) - This is the channel id of the channel that the authorised user 
+    would like to see the messages of.
     start (integer) - The start index of the messages array which will be returned.
 
     Exceptions:
-    InputError - An input error is raised when the channel id or either the start is greater than the total number of messages in the channel
-    AccessError - An access error is raised when the authorised user is not a global owner or an existing member of the channel
+    InputError - An input error is raised when the channel id or either the start is greater 
+    than the total number of messages in the channel
+    AccessError - An access error is raised when the authorised user is not a global owner or an 
+    existing member of the channel
 
     Return Value:
     This function returns the messages array from the channel, the start index and the end index.
@@ -235,8 +249,10 @@ def channel_join_v1(auth_user_id, channel_id):
     channel_id (integer) - This is the channel id of the channel that the user would like to join.
 
     Exceptions:
-    InputError - An input error is raised when the channel id is invalid (i.e. the channel doesn't exist) or if the user already exists in the channel
-    AccessError - An access error is raised when a non authorized user tries to join a private channel (ie. not a global owner and not already in the channel)
+    InputError - An input error is raised when the channel id is invalid 
+    (i.e. the channel doesn't exist) or if the user already exists in the channel
+    AccessError - An access error is raised when a non authorized user tries to join a private 
+    channel (ie. not a global owner and not already in the channel)
 
     Return Value:
     This function does not return anything

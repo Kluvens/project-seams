@@ -50,9 +50,9 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
                     auth_user_authorized = True 
                 if member['u_id'] == u_id:
                     u_id_member = True
-            
+
     # Input errors 
-    if u_id_valid == False:
+    if not u_id_valid:
         raise InputError ("ERROR: The user you are trying to add does not exist.")
 
     if channel_to_join == None:
@@ -90,6 +90,7 @@ def find_channel_index(channel_id):
             i += 1
     return None
 
+
 def is_in_channel(auth_user_id, right_channel):
     for member in right_channel["all_members"]:
         if auth_user_id == member["u_id"]:
@@ -98,6 +99,24 @@ def is_in_channel(auth_user_id, right_channel):
     return False
 
 def channel_details_v1(auth_user_id, channel_id):
+    '''
+    This function is given by authorised user id and channel id, returning name, 
+    whether the channel is public, a list of owner members and a list of all members.
+
+    Arguments:
+    auth_user_id(integer) - This is the user id of the user authorized to create the channel.
+    channel_id(integer) - this is the identifier of the channel
+
+    Exceptions:
+    InputError - when the channel_id does not refer to a valid channel
+    AccessError - channel_id is valid but the authorised user is not a member of the channel
+
+    Return Value:
+    the function will return a dictionary containing the name of the channel,
+    whether the channel is public, the list of all owner members and a list of all members of the channel
+
+    '''
+
     data = data_store.get()
     users = data["users"]
 
@@ -121,6 +140,24 @@ def channel_details_v1(auth_user_id, channel_id):
 
 
 def channel_messages_v1(auth_user_id, channel_id, start):
+    '''
+    channel_messages_v1
+
+    This function outputs upto 50 messages between index start and start + 50.
+
+    Arguments
+    auth_user_id (integer) - This is the user id of an authorised user who is either an owner or member of the channel.
+    channel_id (integer) - This is the channel id of the channel that the authorised user would like to see the messages of.
+    start (integer) - The start index of the messages array which will be returned.
+
+    Exceptions:
+    InputError - An input error is raised when the channel id or either the start is greater than the total number of messages in the channel
+    AccessError - An access error is raised when the authorised user is not a global owner or an existing member of the channel
+
+    Return Value:
+    This function returns the messages array from the channel, the start index and the end index.
+    
+    '''
     data = data_store.get()
     assert "channels" in data
 

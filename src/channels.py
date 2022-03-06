@@ -96,6 +96,25 @@ def channels_listall_v1(auth_user_id):
 
 
 def channels_create_v1(auth_user_id, channel_name, is_public):
+    '''
+    This function allows an authorized user to create a channel
+
+    Arguments:
+    auth_user_id(integer) - This is the user id of the user authorized to create the channel. 
+    This means that the authrised user is the owner member and a member of the channel crated.
+    
+    name - this is the name of the channel
+    
+    is_public - This is whether the channel is public to others
+
+    Exceptions:
+    InputError: An input error is raised when the channel name is less than 1 character or 
+    the channel name is more than 20 characters
+
+    Return Value:
+    The function will return a dictionary that contains the channel_id of this channel
+    '''
+
     data = data_store.get()
     
     host_info = data["users"][auth_user_id]

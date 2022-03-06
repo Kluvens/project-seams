@@ -81,6 +81,24 @@ def is_in_channel(auth_user_id, right_channel):
     return False
 
 def channel_details_v1(auth_user_id, channel_id):
+    '''
+    This function is given by authorised user id and channel id, returning name, 
+    whether the channel is public, a list of owner members and a list of all members.
+
+    Arguments:
+    auth_user_id(integer) - This is the user id of the user authorized to create the channel.
+    channel_id(integer) - this is the identifier of the channel
+
+    Exceptions:
+    InputError - when the channel_id does not refer to a valid channel
+    AccessError - channel_id is valid but the authorised user is not a member of the channel
+
+    Return Value:
+    the function will return a dictionary containing the name of the channel,
+    whether the channel is public, the list of all owner members and a list of all members of the channel
+
+    '''
+
     data = data_store.get()
     users = data["users"]
 
@@ -101,6 +119,7 @@ def channel_details_v1(auth_user_id, channel_id):
         'owner_members': right_channel['owner_members'],
         'all_members': right_channel['all_members'],
     }
+
 
 def channel_messages_v1(auth_user_id, channel_id, start):
     data = data_store.get()

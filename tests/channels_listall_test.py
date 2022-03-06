@@ -16,13 +16,13 @@ def test_listall_public_and_private():
     u_id = auth_register_v1("e1@gmail.com", "abcdefg123", "James", "Cai")
 
     # create channels 
-    channels_create_v1(u_id['auth_user_id'], "ch1", True)
-    channels_create_v1(u_id['auth_user_id'], "ch2", False)
+    ch1 = channels_create_v1(u_id['auth_user_id'], "ch1", True)
+    ch2 = channels_create_v1(u_id['auth_user_id'], "ch2", False)
 
     listall = channels_listall_v1(u_id['auth_user_id'])
 
     # assert listall returns filled dict
-    assert listall == {'channels': [{'channel_id': 0, 'name': 'ch1'}, {'channel_id': 1, 'name': 'ch2'}]}
+    assert listall['channels'] == [{'channel_id': ch1["channel_id"], 'name': 'ch1'}, {'channel_id': ch2["channel_id"], 'name': 'ch2'}]
 
 def test_listall_public_only():
     clear_v1()
@@ -31,13 +31,13 @@ def test_listall_public_only():
     u_id = auth_register_v1("e1@gmail.com", "abcdefg123", "James", "Cai")
 
     # create channels 
-    channels_create_v1(u_id['auth_user_id'], "ch1", True)
-    channels_create_v1(u_id['auth_user_id'], "ch2", True)
+    ch1 = channels_create_v1(u_id['auth_user_id'], "ch1", True)
+    ch2 = channels_create_v1(u_id['auth_user_id'], "ch2", True)
 
     listall = channels_listall_v1(u_id['auth_user_id'])
 
     # assert listall returns filled dict
-    assert listall == {'channels': [{'channel_id': 0, 'name': 'ch1'}, {'channel_id': 1, 'name': 'ch2'}]}
+    assert listall['channels'] == [{'channel_id': ch1["channel_id"], 'name': 'ch1'}, {'channel_id': ch2["channel_id"], 'name': 'ch2'}]
 
 def test_listall_private_only():
     clear_v1()
@@ -46,13 +46,13 @@ def test_listall_private_only():
     u_id = auth_register_v1("e1@gmail.com", "abcdefg123", "James", "Cai")
 
     # create channels 
-    channels_create_v1(u_id['auth_user_id'], "ch1", False)
-    channels_create_v1(u_id['auth_user_id'], "ch2", False)
+    ch1 = channels_create_v1(u_id['auth_user_id'], "ch1", False)
+    ch2 = channels_create_v1(u_id['auth_user_id'], "ch2", False)
 
     listall = channels_listall_v1(u_id['auth_user_id'])
 
     # assert listall returns filled dict
-    assert listall == {'channels': [{'channel_id': 0, 'name': 'ch1'}, {'channel_id': 1, 'name': 'ch2'}]}
+    assert listall['channels'] == [{'channel_id': ch1["channel_id"], 'name': 'ch1'}, {'channel_id': ch2["channel_id"], 'name': 'ch2'}]
     
 # test listall func when no channels exist
 def test_listall_no_channels():
@@ -66,6 +66,23 @@ def test_listall_no_channels():
     # assert listall returns empty dict
     assert listall == {'channels': []}
 
+# test listall when multiple channels and users
+def test_multiple_users_and_channels():
+    clear_v1()
+
+    # create user
+    u_id1 = auth_register_v1("e1@gmail.com", "abcdefg123", "James", "Cai")
+    u_id2 = auth_register_v1("e2@gmail.com", "abcdefg123", "Jam", "Cao")
+
+    # create channels 
+    ch1 = channels_create_v1(u_id1['auth_user_id'], "ch1", False)
+    ch2 = channels_create_v1(u_id1['auth_user_id'], "ch2", False)
+    ch3 = channels_create_v1(u_id2['auth_user_id'], "ch3", False)
+
+    listall = channels_listall_v1(u_id1['auth_user_id'])
+
+    # assert listall returns filled dict
+    assert listall['channels'] == [{'channel_id': ch1["channel_id"], 'name': 'ch1'}, {'channel_id': ch2["channel_id"], 'name': 'ch2'}, {'channel_id': ch3["channel_id"], 'name': 'ch3'}]
 # =============================TESTING ERRORS================================
 
 def test_invalid_listall_input():

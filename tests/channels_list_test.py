@@ -52,13 +52,13 @@ def test_user_join_all_channels_private():
     u_id2 = auth_register_v1("james2@gmail.com", "abcdefg123", "Jam", "Cao")
 
     # create channels
-    channels_create_v1(u_id1['auth_user_id'], "ch1", False)
-    channels_create_v1(u_id1['auth_user_id'], "ch2", False)
+    ch1 = channels_create_v1(u_id1['auth_user_id'], "ch1", False)
+    ch2 = channels_create_v1(u_id1['auth_user_id'], "ch2", False)
 
     listv1 = channels_list_v1(u_id1['auth_user_id'])
 
     # assert user 1 is part of all channels
-    assert listv1['channels'] == [{'channel_id': 0, 'name': 'ch1'}, {'channel_id': 1, 'name': 'ch2'}]
+    assert listv1['channels'] == [{'channel_id': ch1['channel_id'], 'name': 'ch1'}, {'channel_id': ch2['channel_id'], 'name': 'ch2'}]
 
 def test_user_join_all_channels_public():
     clear_v1()
@@ -68,13 +68,13 @@ def test_user_join_all_channels_public():
     u_id2 = auth_register_v1("james2@gmail.com", "abcdefg123", "Jam", "Cao")
 
     # create channels
-    channels_create_v1(u_id1['auth_user_id'], "ch1", True)
-    channels_create_v1(u_id1['auth_user_id'], "ch2", True)
+    ch1 = channels_create_v1(u_id1['auth_user_id'], "ch1", True)
+    ch2 = channels_create_v1(u_id1['auth_user_id'], "ch2", True)
 
     listv1 = channels_list_v1(u_id1['auth_user_id'])
 
     # assert user 1 is part of all channels
-    assert listv1['channels'] == [{'channel_id': 0, 'name': 'ch1'}, {'channel_id': 1, 'name': 'ch2'}]
+    assert listv1['channels'] == [{'channel_id': ch1['channel_id'], 'name': 'ch1'}, {'channel_id': ch2['channel_id'], 'name': 'ch2'}]
 
 # test func output when user has joined some channels public and private
 def test_user_join_some_channels_private():
@@ -86,14 +86,14 @@ def test_user_join_some_channels_private():
 
     # create channels with u_id1 as owner of ch1 and ch2 and not a member
     # of ch3
-    channels_create_v1(u_id1['auth_user_id'], "ch1", False)
-    channels_create_v1(u_id1['auth_user_id'], "ch2", False)
-    channels_create_v1(u_id2['auth_user_id'], "ch3", False)
+    ch1 = channels_create_v1(u_id1['auth_user_id'], "ch1", False)
+    ch2 = channels_create_v1(u_id1['auth_user_id'], "ch2", False)
+    ch3 = channels_create_v1(u_id2['auth_user_id'], "ch3", False)
 
     listv1 = channels_list_v1(u_id1['auth_user_id'])
 
     # assert user 1 is part of ch1 and ch2
-    assert listv1['channels'] == [{'channel_id': 0, 'name': 'ch1'}, {'channel_id': 1, 'name': 'ch2'}]
+    assert listv1['channels'] == [{'channel_id': ch1['channel_id'], 'name': 'ch1'}, {'channel_id': ch2['channel_id'], 'name': 'ch2'}]
 
 def test_user_join_some_channels_public():
     clear_v1()
@@ -104,14 +104,14 @@ def test_user_join_some_channels_public():
 
     # create channels with u_id1 as owner of ch1 and ch2 and not a member
     # of ch3
-    channels_create_v1(u_id1['auth_user_id'], "ch1", True)
-    channels_create_v1(u_id1['auth_user_id'], "ch2", True)
-    channels_create_v1(u_id2['auth_user_id'], "ch3", True)
+    ch1 = channels_create_v1(u_id1['auth_user_id'], "ch1", True)
+    ch2 = channels_create_v1(u_id1['auth_user_id'], "ch2", True)
+    ch3 = channels_create_v1(u_id2['auth_user_id'], "ch3", True)
 
     listv1 = channels_list_v1(u_id1['auth_user_id'])
 
     # assert user 1 is part of ch1 and ch2
-    assert listv1['channels'] == [{'channel_id': 0, 'name': 'ch1'}, {'channel_id': 1, 'name': 'ch2'}]
+    assert listv1['channels'] == [{'channel_id': ch1['channel_id'], 'name': 'ch1'}, {'channel_id': ch2['channel_id'], 'name': 'ch2'}]
 
 # =============================TESTING ERRORS================================
 

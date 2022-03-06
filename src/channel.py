@@ -103,23 +103,23 @@ def channel_details_v1(auth_user_id, channel_id):
 
 def channel_messages_v1(auth_user_id, channel_id, start):
     data = data_store.get()
-    assert data["channels"] != None
+    assert "channels" in data
 
     # Check whether channel_id exist in the database
-    channel_exist = 0
+    channel_exist = False
     for channel in data['channels']:
         if channel['channel_id'] == channel_id:
-            channel_exist = 1
-    if channel_exist == 0:
+            channel_exist = True
+    if not channel_exist:
         raise InputError("Error occurred channel_id is not in database")
     
     # Check user is a member in channel_id
-    authorised_user = 0
+    authorised_user = False
     for channel in data['channels']:
         for member in channel['all_members']:
             if member['u_id'] == auth_user_id:
-                authorised_user = 1
-    if authorised_user == 0:
+                authorised_user = True
+    if not authorised_user:
         raise AccessError("Error occurred authorised user is not a member of channel_id")
 
     # Retrieves all messages and also number of messages
@@ -132,6 +132,9 @@ def channel_messages_v1(auth_user_id, channel_id, start):
             else:
                 data['channels'][channel_id]['messages'] = []
     
+    if start > num_messages:
+        raise InputError("Error occurred start value is greater than the number of messages")
+
     # When there is no messages
     if num_messages == 0 and start == 0:
         return {
@@ -139,9 +142,6 @@ def channel_messages_v1(auth_user_id, channel_id, start):
             'start': start, 
             'end': -1
         }
-    
-    if start >= num_messages:
-        raise InputError("Error occurred start value is greater than the number of messages")
 
     # Iterating through list to collect messages
     end = start + 50
@@ -158,7 +158,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
             'message': found_messages[index].get('message'),
             'time_sent': found_messages[index].get('time_sent'),
         })
-    
+
     if num < 50:
         end = -1
 

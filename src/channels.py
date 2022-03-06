@@ -18,7 +18,8 @@ def channels_list_v1(auth_user_id):
         InputError  - Occurs when invalid auth_user_id
 
     Return Value:
-        Returns {channels} when {auth_user_id} is input
+        Returns {channels} which contains a list of dictionaries {channel_id, name} when
+        (auth_user_id) is input
     '''
 
     # if auth_user_id doesnt exist return InputError

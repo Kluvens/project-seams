@@ -9,7 +9,7 @@ from src.auth import auth_register_v1
 
 # test if list func doesn't return dict when inputting user_id with
 # non-existant channel public and private
-def test_no_channels_joined_public():
+def test_no_channels_joined_private():
     clear_v1()
 
     # create two users
@@ -26,7 +26,7 @@ def test_no_channels_joined_public():
     with pytest.raises(IndexError):
         listv1['channels'][u_id2['auth_user_id']]
 
-def test_no_channels_joined_private():
+def test_no_channels_joined_public():
     clear_v1()
 
     # create two users
@@ -44,7 +44,7 @@ def test_no_channels_joined_private():
         listv1['channels'][u_id2['auth_user_id']]
 
 # test func output when user has joined all channels public and private
-def test_user_join_all_channels_public():
+def test_user_join_all_channels_private():
     clear_v1()
 
     # create user
@@ -60,7 +60,7 @@ def test_user_join_all_channels_public():
     # assert user 1 is part of all channels
     assert listv1['channels'] == [{'channel_id': 0, 'name': 'ch1'}, {'channel_id': 1, 'name': 'ch2'}]
 
-def test_user_join_all_channels_private():
+def test_user_join_all_channels_public():
     clear_v1()
 
     # create user
@@ -77,7 +77,7 @@ def test_user_join_all_channels_private():
     assert listv1['channels'] == [{'channel_id': 0, 'name': 'ch1'}, {'channel_id': 1, 'name': 'ch2'}]
 
 # test func output when user has joined some channels public and private
-def test_user_join_some_channels_public():
+def test_user_join_some_channels_private():
     clear_v1()
 
     # create users
@@ -95,7 +95,7 @@ def test_user_join_some_channels_public():
     # assert user 1 is part of ch1 and ch2
     assert listv1['channels'] == [{'channel_id': 0, 'name': 'ch1'}, {'channel_id': 1, 'name': 'ch2'}]
 
-def test_user_join_some_channels_private():
+def test_user_join_some_channels_public():
     clear_v1()
 
     # create users

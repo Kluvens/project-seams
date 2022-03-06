@@ -1,3 +1,3 @@
-Assumption
+Assumptions
 
-When invalid auth_user_id is input throw an InputError
+Throw an InputError for invalid user input for channels_listall_v1 and channels_list_v1

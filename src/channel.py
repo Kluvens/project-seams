@@ -30,7 +30,6 @@ def channel_details_v1(auth_user_id, channel_id):
     }
 
 def channel_messages_v1(auth_user_id, channel_id, start):
-    clear_v1()
     data = data_store.get()
     assert data["channels"] != None
 

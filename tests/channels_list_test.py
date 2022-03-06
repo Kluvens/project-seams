@@ -21,10 +21,8 @@ def test_no_channels_joined_private():
 
     # return channels for user 2 (non-existant)
     listv1 = channels_list_v1(u_id2['auth_user_id'])
-
-    # pass if trying to access non-existant channel
-    with pytest.raises(IndexError):
-        listv1['channels'][u_id2['auth_user_id']]
+    
+    assert listv1 == {'channels': []}
 
 def test_no_channels_joined_public():
     clear_v1()
@@ -40,8 +38,7 @@ def test_no_channels_joined_public():
     listv1 = channels_list_v1(u_id2['auth_user_id'])
 
     # pass if trying to access non-existant channel 
-    with pytest.raises(IndexError):
-        listv1['channels'][u_id2['auth_user_id']]
+    assert listv1 == {'channels': []}   
 
 # test func output when user has joined all channels public and private
 def test_user_join_all_channels_private():

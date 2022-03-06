@@ -3,8 +3,6 @@ from src.error import InputError
 from src.other import clear_v1
 from src.auth import auth_register_v1
 
-# Assumption
-# when invalid auth_user_id is input throw an InputError
 def channels_list_v1(auth_user_id):
 
     # if auth_user_id doesnt exist return InputError

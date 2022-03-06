@@ -42,20 +42,24 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     if channel_exist == 0:
         raise InputError("Error occurred channel_id is not in database")
     
-    # Check user is a member in channel_id
-    # authorised_user = 0
-    # for channel in data['channels']:
-    #     for member in channel['all_members']:
-    #         if member['u_id'] == auth_user_id:
-    #             authorised_user = 1
-    # if authorised_user == 0:
-    #     raise AccessError("Error occurred authorised user is not a member of channel_id")
+    Check user is a member in channel_id
+    authorised_user = 0
+    for channel in data['channels']:
+        for member in channel['all_members']:
+            if member['u_id'] == auth_user_id:
+                authorised_user = 1
+    if authorised_user == 0:
+        raise AccessError("Error occurred authorised user is not a member of channel_id")
 
     # Retrieves all messages and also number of messages
+    num_messages = 0
     for channel in data['channels']:
         if channel['channel_id'] == channel_id:
-            found_messages = channel['messages']
-            num_messages = len(found_messages)
+            if 'messages' in data['channels'][channel_id]:
+                found_messages = channel['messages']
+                num_messages = len(found_messages)
+            else:
+                data['channels'][channel_id]['messages'] = []
     
     # When there is no messages
     if num_messages == 0 and start == 0:

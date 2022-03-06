@@ -22,17 +22,23 @@ def channels_list_v1(auth_user_id):
         (auth_user_id) is input
     '''
 
-    # if auth_user_id doesnt exist return AccessError
-    try:
-        auth_user_id + 1 - 1
-    except:
-        raise AccessError
-
-    # initiliase datastore and dicts
+    # initialise datastore and dicts
     data = data_store.get()
     channels_list = data['channels']
     channels_dict = {'channels' : []}
     
+    # if auth_user_id doesnt exist return AccessError
+    if type(auth_user_id) != int:
+        raise AccessError("ERROR: Invalid auth_user_id type")
+
+    users_list = data['users']
+    match = 0
+    for user in users_list:
+        if auth_user_id == user['u_id']:
+            match += 1
+    if match == 0:
+        raise AccessError("ERROR: Invalid auth_user_id")
+
     # loop through data_store and if u_id is in channel
     # add channels and names to dict
     for channel in channels_list:
@@ -91,4 +97,7 @@ def channels_create_v1(auth_user_id, channel_name, is_public):
     return {
         'channel_id': channel_id,
     }
+
+
+
 

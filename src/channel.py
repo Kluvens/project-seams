@@ -1,26 +1,26 @@
 from src.data_store import data_store
 from src.error import AccessError, InputError
 
-
-''' 
-channel_invite.py
-
-This function allows an authorized user to invite another user into a given channel.
-
-Arguments:
-auth_user_id (integer) - This is the user id of the user authorized to invite other users. This means they are a member themselves, and/or are an owner.
-channel_id (integer) - This is the channel id of the channel that the authorized user would like to invite the other user to.
-u_id (integer) - This is the user id of the user to be invited to the given channel.
-
-Exceptions:
-InputError - An input error is raised when the channel id or either user is invalid or if the user already exists in the channel
-AccessError - An access error is raised when the authorizing user is not a global owner or an existing member of the channel
-
-Return Value:
-This function does not return anything
-'''
-
 def channel_invite_v1(auth_user_id, channel_id, u_id):
+
+    ''' 
+    channel_invite.py
+
+    This function allows an authorized user to invite another user into a given channel.
+
+    Arguments:
+    auth_user_id (integer) - This is the user id of the user authorized to invite other users. This means they are a member themselves, and/or are an owner.
+    channel_id (integer) - This is the channel id of the channel that the authorized user would like to invite the other user to.
+    u_id (integer) - This is the user id of the user to be invited to the given channel.
+
+    Exceptions:
+    InputError - An input error is raised when the channel id or either user is invalid or if the user already exists in the channel
+    AccessError - An access error is raised when the authorizing user is not a global owner or an existing member of the channel
+
+    Return Value:
+    This function does not return anything
+    '''
+
 
     # Access user and channel lists 
     store = data_store.get()
@@ -187,23 +187,23 @@ def channel_messages_v1(auth_user_id, channel_id, start):
         'end': end,
     }
 
-'''
-channel_join.py
-
-This function allows given user to join a given channel.
-
-Arguments:
-auth_user_id (integer) - This is the user id of the user that would like to join the channel.
-channel_id (integer) - This is the channel id of the channel that the user would like to join.
-
-Exceptions:
-InputError - An input error is raised when the channel id is invalid (i.e. the channel doesn't exist) or if the user already exists in the channel
-AccessError - An access error is raised when a non authorized user tries to join a private channel (ie. not a global owner and not already in the channel)
-
-Return Value:
-This function does not return anything
-'''
 def channel_join_v1(auth_user_id, channel_id):
+    '''
+    channel_join.py
+
+    This function allows given user to join a given channel.
+
+    Arguments:
+    auth_user_id (integer) - This is the user id of the user that would like to join the channel.
+    channel_id (integer) - This is the channel id of the channel that the user would like to join.
+
+    Exceptions:
+    InputError - An input error is raised when the channel id is invalid (i.e. the channel doesn't exist) or if the user already exists in the channel
+    AccessError - An access error is raised when a non authorized user tries to join a private channel (ie. not a global owner and not already in the channel)
+
+    Return Value:
+    This function does not return anything
+    '''
 
     # Access channel and user lists
     store = data_store.get()
@@ -222,8 +222,8 @@ def channel_join_v1(auth_user_id, channel_id):
     if channel_list != []:
         channel_to_join = channel_list[0]
         # Check if user exists in channel already
-        users = channel_to_join['all_members']
-        u_id_list = [user['u_id'] for user in users]
+        users1 = channel_to_join['all_members']
+        u_id_list = [user['u_id'] for user in users1]
         if auth_user_id in u_id_list:
             user_in_channel = True
         # Check if the channel is public 

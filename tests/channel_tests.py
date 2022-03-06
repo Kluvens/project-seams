@@ -125,7 +125,7 @@ def test_channel_join_AccessError():
     channel_id_private = channels_create_v1(user1['auth_user_id'], 'private test channel', False) 
 
     with pytest.raises(AccessError) as error:
-        channel_join_v1(user2['auth_user_id'],channel_id_private['channel_id'])
+        channel_join_v1(user2['auth_user_id'], channel_id_private['channel_id'])
     assert error.type == AccessError
 
 def test_channel_join_Success():
@@ -170,11 +170,6 @@ def test_channel_join_Success():
             break
 
     assert user_exists2 is True 
-
-
-
-    
-
 
     
         

@@ -25,7 +25,7 @@ def channels_listall_v1(auth_user_id):
                                 is first registered
         
     Exceptions:
-        InputError  - Occurs when invalid auth_user_id
+        AccessError  - Occurs when invalid auth_user_id
 
     Return Value:
         Returns {channels} which contains a list of dictionaries {channel_id, name} when
@@ -43,7 +43,7 @@ def channels_listall_v1(auth_user_id):
     users_list = data['users']
     match = 0
     for user in users_list:
-        if auth_user_id is user['u_id']:
+        if auth_user_id == user['u_id']:
             match += 1
     if match == 0:
         raise AccessError("ERROR: Invalid auth_user_id")

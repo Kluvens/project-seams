@@ -25,7 +25,7 @@ def channels_listall_v1(auth_user_id):
                                 is first registered
         
     Exceptions:
-        AccessError  - Occurs when invalid auth_user_id
+        InputError  - Occurs when invalid auth_user_id
 
     Return Value:
         Returns {channels} which contains a list of dictionaries {channel_id, name} when

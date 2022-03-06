@@ -3,6 +3,21 @@ from src.error import InputError, AccessError
 
 def channels_list_v1(auth_user_id):
 
+<<<<<<< HEAD
+=======
+    return {
+        'channels': [
+        	{
+        		'channel_id': 1,
+        		'name': 'My Channel',
+        	}
+        ],
+    }
+
+
+def channels_listall_v1(auth_user_id):
+
+>>>>>>> 1020bce35262008796ec34acb8e051d6e017b21b
     '''
     Returns a list of of dictionaries in {channels}, where the list is made up of dictionairies 
     containing types {channel_id, name} if it corresponds to the given user id. The channels 
@@ -19,8 +34,12 @@ def channels_list_v1(auth_user_id):
         Returns {channels} which contains a list of dictionaries {channel_id, name} when
         (auth_user_id) is input
     '''
+<<<<<<< HEAD
 
     # initialise datastore and dicts
+=======
+    # initialise datastore and dict
+>>>>>>> 1020bce35262008796ec34acb8e051d6e017b21b
     data = data_store.get()
     channels_list = data['channels']
     channels_dict = {'channels' : []}
@@ -36,6 +55,15 @@ def channels_list_v1(auth_user_id):
             match += 1
     if match == 0:
         raise AccessError("ERROR: Invalid auth_user_id")
+<<<<<<< HEAD
+=======
+    
+    # loop through and grab all channel and name variables
+    for channel in channels_list:
+        channel_id = channel['channel_id']
+        name = channel['name']
+        channels_dict['channels'].append({'channel_id' : channel_id, 'name' : name})
+>>>>>>> 1020bce35262008796ec34acb8e051d6e017b21b
 
     # loop through data_store and if u_id is in channel
     # add channels and names to dict

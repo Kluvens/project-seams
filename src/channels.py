@@ -34,7 +34,7 @@ def channels_list_v1(auth_user_id):
     users_list = data['users']
     match = 0
     for user in users_list:
-        if auth_user_id == user['u_id']:
+        if auth_user_id is user['u_id']:
             match += 1
     if match == 0:
         raise AccessError("ERROR: Invalid auth_user_id")

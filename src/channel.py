@@ -1,33 +1,55 @@
-from data_store import data_store
-import error
+from src.data_store import data_store
+from src.error import AccessError, InputError
 
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
     return {
     }
 
+# ==================================================== JUSTINS CODE ==========================================
+
+def find_channel_index(channel_id):
+    data = data_store.get()
+
+    i = 0
+    for channel in data["channels"]:
+        if channel["channel_id"] == channel_id:
+            return i
+        else:
+            i += 1
+    return None
+
+def is_in_channel(auth_user_id, right_channel):
+    for channel in right_channel["all_members"]:
+        if auth_user_id == channel["u_id"]:
+            return True
+
+    return False
+
+
 def channel_details_v1(auth_user_id, channel_id):
+    data = data_store.get()
+    users = data["users"]
+
+    right_channel_index = find_channel_index(channel_id)
+
+    # error
+    if right_channel_index == None:
+        raise InputError("channel_id does not refer to a valid channel")
+
+    right_channel = data["channels"][right_channel_index]
+
+    if not is_in_channel(auth_user_id, right_channel):
+        raise AccessError("channel_id is valid and the authorised user is not a member of the channel")
+
     return {
-        'name': 'Hayden',
-        'owner_members': [
-            {
-                'u_id': 1,
-                'email': 'example@gmail.com',
-                'name_first': 'Hayden',
-                'name_last': 'Jacobs',
-                'handle_str': 'haydenjacobs',
-            }
-        ],
-        'all_members': [
-            {
-                'u_id': 1,
-                'email': 'example@gmail.com',
-                'name_first': 'Hayden',
-                'name_last': 'Jacobs',
-                'handle_str': 'haydenjacobs',
-            }
-        ],
+        'name': right_channel["name"],
+        'is_public': right_channel["is_public"],
+        'owner_members': right_channel['owner_members'],
+        'all_members': right_channel['all_members'],
     }
+
+# ================================ JUSTINS CODE ==================================
 
 def channel_messages_v1(auth_user_id, channel_id, start):
     return {
@@ -55,14 +77,12 @@ def channel_join_v1(auth_user_id, channel_id):
     user_in_channel = False
     channel_to_join = None
 
-    # Check channel exists and save channel
+    # Check channel exists
     channel_list = [channel for channel in channels if channel['channel_id'] == channel_id]
-    channel_len = len(channel_to_join)
-    if channel_len != 0:
-        channel_join = channel_list[0]
         
-    # If channel exists
-    if channel_join != 0:
+    # If channel exists, save correct channel
+    if channel_list != []:
+        channel_to_join = channel_list[0]
         # Check if user exists in channel already
         users = channel_to_join['all_members']
         u_id_list = [user['u_id'] for user in users]
@@ -71,6 +91,7 @@ def channel_join_v1(auth_user_id, channel_id):
         # Check if the channel is public 
         if channel_to_join['is_public'] == True:
             channel_access = True 
+            print (channel_to_join['is_public'])
 
     # Check if user is a global owner 
     if auth_user_id == 0:
@@ -78,19 +99,19 @@ def channel_join_v1(auth_user_id, channel_id):
 
     # Access error 
     if channel_access == False:
-        raise error.AccessError ("ERROR: You do not have access to this private channel")
+        raise AccessError ("ERROR: You do not have access to this private channel")
     
     # Input error 
-    if channel_len == 0:
-        raise error.InputError ("ERROR: Channel does not exist")
+    if channel_list == []:
+        raise InputError ("ERROR: Channel does not exist")
 
     if user_in_channel == True:
-        raise error.InputError ("ERROR: You have already joined this channel")         
+        raise InputError ("ERROR: You have already joined this channel")         
         
     # Append member if all conditions met
     if channel_to_join != None and channel_access == True and user_in_channel == False:
         member_list = channel_to_join['all_members']
-        new_member = {auth_user_id}
+        new_member = {'u_id':auth_user_id}
         member_list.append(new_member)
 
     

@@ -3,27 +3,15 @@ from src.error import InputError
 
 def channels_list_v1(auth_user_id):
 
-    # if auth_user_id doesnt exist return InputError
-    try:
-        auth_user_id + 1 - 1
-    except:
-        raise InputError
+    return {
+        'channels': [
+        	{
+        		'channel_id': 1,
+        		'name': 'My Channel',
+        	}
+        ],
+    }
 
-    # initiliase datastore and dicts
-    data = data_store.get()
-    channels_list = data['channels']
-    channels_dict = {'channels' : []}
-    
-    # loop through data_store and if u_id is in channel
-    # add channels and names to dict
-    for channel in channels_list:
-        for member in channel['all_members']:
-            if auth_user_id == member['u_id']:
-                channel_id = channel['channel_id']
-                name = channel['name']
-                channels_dict['channels'].append({'channel_id' : channel_id, 'name' : name})
-
-    return channels_dict
 
 def channels_listall_v1(auth_user_id):
 
@@ -43,16 +31,22 @@ def channels_listall_v1(auth_user_id):
         Returns {channels} which contains a list of dictionaries {channel_id, name} when
         (auth_user_id) is input
     '''
-
-    # if auth_user_id doesnt exist return InputError
-    try:
-        auth_user_id + 1 - 1
-    except:
-        raise InputError
-
+    # initialise datastore and dict
     data = data_store.get()
     channels_list = data['channels']
     channels_dict = {'channels' : []}
+    
+    # if auth_user_id doesnt exist return AccessError
+    if type(auth_user_id) != int:
+        raise AccessError("ERROR: Invalid auth_user_id type")
+
+    users_list = data['users']
+    match = 0
+    for user in users_list:
+        if auth_user_id is user['u_id']:
+            match += 1
+    if match == 0:
+        raise AccessError("ERROR: Invalid auth_user_id")
     
     # loop through and grab all channel and name variables
     for channel in channels_list:

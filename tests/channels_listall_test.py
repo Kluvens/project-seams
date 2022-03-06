@@ -90,7 +90,12 @@ def test_multiple_users_and_channels():
                                 {'channel_id': ch3["channel_id"], 'name': 'ch3'}]
 # =============================TESTING ERRORS================================
 
-def test_invalid_listall_input():
+def test_invalid_input_string():
     clear_v1()
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         channels_listall_v1('BOBbob')
+
+def test_invalid_input_invalid_user_id():
+    clear_v1()
+    with pytest.raises(AccessError):
+        channels_listall_v1(10)

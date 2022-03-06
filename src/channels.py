@@ -1,7 +1,5 @@
 from src.data_store import data_store
-from src.error import AccessError, InputError
-from src.other import clear_v1
-from src.auth import auth_register_v1
+from src.error import InputError, AccessError
 
 def channels_list_v1(auth_user_id):
 
@@ -60,6 +58,7 @@ def channels_listall_v1(auth_user_id):
         	}
         ],
     }
+
 
 def channels_create_v1(auth_user_id, channel_name, is_public):
     data = data_store.get()

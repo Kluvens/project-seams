@@ -2,7 +2,7 @@ import pytest
 
 from src.channels import channels_list_v1, channels_listall_v1, channels_create_v1
 from src.other import clear_v1
-from src.error import InputError
+from src.error import AccessError
 from src.auth import auth_register_v1
 
 # =============================TESTING CORRECTNESS============================
@@ -55,7 +55,8 @@ def test_user_join_all_channels_private():
     listv1 = channels_list_v1(u_id1['auth_user_id'])
 
     # assert user 1 is part of all channels
-    assert listv1['channels'] == [{'channel_id': ch1['channel_id'], 'name': 'ch1'}, {'channel_id': ch2['channel_id'], 'name': 'ch2'}]
+    assert listv1['channels'] == [{'channel_id': ch1['channel_id'], 'name': 'ch1'},
+                                {'channel_id': ch2['channel_id'], 'name': 'ch2'}]
 
 def test_user_join_all_channels_public():
     clear_v1()
@@ -71,7 +72,8 @@ def test_user_join_all_channels_public():
     listv1 = channels_list_v1(u_id1['auth_user_id'])
 
     # assert user 1 is part of all channels
-    assert listv1['channels'] == [{'channel_id': ch1['channel_id'], 'name': 'ch1'}, {'channel_id': ch2['channel_id'], 'name': 'ch2'}]
+    assert listv1['channels'] == [{'channel_id': ch1['channel_id'], 'name': 'ch1'}, 
+                                {'channel_id': ch2['channel_id'], 'name': 'ch2'}]
 
 # test func output when user has joined some channels public and private
 def test_user_join_some_channels_private():
@@ -90,7 +92,8 @@ def test_user_join_some_channels_private():
     listv1 = channels_list_v1(u_id1['auth_user_id'])
 
     # assert user 1 is part of ch1 and ch2
-    assert listv1['channels'] == [{'channel_id': ch1['channel_id'], 'name': 'ch1'}, {'channel_id': ch2['channel_id'], 'name': 'ch2'}]
+    assert listv1['channels'] == [{'channel_id': ch1['channel_id'], 'name': 'ch1'}, 
+                                {'channel_id': ch2['channel_id'], 'name': 'ch2'}]
 
 def test_user_join_some_channels_public():
     clear_v1()
@@ -108,11 +111,18 @@ def test_user_join_some_channels_public():
     listv1 = channels_list_v1(u_id1['auth_user_id'])
 
     # assert user 1 is part of ch1 and ch2
-    assert listv1['channels'] == [{'channel_id': ch1['channel_id'], 'name': 'ch1'}, {'channel_id': ch2['channel_id'], 'name': 'ch2'}]
+    assert listv1['channels'] == [{'channel_id': ch1['channel_id'], 'name': 'ch1'}, 
+                                {'channel_id': ch2['channel_id'], 'name': 'ch2'}]
 
 # =============================TESTING ERRORS================================
 
-def test_invalid_list_input():
+def test_invalid_input_string():
     clear_v1()
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         channels_list_v1('BOBbob')
+
+def test_invalid_input_invalid_user_id():
+    clear_v1()
+    with pytest.raises(AccessError):
+        channels_list_v1(10)
+

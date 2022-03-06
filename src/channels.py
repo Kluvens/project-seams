@@ -85,4 +85,3 @@ def channels_create_v1(auth_user_id, channel_name, is_public):
     return {
         'channel_id': channel_id,
     }
-

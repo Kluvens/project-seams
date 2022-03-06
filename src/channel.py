@@ -32,7 +32,7 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     users = store['users']
 
     # Check u_id is valid, channel is valid, auth_user is a channel member and u_id is not 
-    already a member of channel
+    # already a member of channel
     channel_to_join = None
     u_id_valid = False
     auth_user_authorized = False
@@ -64,17 +64,14 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
         raise InputError ("ERROR: This channel does not exist.")
 
     if u_id_member == True:
-        raise InputError 
-            ("ERROR: The user you are trying to add already exists in the channel")
+        raise InputError ("ERROR: The user you are trying to add already exists in the channel")
 
     # Access errors
     if auth_user_authorized == False:
-        raise AccessError 
-            ("ERROR: You are not authorized to invite users to this channel.")
+        raise AccessError ("ERROR: You are not authorized to invite users to this channel.")
 
     # If all conditions are met, append user to members list for given channel
-    if u_id_valid == True and channel_to_join != None 
-        and u_id_member == False and auth_user_authorized == True:
+    if u_id_valid == True and channel_to_join != None and u_id_member == False and auth_user_authorized == True:
         member_list = channel_to_join['all_members']
         new_member = {
             'u_id': u_id,
@@ -138,8 +135,7 @@ def channel_details_v1(auth_user_id, channel_id):
     right_channel = data["channels"][right_channel_index]
 
     if not is_in_channel(auth_user_id, right_channel):
-        raise 
-        AccessError("channel_id is valid and the authorised user is not a member of the channel")
+        raise AccessError("channel_id is valid and the authorised user is not a member of the channel")
 
     return {
         'name': right_channel["name"],

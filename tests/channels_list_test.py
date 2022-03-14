@@ -46,7 +46,6 @@ def test_user_join_all_channels_private():
 
     # create user
     u_id1 = auth_register_v1("james@gmail.com", "abcdefg123", "James", "Cai")
-    u_id2 = auth_register_v1("james2@gmail.com", "abcdefg123", "Jam", "Cao")
 
     # create channels
     ch1 = channels_create_v1(u_id1['auth_user_id'], "ch1", False)
@@ -63,7 +62,6 @@ def test_user_join_all_channels_public():
 
     # create user
     u_id1 = auth_register_v1("james@gmail.com", "abcdefg123", "James", "Cai")
-    u_id2 = auth_register_v1("james2@gmail.com", "abcdefg123", "Jam", "Cao")
 
     # create channels
     ch1 = channels_create_v1(u_id1['auth_user_id'], "ch1", True)

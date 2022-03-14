@@ -18,7 +18,7 @@ def test_channel_invite_InputError():
     # Global Owner creates public channel
     channel_id_public = channels_create_v1(user1['auth_user_id'], 'public test channel', True) 
     # Global Owner creates private channel
-    channel_id_private = channels_create_v1(user1['auth_user_id'], 'private test channel', False) 
+    channels_create_v1(user1['auth_user_id'], 'private test channel', False) 
 
     # Input invalid channel
     # channel_invite_v1(user1['auth_user_id'],'420',user2['auth_user_id'])

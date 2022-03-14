@@ -124,7 +124,7 @@ def channel_details_v1(auth_user_id, channel_id):
     '''
 
     data = data_store.get()
-    users = data["users"]
+    # users = data["users"]
 
     right_channel_index = find_channel_index(channel_id)
 

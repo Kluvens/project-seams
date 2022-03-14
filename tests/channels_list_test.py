@@ -46,7 +46,7 @@ def test_user_join_all_channels_private():
 
     # create user
     u_id1 = auth_register_v1("james@gmail.com", "abcdefg123", "James", "Cai")
-    u_id2 = auth_register_v1("james2@gmail.com", "abcdefg123", "Jam", "Cao")
+    auth_register_v1("james2@gmail.com", "abcdefg123", "Jam", "Cao")
 
     # create channels
     ch1 = channels_create_v1(u_id1['auth_user_id'], "ch1", False)
@@ -63,7 +63,7 @@ def test_user_join_all_channels_public():
 
     # create user
     u_id1 = auth_register_v1("james@gmail.com", "abcdefg123", "James", "Cai")
-    u_id2 = auth_register_v1("james2@gmail.com", "abcdefg123", "Jam", "Cao")
+    auth_register_v1("james2@gmail.com", "abcdefg123", "Jam", "Cao")
 
     # create channels
     ch1 = channels_create_v1(u_id1['auth_user_id'], "ch1", True)
@@ -87,7 +87,7 @@ def test_user_join_some_channels_private():
     # of ch3
     ch1 = channels_create_v1(u_id1['auth_user_id'], "ch1", False)
     ch2 = channels_create_v1(u_id1['auth_user_id'], "ch2", False)
-    ch3 = channels_create_v1(u_id2['auth_user_id'], "ch3", False)
+    channels_create_v1(u_id2['auth_user_id'], "ch3", False)
 
     listv1 = channels_list_v1(u_id1['auth_user_id'])
 
@@ -106,7 +106,7 @@ def test_user_join_some_channels_public():
     # of ch3
     ch1 = channels_create_v1(u_id1['auth_user_id'], "ch1", True)
     ch2 = channels_create_v1(u_id1['auth_user_id'], "ch2", True)
-    ch3 = channels_create_v1(u_id2['auth_user_id'], "ch3", True)
+    channels_create_v1(u_id2['auth_user_id'], "ch3", True)
 
     listv1 = channels_list_v1(u_id1['auth_user_id'])
 

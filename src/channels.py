@@ -128,7 +128,8 @@ def channels_create_v1(auth_user_id, channel_name, is_public):
             'handle_str': host_info["handle_str"],
         }
     ]
-
+    all_members_list = host_info_list
+    owner_members_list = host_info_list.copy()
     channel_id = len(data["channels"])
 
     # error
@@ -140,8 +141,8 @@ def channels_create_v1(auth_user_id, channel_name, is_public):
             'channel_id': channel_id,
             'name': channel_name,
             'is_public': is_public,
-            'owner_members': host_info_list,
-            'all_members': host_info_list,
+            'owner_members': owner_members_list,
+            'all_members': all_members_list,
         }
     )
 

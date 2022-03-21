@@ -73,13 +73,7 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     # If all conditions are met, append user to members list for given channel
     if u_id_valid == True and channel_to_join != None and u_id_member == False and auth_user_authorized == True:
         member_list = channel_to_join['all_members']
-        new_member = {
-            'u_id': u_id,
-            'email': users[u_id]["email"],
-            'name_first': users[u_id]["name_first"],
-            'name_last': users[u_id]["name_last"],
-            'handle_str': users[u_id]["handle_str"],
-        }
+        new_member = {'u_id': u_id}
         member_list.append(new_member)
 
     return {}
@@ -297,12 +291,6 @@ def channel_join_v1(auth_user_id, channel_id):
     # Append member if all conditions met
     if channel_to_join != None and channel_access == True and user_in_channel == False:
         member_list = channel_to_join['all_members']
-        new_member = {
-            'u_id':auth_user_id,
-            'email': users[auth_user_id]["email"],
-            'name_first': users[auth_user_id]["name_first"],
-            'name_last': users[auth_user_id]["name_last"],
-            'handle_str': users[auth_user_id]["handle_str"]
-            }
+        new_member = {'u_id':auth_user_id}
         member_list.append(new_member)
     return {}

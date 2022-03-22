@@ -1,7 +1,7 @@
 from src.data_store import data_store
 from src.error import AccessError, InputError
 
-def channel_invite_v1(auth_user_id, channel_id, u_id):
+def channel_invite_v2(token, channel_id, u_id):
 
     ''' 
     channel_invite.py
@@ -37,6 +37,9 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     u_id_valid = False
     auth_user_authorized = False
     u_id_member = False
+
+    # Convert token to auth_user_id TO DO
+    auth_user_id = token
 
     # Check for valid u_id
     u_id_list = [user['u_id']for user in users]
@@ -97,7 +100,7 @@ def is_in_channel(auth_user_id, right_channel):
 
     return False
 
-def channel_details_v1(auth_user_id, channel_id):
+def channel_details_v2(auth_user_id, channel_id):
     '''
     This function is given by authorised user id and channel id, returning name, 
     whether the channel is public, a list of owner members and a list of all members.
@@ -139,7 +142,7 @@ def channel_details_v1(auth_user_id, channel_id):
     }
 
 
-def channel_messages_v1(auth_user_id, channel_id, start):
+def channel_messages_v2(auth_user_id, channel_id, start):
     '''
     channel_messages_v1
 
@@ -228,7 +231,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
         'end': end,
     }
 
-def channel_join_v1(auth_user_id, channel_id):
+def channel_join_v2(auth_user_id, channel_id):
     '''
     channel_join.py
 

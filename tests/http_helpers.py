@@ -1,6 +1,6 @@
 import json
 import requests
-
+from src.helpers import hash
 
 class GenerateTestData:
     '''
@@ -97,13 +97,16 @@ class GenerateTestData:
         return registered_users
 
     def login(self, num_of_users):
+        '''
+        '''
         users = self.dummy_users_data(num_of_users)
         register_user_route = self.url + 'auth/login/v2'
         logged_in_users = [] 
         for idx, user in enumerate(users):
             user_login_info = requests.post( 
                 register_user_route,
-                json={"email" : users[idx]["email"], "password" : users[idx]["password"]}
+                json={"email" : users[idx]["email"], 
+                "password" : hash(users[idx]["password"])}
             )
             user_dict = user_login_info.json()
             logged_in_users.append(user_dict)

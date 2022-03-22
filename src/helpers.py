@@ -1,5 +1,8 @@
 import jwt
 import uuid
+import json
+import requests
+import hashlib
 
 def check_if_token_exists(token: str) -> bool:
     '''
@@ -52,3 +55,10 @@ def generate_session_token(u_id):
     encripted_token = jwt.encode(payload, secret, algorithm="HS256")
     return encripted_token
 
+
+def hash(password):
+    '''
+    This function uses the hashlib module to hash a given
+    password string. It returns the hashed string.
+    '''
+    return hashlib.sha256(str(password).encode()).hexdigest()

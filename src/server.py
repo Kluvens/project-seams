@@ -5,6 +5,9 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
+from src.auth import auth_register_v1
+from src.auth import auth_login_v1
+from src.other import clear_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -39,8 +42,28 @@ def echo():
         'data': data
     })
 
+# auth/register/v2 route
+@APP.route("/auth/register/v2", methods=['POST'])
+def register():
+    paramters_dict = request.get_json()
+    return dumps(auth_register_v1(**paramters_dict))
+
+
+# auth/login/v2 route
+@APP.route("/auth/login/v2", methods=['POST'])
+def login():
+    paramters_dict = request.get_json()
+    return dumps(auth_login_v1(**paramters_dict))
+
+# clear/v1
+@APP.route("/clear/v1", methods=['DELETE'])
+def reset():
+    clear_v1()
+    return dumps({})
+
+
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
-    APP.run(port=config.port) # Do not edit this port
+    APP.run(port=config.port, debug=True) # Do not edit this port

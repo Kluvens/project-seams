@@ -55,6 +55,15 @@ def login():
     paramters_dict = request.get_json()
     return dumps(auth_login_v1(**paramters_dict))
 
+
+# auth/logout/v1 route
+@APP.route("/auth/logout/v1", methods=['POST'])
+def logout():
+    token = request.get_json()
+    auth_logout_v1(str(token))
+    return dumps({})
+
+
 # clear/v1
 @APP.route("/clear/v1", methods=['DELETE'])
 def reset():
@@ -66,4 +75,4 @@ def reset():
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
-    APP.run(port=config.port, debug=True) # Do not edit this port
+    APP.run(port=config.port) # Do not edit this port

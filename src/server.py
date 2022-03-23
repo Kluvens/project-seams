@@ -7,6 +7,8 @@ from src.error import InputError
 from src import config
 from src.auth import auth_register_v1
 from src.auth import auth_login_v1
+from src.auth import auth_logout_v1
+from src.channels import channels_create_v1
 from src.other import clear_v1
 
 def quit_gracefully(*args):
@@ -60,9 +62,14 @@ def login():
 @APP.route("/auth/logout/v1", methods=['POST'])
 def logout():
     token = request.get_json()
-    auth_logout_v1(str(token))
-    return dumps({})
+    empty_dict = auth_logout_v1(str(token))
+    return dumps(empty_dict)
 
+# channel/create/v2 route
+@APP.route("/channels/create/v2", methods=['POST'])
+def create():
+    parameters = request.get_json()
+    return dumps(channels_create_v1(**parameters))
 
 # clear/v1
 @APP.route("/clear/v1", methods=['DELETE'])

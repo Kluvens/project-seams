@@ -106,7 +106,7 @@ class GenerateTestData:
             user_login_info = requests.post( 
                 register_user_route,
                 json={"email" : users[idx]["email"], 
-                "password" : hash(users[idx]["password"])}
+                "password" : users[idx]["password"]}
             )
             user_dict = user_login_info.json()
             logged_in_users.append(user_dict)

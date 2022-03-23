@@ -62,6 +62,23 @@ class GenerateTestData:
         }
 
 
+    
+
+    def dummy_channel0(self, token):
+        return {
+            "token" : str(token),
+            "channel_name" : "DummyChannel0",
+            "is_public" : True
+        }
+
+
+    def dummy_channel1(self, token):
+        return {
+            "token" : str(token),
+            "channel_name" : "DummyChannel1",
+            "is_public" : False
+        }
+
     def dummy_users_data(self, num_of_users):
         dummy_users = {
             0 : self.data_owner,
@@ -112,3 +129,19 @@ class GenerateTestData:
             logged_in_users.append(user_dict)
         
         return logged_in_users
+
+
+    # for now this supports up to 2 channels
+    def create_channel(self, num_of_channels, token):
+        '''
+        '''
+        parameters = self.dummy_channel0(token)
+        route = self.url + '/channels/create/v2'
+        response = requests.post(
+            route,
+            json=parameters
+        )
+        return response
+
+
+    

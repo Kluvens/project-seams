@@ -7,8 +7,10 @@ import hashlib
 import jwt
 import re
 from src.data_store import data_store
+from src.error import AccessError
 from src.error import InputError
-
+from src.helpers import check_if_token_exists
+from src.helpers import decode_token
 
 def auth_login_v1(email, password):
     '''
@@ -167,6 +169,23 @@ def auth_register_v1(email, password, name_first, name_last):
   
     return { "token" : token, "auth_user_id" : u_id }
 
+
+def auth_logout_v1(token):
+    '''
+        This function takes in a token string. If the
+        token is invalid, it raises an access error.
+        Otherwise, it logs out the user session that
+        corresponds to the token and returns an empty dict
+    '''
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid Token!")
+
+    users_list = data_store.get()["users"]
+    u_id = decode_token(token)
+    if token in users_list[u_id]["sessions"]:
+        users_list[u_id]["sessions"].remove(token)
+
+    return {}
 
 # ============================= HELPER FUNCTIONS ========================
 

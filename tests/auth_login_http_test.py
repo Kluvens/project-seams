@@ -61,13 +61,12 @@ def test_login_existing_user(route, dummy_data, num_of_users):
 def test_does_email_exist(route, dummy_data, email, num_of_users):
     reset_call()
     dummy_data.register_users(num_of_users)
-    with pytest.raises(HTTPError):
-        response = requests.post(
-            route, 
-            json={"email" : email, "password" : "IamApassword"}
-            ).raise_for_status()
-        # This seems redundant, so I'm going to double check with a tutor
-        assert response.status_code == 400
+    response = requests.post(
+        route, 
+        json={"email" : email, "password" : "IamApassword"}
+    )
+    # This seems redundant, so I'm going to double check with a tutor
+    assert response.status_code == 400
 
 # Choosing password that are very close the the actual
 # password. Each parameter deals with a possible edge case
@@ -83,8 +82,10 @@ def test_does_email_exist(route, dummy_data, email, num_of_users):
 def test_handelling_incorrect_password(route, dummy_data, email, password):
     reset_call()
     dummy_data.register_users(num_of_users=4)
-    with pytest.raises(HTTPError):
-        requests.post(
+    response = requests.post(
             route, 
             json={"email" : email, "password" : password}
-            ).raise_for_status()
+        )
+    assert response.status_code == 400
+
+        

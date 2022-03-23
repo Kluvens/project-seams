@@ -42,13 +42,15 @@ def auth_login_v1(email, password):
         raise InputError("The email you entered does not belong to a user.")
 
     # Check Password is correct
-    if not is_password_correct(users_list, email, password):
+    hashed_pw = hash(password)
+    if not is_password_correct(users_list, email, hashed_pw):
         raise InputError("The password you entered is not correct.")
 
 
     u_id = get_corresponding_user_id(users_list, email)
-
-    return {'auth_user_id': u_id}
+    token = str(generate_session_token(u_id))
+    users_list[u_id]['sessions'].append(token)
+    return {'token' : token, 'auth_user_id': u_id}
 
 
 
@@ -149,7 +151,7 @@ def auth_register_v1(email, password, name_first, name_last):
     curr_user['password'] = hash(password)
     curr_user['name_first'] = name_first
     curr_user['name_last'] = name_last
-    curr_user['session'] = [str(token)]
+    curr_user['sessions'] = [str(token)]
     curr_user['handle_str'] = handle
 
     # Dealing with first layer of permissions
@@ -321,4 +323,13 @@ def generate_session_token(u_id):
 # ====================END OF HELPER FUNCTIONS SECTION ===================
 
 
-if __name__ == "__main__":...
+if __name__ == "__main__":
+    u1 = auth_register_v1("wqq@ss.com", "123123abc", "k", "z")
+    u2 = auth_register_v1("wqqs@ss.com", "12323abc", "k", "z")
+    l1 = auth_login_v1("wqq@ss.com", "123123abc")
+    # print(l1)
+    # print(u1)
+    data = data_store.get()['users'][0]['password']
+    x = hash("123123abc")
+    print(f"----{data}\n\n----{x}")
+    print(len(data))

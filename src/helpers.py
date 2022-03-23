@@ -3,8 +3,9 @@ import uuid
 import json
 import requests
 import hashlib
+from src.data_store import data_store
 
-def check_if_token_exists(token: str) -> bool:
+def check_if_token_exists(token):
     '''
     This is a helper function that takes in
     a token string and returns a boolean value
@@ -20,12 +21,12 @@ def check_if_token_exists(token: str) -> bool:
     for user in users:
         if user['sessions'] == {}:
             return False
-        if user['token'] in sessions:
+        if token in user['sessions']:
             return True
     return False
 
-
-def decode_token(token: str) -> dict:
+# add error handelling in case of invalid token
+def decode_token(token):
     secret = "rjry3rJYwYIDHvVU0wJQuh6cFujCDfWS4Qa81w9HHGjEa0xs7N"
     payload = jwt.decode(token, secret, algorithms=["HS256"])
     return payload['u_id']

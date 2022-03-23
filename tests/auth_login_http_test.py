@@ -23,7 +23,7 @@ def dummy_data():
 def route():
     return url + "auth/login/v2"
 
-#================= Testing Correctness ===========================
+# #================= Testing Correctness ===========================
 
 
 # Testing logging user functionality when we have a varying number
@@ -37,8 +37,8 @@ def test_login_existing_user(route, dummy_data, num_of_users):
     assert (registered_user_dict['auth_user_id'] == 
         logged_in_user_dict['auth_user_id'])
 
-    # assert (logged_in_user_dict['auth_user_id'] == 
-        # decode_token(logged_in_user_dict['token']))
+    assert (logged_in_user_dict['auth_user_id'] == 
+        decode_token(logged_in_user_dict['token']))
 
 
 # Testing if logging in user multiple times will 
@@ -46,7 +46,7 @@ def test_login_existing_user(route, dummy_data, num_of_users):
 
 
 
-#==================Testing Exceptions=============================
+# ==================Testing Exceptions=============================
 
 @pytest.mark.parametrize("num_of_users", [1, 2, 3])
 
@@ -62,11 +62,12 @@ def test_does_email_exist(route, dummy_data, email, num_of_users):
     reset_call()
     dummy_data.register_users(num_of_users)
     with pytest.raises(HTTPError):
-        requests.post(
+        response = requests.post(
             route, 
             json={"email" : email, "password" : "IamApassword"}
             ).raise_for_status()
-
+        # This seems redundant, so I'm going to double check with a tutor
+        assert response.status_code == 400
 
 # Choosing password that are very close the the actual
 # password. Each parameter deals with a possible edge case

@@ -121,8 +121,7 @@ def test_email_registered(route, email):
     dummy_data = GenerateTestData(url)
     registered_users = dummy_data.register_users(num_of_users=3)
 
-    with pytest.raises(HTTPError):
-        requests.post(
+    response = requests.post(
         route,
         json={
             "email": email,
@@ -130,7 +129,8 @@ def test_email_registered(route, email):
             "name_first" : "Kais",
             "name_last" : "Alz"
         }
-    ).raise_for_status()
+    )
+    assert response.status_code == 400
 
 
 
@@ -141,8 +141,8 @@ def test_email_registered(route, email):
 @pytest.mark.parametrize("password", ["", "a", "AAa", "12345", "* __1"])
 def test_is_password_valid(route, password):
     reset_call()
-    with pytest.raises(HTTPError):
-        requests.post(
+
+    response = requests.post(
         route,
         json={
             "email": "Kais11011@seams.com",
@@ -150,9 +150,9 @@ def test_is_password_valid(route, password):
             "name_first" : "Kais",
             "name_last" : "Alz"
         }
-    ).raise_for_status()
+    )
 
-
+    assert response.status_code == 400
 
 #=========================== SET 4 ===============================
 # Testing if an exception is raised for invalid first name and last name inputs
@@ -168,8 +168,7 @@ def test_is_password_valid(route, password):
 )
 def test_name_is_valid(route, name_first, name_last):
     reset_call()
-    with pytest.raises(HTTPError):
-        requests.post(
+    response = requests.post(
         route,
         json={
             "email": "Kais11011@seams.com",
@@ -177,4 +176,5 @@ def test_name_is_valid(route, name_first, name_last):
             "name_first" : name_first,
             "name_last" : name_last
         }
-    ).raise_for_status()
+    )
+    assert response.status_code == 400

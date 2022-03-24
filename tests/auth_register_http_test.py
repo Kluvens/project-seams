@@ -93,16 +93,16 @@ def test_return_id_multiple_users(dummy_data):
 
 def test_is_email_valid(route, email):
     reset_call()
-    with pytest.raises(HTTPError) as exc_info:
-        requests.post(
-            route, 
-            json={
-                "email": email,
-                "password" : "123abc123",
-                "name_first" : "Kais",
-                "name_last" : "Alz"
-            }
-        ).raise_for_status()
+    response = requests.post(
+        route, 
+        json={
+            "email": email,
+            "password" : "123abc123",
+            "name_first" : "Kais",
+            "name_last" : "Alz"
+        }
+    )
+    assert response.status_code == 400
 
 
 

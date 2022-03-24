@@ -77,8 +77,6 @@ def setup():
 
 
 def test_channel_create_token_error(setup):
-    
-    user_dict = setup[0]
     response = requests.post(
         f"{url}/channels/create/v2", 
         json={

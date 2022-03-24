@@ -65,7 +65,6 @@ def test_does_email_exist(route, dummy_data, email, num_of_users):
         route, 
         json={"email" : email, "password" : "IamApassword"}
     )
-    # This seems redundant, so I'm going to double check with a tutor
     assert response.status_code == 400
 
 # Choosing password that are very close the the actual

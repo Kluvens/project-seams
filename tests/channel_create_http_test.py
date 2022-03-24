@@ -79,7 +79,6 @@ def setup():
 def test_channel_create_token_error(setup):
     
     user_dict = setup[0]
-    token = str(user_dict['token'])
     response = requests.post(
         f"{url}/channels/create/v2", 
         json={
@@ -121,7 +120,6 @@ def test_channel_details_working_single_member(setup):
     assert response.status_code == 200
     first_channel_details = response.json()
 
-    print(first_channel_details)
     assert first_channel_details['name'] == "Kais_channel"
     assert first_channel_details["is_public"] == True
     ###### One error down channel details does not return an id #########

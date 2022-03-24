@@ -13,12 +13,6 @@ def reset_call():
     requests.delete(url + 'clear/v1')
 
 
-@pytest.fixture
-def register_test_users(num_of_users):
-    dummy_data = GenerateTestData(url)
-    users_return_dict = dummy_data.register_users(num_of_users)
-    
-
 @pytest.fixture()
 def dummy_data():
     data_instance = GenerateTestData(url)
@@ -119,7 +113,7 @@ def test_is_email_valid(route, email):
 def test_email_registered(route, email):
     reset_call()
     dummy_data = GenerateTestData(url)
-    registered_users = dummy_data.register_users(num_of_users=3)
+    dummy_data.register_users(num_of_users=3)
 
     response = requests.post(
         route,

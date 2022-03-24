@@ -1,5 +1,8 @@
 from src.data_store import data_store
 from src.error import InputError, AccessError
+from src.helpers import decode_token
+from src.helpers import check_if_token_exists
+
 
 def channels_list_v2(token):
 
@@ -26,22 +29,16 @@ def channels_list_v2(token):
     channels_dict = {'channels' : []}
     
     # if token doesnt exist return AccessError
-    if type(token) != str:
-        raise AccessError("ERROR: Invalid token type")
-
-    users_list = data['users']
-    match = 0
-    for user in users_list:
-        if token == user['u_id']:
-            match += 1
-    if match == 0:
-        raise AccessError("ERROR: Invalid token")
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid token")
+    
+    u_id = int(decode_token(token))
 
     # loop through data_store and if u_id is in channel
     # add channels and names to dict
     for channel in channels_list:
         for member in channel['all_members']:
-            if token == member['u_id']:
+            if u_id == member['u_id']:
                 channel_id = channel['channel_id']
                 name = channel['name']
                 channels_dict['channels'].append({'channel_id' : channel_id, 'name' : name})
@@ -72,16 +69,8 @@ def channels_listall_v2(token):
     channels_dict = {'channels' : []}
     
     # if token doesnt exist return AccessError
-    if type(token) != str:
-        raise AccessError("ERROR: Invalid token type")
-
-    users_list = data['users']
-    match = 0
-    for user in users_list:
-        if token == user['u_id']:
-            match += 1
-    if match == 0:
-        raise AccessError("ERROR: Invalid token")
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid token")
     
     # loop through and grab all channel and name variables
     for channel in channels_list:
@@ -116,8 +105,10 @@ def channels_create_v1(token, channel_name, is_public):
     '''
 
     data = data_store.get()
+
     
-    host_info = data["users"][token]
+    auth_user_id = int(decode_token(token))
+    host_info = data["users"][auth_user_id]
 
     host_info_list = [
         {

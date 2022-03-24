@@ -2,11 +2,15 @@
 This module contains the implementation for the auth feature function
 
 '''
-
+import uuid
+import hashlib
+import jwt
 import re
 from src.data_store import data_store
+from src.error import AccessError
 from src.error import InputError
-
+from src.helpers import check_if_token_exists
+from src.helpers import decode_token
 
 def auth_login_v1(email, password):
     '''
@@ -40,13 +44,15 @@ def auth_login_v1(email, password):
         raise InputError("The email you entered does not belong to a user.")
 
     # Check Password is correct
-    if not is_password_correct(users_list, email, password):
+    hashed_pw = hash(password)
+    if not is_password_correct(users_list, email, hashed_pw):
         raise InputError("The password you entered is not correct.")
 
 
     u_id = get_corresponding_user_id(users_list, email)
-
-    return {'auth_user_id': u_id}
+    token = str(generate_session_token(u_id))
+    users_list[u_id]['sessions'].append(token)
+    return {'token' : token, 'auth_user_id': u_id}
 
 
 
@@ -98,16 +104,16 @@ def auth_register_v1(email, password, name_first, name_last):
     # Check if email is already in the database
     # Emails ARE assumed to be case sensitive
     if is_email_already_registered(users_list, email):
-        raise InputError(
+        raise InputError(description=
             "The email you entered is already used "
             "by a registered user.")
 
     if not is_valid_email(email):
-        raise InputError("The email you entered is invalid.")
+        raise InputError(description="The email you entered is invalid.")
 
     # Validate password
     if not is_valid_password(password):
-        raise InputError(
+        raise InputError(description=
             "The password you entered is invalid.\n"
             "Your password must have at least 6 ASCII characters.")
 
@@ -134,20 +140,52 @@ def auth_register_v1(email, password, name_first, name_last):
     curr_user = {}
     users_list.append(curr_user)
 
+    # Generate a session token
+    # When a user is registered, they will be 
+    # logged in and a new session token will
+    # be created for them.
+    token = generate_session_token(u_id)
+
     # Populate object in datastore with user data
     curr_user = users_list[u_id]
     curr_user['u_id'] = u_id
     curr_user['email'] = email
-    curr_user['password'] = password
+    curr_user['password'] = hash(password)
     curr_user['name_first'] = name_first
     curr_user['name_last'] = name_last
-
+    curr_user['sessions'] = [str(token)]
     curr_user['handle_str'] = handle
 
+    # Dealing with first layer of permissions
+    OWNER = 1
+    MEMBER = 2
+    if u_id == 0:
+        curr_user['permissions'] = OWNER
+    else:
+        curr_user['permissions'] = MEMBER
+
+
     data_store.set(data)
+  
+    return { "token" : token, "auth_user_id" : u_id }
 
-    return { 'auth_user_id': u_id }
 
+def auth_logout_v1(token):
+    '''
+        This function takes in a token string. If the
+        token is invalid, it raises an access error.
+        Otherwise, it logs out the user session that
+        corresponds to the token and returns an empty dict
+    '''
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid Token!")
+
+    users_list = data_store.get()["users"]
+    u_id = decode_token(token)
+    if token in users_list[u_id]["sessions"]:
+        users_list[u_id]["sessions"].remove(token)
+
+    return {}
 
 # ============================= HELPER FUNCTIONS ========================
 
@@ -264,8 +302,53 @@ def get_corresponding_user_id(users_list, email):
             return user_index
     return None
 
+
+
+
+def hash(password):
+    '''
+    This function uses the hashlib module to hash a given
+    password string. It returns the hashed string.
+    '''
+    return hashlib.sha256(str(password).encode()).hexdigest()
+
+
+def generate_session_token(u_id):
+    '''
+    This function uses generates a session token string
+    using the u_id of the user and the secret string.
+
+    Every session token generated will be guaranteed by
+    adding uuid.uuid4() to the payload
+
+    The token generation will be taken care of by a jwt method
+    and the encrypted token will be returned as a string.
+
+    This function will be called when a user is registered 
+    and everytime the user logs in.
+    '''
+    secret = "rjry3rJYwYIDHvVU0wJQuh6cFujCDfWS4Qa81w9HHGjEa0xs7N"
+
+    payload = {
+        'unique_session_id' : str(uuid.uuid4()),
+        'u_id' : u_id 
+    }
+
+    encripted_token = jwt.encode(payload, secret, algorithm="HS256")
+    return encripted_token
+
+
+
 # ====================END OF HELPER FUNCTIONS SECTION ===================
 
 
 if __name__ == "__main__":
-    pass
+    u1 = auth_register_v1("wqq@ss.com", "123123abc", "k", "z")
+    u2 = auth_register_v1("wqqs@ss.com", "12323abc", "k", "z")
+    l1 = auth_login_v1("wqq@ss.com", "123123abc")
+    # print(l1)
+    # print(u1)
+    data = data_store.get()['users'][0]['password']
+    x = hash("123123abc")
+    print(f"----{data}\n\n----{x}")
+    print(len(data))

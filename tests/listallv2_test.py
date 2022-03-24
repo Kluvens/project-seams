@@ -1,6 +1,6 @@
 import pytest
 
-from src.channels import channels_listall_v1, channels_create_v1
+from src.channels import channels_listall_v2, channels_create_v1
 from src.other import clear_v1
 from src.error import AccessError
 from src.auth import auth_register_v1
@@ -15,10 +15,10 @@ def test_listall_public_and_private():
     u_id = auth_register_v1("e1@gmail.com", "abcdefg123", "James", "Cai")
 
     # create channels
-    ch1 = channels_create_v1(u_id['auth_user_id'], "ch1", True)
-    ch2 = channels_create_v1(u_id['auth_user_id'], "ch2", False)
+    ch1 = channels_create_v1(u_id['token'], "ch1", True)
+    ch2 = channels_create_v1(u_id['token'], "ch2", False)
 
-    listall = channels_listall_v1(u_id['auth_user_id'])
+    listall = channels_listall_v2(u_id['token'])
 
     # assert listall returns filled dict
     assert listall['channels'] == [{'channel_id': ch1["channel_id"], 'name': 'ch1'},
@@ -31,10 +31,10 @@ def test_listall_public_only():
     u_id = auth_register_v1("e1@gmail.com", "abcdefg123", "James", "Cai")
 
     # create channels
-    ch1 = channels_create_v1(u_id['auth_user_id'], "ch1", True)
-    ch2 = channels_create_v1(u_id['auth_user_id'], "ch2", True)
+    ch1 = channels_create_v1(u_id['token'], "ch1", True)
+    ch2 = channels_create_v1(u_id['token'], "ch2", True)
 
-    listall = channels_listall_v1(u_id['auth_user_id'])
+    listall = channels_listall_v2(u_id['token'])
 
     # assert listall returns filled dict
     assert listall['channels'] == [{'channel_id': ch1["channel_id"], 'name': 'ch1'},
@@ -47,10 +47,10 @@ def test_listall_private_only():
     u_id = auth_register_v1("e1@gmail.com", "abcdefg123", "James", "Cai")
 
     # create channels
-    ch1 = channels_create_v1(u_id['auth_user_id'], "ch1", False)
-    ch2 = channels_create_v1(u_id['auth_user_id'], "ch2", False)
+    ch1 = channels_create_v1(u_id['token'], "ch1", False)
+    ch2 = channels_create_v1(u_id['token'], "ch2", False)
 
-    listall = channels_listall_v1(u_id['auth_user_id'])
+    listall = channels_listall_v2(u_id['token'])
 
     # assert listall returns filled dict
     assert listall['channels'] == [{'channel_id': ch1["channel_id"], 'name': 'ch1'},
@@ -63,7 +63,7 @@ def test_listall_no_channels():
     # create user
     u_id = auth_register_v1("e1@gmail.com", "abcdefg123", "James", "Cai")
 
-    listall = channels_listall_v1(u_id['auth_user_id'])
+    listall = channels_listall_v2(u_id['token'])
 
     # assert listall returns empty dict
     assert listall == {'channels': []}
@@ -77,11 +77,11 @@ def test_multiple_users_and_channels():
     u_id2 = auth_register_v1("e2@gmail.com", "abcdefg123", "Jam", "Cao")
 
     # create channels
-    ch1 = channels_create_v1(u_id1['auth_user_id'], "ch1", False)
-    ch2 = channels_create_v1(u_id1['auth_user_id'], "ch2", False)
-    ch3 = channels_create_v1(u_id2['auth_user_id'], "ch3", False)
+    ch1 = channels_create_v1(u_id1['token'], "ch1", False)
+    ch2 = channels_create_v1(u_id1['token'], "ch2", False)
+    ch3 = channels_create_v1(u_id2['token'], "ch3", False)
 
-    listall = channels_listall_v1(u_id1['auth_user_id'])
+    listall = channels_listall_v2(u_id1['token'])
 
     # assert listall returns filled dict
     assert listall['channels'] == [{'channel_id': ch1["channel_id"], 'name': 'ch1'},
@@ -93,9 +93,9 @@ def test_multiple_users_and_channels():
 def test_invalid_input_string():
     clear_v1()
     with pytest.raises(AccessError):
-        channels_listall_v1('BOBbob')
+        channels_listall_v2('BOBbob')
 
 def test_invalid_input_invalid_user_id():
     clear_v1()
     with pytest.raises(AccessError):
-        channels_listall_v1(10)
+        channels_listall_v2(10)

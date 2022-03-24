@@ -5,8 +5,11 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
-from src.channels import channels_list_v2, channels_listall_v2
 from src.auth import auth_register_v1
+from src.auth import auth_login_v1
+from src.auth import auth_logout_v1
+from src.channels import channels_create_v1, channels_list_v2, channels_listall_v2
+from src.other import clear_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -41,19 +44,51 @@ def echo():
         'data': data
     })
 
-# channels_list_v2
-@APP.route("/channels/list/v2", methods=['GET'])
-def channels_list_v2():
-    token = request.args.get('token')
-    return dumps(channel.channels_list_v2(token))
+# auth/register/v2 route
+@APP.route("/auth/register/v2", methods=['POST'])
+def register():
+    paramters_dict = request.get_json()
+    return dumps(auth_register_v1(**paramters_dict))
 
 
-# channels_listall_v2
-@APP.route("/channels/listall/v2", methods=['GET'])
-def channels_list_v2():
-    token = request.args.get('token')
-    return dumps(channel.channels_listall_v2(token))
-    
+# auth/login/v2 route
+@APP.route("/auth/login/v2", methods=['POST'])
+def login():
+    paramters_dict = request.get_json()
+    return dumps(auth_login_v1(**paramters_dict))
+
+
+# auth/logout/v1 route
+@APP.route("/auth/logout/v1", methods=['POST'])
+def logout():
+    token = request.get_json()
+    empty_dict = auth_logout_v1(str(token))
+    return dumps(empty_dict)
+
+# channel/create/v2 route
+@APP.route("/channels/create/v2", methods=['POST'])
+def create():
+    parameters = request.get_json()
+    return dumps(channels_create_v1(**parameters))
+
+# clear/v1
+@APP.route("/clear/v1", methods=['DELETE'])
+def reset():
+    clear_v1()
+    return dumps({})
+
+# channels/list/v2
+@APP.route('/channels/list/v2', methods=['GET'])
+def list():
+    paramters_dict = request.get_json()
+    return dumps(channels_list_v2(**paramters_dict))
+
+# channels/listall/v2
+@APP.route('/channels/listall/v2', methods=['GET'])
+def listall():
+    paramters_dict = request.get_json()
+    return dumps(channels_listall_v2(**paramters_dict))
+
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":

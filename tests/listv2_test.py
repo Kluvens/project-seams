@@ -1,6 +1,6 @@
 import pytest
 
-from src.channels import channels_list_v1, channels_listall_v1, channels_create_v1
+from src.channels import channels_list_v2, channels_create_v1
 from src.other import clear_v1
 from src.error import AccessError
 from src.auth import auth_register_v1
@@ -17,10 +17,10 @@ def test_no_channels_joined_private():
     u_id2 = auth_register_v1("e2@gmail.com", "abcdefg123", "Jam", "Cao")
 
     # create private channel for user 1
-    channels_create_v1(u_id1['auth_user_id'], "ch1", False)
+    channels_create_v1(u_id1['token'], "ch1", False)
 
     # return channels for user 2 (non-existant)
-    listv1 = channels_list_v1(u_id2['auth_user_id'])
+    listv1 = channels_list_v2(u_id2['token'])
     
     assert listv1 == {'channels': []}
 
@@ -32,10 +32,10 @@ def test_no_channels_joined_public():
     u_id2 = auth_register_v1("e2@gmail.com", "abcdefg123", "Jam", "Cao")
 
     # create public channel for user 1
-    channels_create_v1(u_id1['auth_user_id'], "ch1", True)
+    channels_create_v1(u_id1['token'], "ch1", True)
 
     # return channels for user 2 (non-existant)
-    listv1 = channels_list_v1(u_id2['auth_user_id'])
+    listv1 = channels_list_v2(u_id2['token'])
 
     # pass if trying to access non-existant channel 
     assert listv1 == {'channels': []}   
@@ -49,10 +49,10 @@ def test_user_join_all_channels_private():
     auth_register_v1("james2@gmail.com", "abcdefg123", "Jam", "Cao")
 
     # create channels
-    ch1 = channels_create_v1(u_id1['auth_user_id'], "ch1", False)
-    ch2 = channels_create_v1(u_id1['auth_user_id'], "ch2", False)
+    ch1 = channels_create_v1(u_id1['token'], "ch1", False)
+    ch2 = channels_create_v1(u_id1['token'], "ch2", False)
 
-    listv1 = channels_list_v1(u_id1['auth_user_id'])
+    listv1 = channels_list_v2(u_id1['token'])
 
     # assert user 1 is part of all channels
     assert listv1['channels'] == [{'channel_id': ch1['channel_id'], 'name': 'ch1'},
@@ -66,10 +66,10 @@ def test_user_join_all_channels_public():
     auth_register_v1("james2@gmail.com", "abcdefg123", "Jam", "Cao")
 
     # create channels
-    ch1 = channels_create_v1(u_id1['auth_user_id'], "ch1", True)
-    ch2 = channels_create_v1(u_id1['auth_user_id'], "ch2", True)
+    ch1 = channels_create_v1(u_id1['token'], "ch1", True)
+    ch2 = channels_create_v1(u_id1['token'], "ch2", True)
 
-    listv1 = channels_list_v1(u_id1['auth_user_id'])
+    listv1 = channels_list_v2(u_id1['token'])
 
     # assert user 1 is part of all channels
     assert listv1['channels'] == [{'channel_id': ch1['channel_id'], 'name': 'ch1'}, 
@@ -85,11 +85,11 @@ def test_user_join_some_channels_private():
 
     # create channels with u_id1 as owner of ch1 and ch2 and not a member
     # of ch3
-    ch1 = channels_create_v1(u_id1['auth_user_id'], "ch1", False)
-    ch2 = channels_create_v1(u_id1['auth_user_id'], "ch2", False)
-    channels_create_v1(u_id2['auth_user_id'], "ch3", False)
+    ch1 = channels_create_v1(u_id1['token'], "ch1", False)
+    ch2 = channels_create_v1(u_id1['token'], "ch2", False)
+    channels_create_v1(u_id2['token'], "ch3", False)
 
-    listv1 = channels_list_v1(u_id1['auth_user_id'])
+    listv1 = channels_list_v2(u_id1['token'])
 
     # assert user 1 is part of ch1 and ch2
     assert listv1['channels'] == [{'channel_id': ch1['channel_id'], 'name': 'ch1'}, 
@@ -104,11 +104,11 @@ def test_user_join_some_channels_public():
 
     # create channels with u_id1 as owner of ch1 and ch2 and not a member
     # of ch3
-    ch1 = channels_create_v1(u_id1['auth_user_id'], "ch1", True)
-    ch2 = channels_create_v1(u_id1['auth_user_id'], "ch2", True)
-    channels_create_v1(u_id2['auth_user_id'], "ch3", True)
+    ch1 = channels_create_v1(u_id1['token'], "ch1", True)
+    ch2 = channels_create_v1(u_id1['token'], "ch2", True)
+    channels_create_v1(u_id2['token'], "ch3", True)
 
-    listv1 = channels_list_v1(u_id1['auth_user_id'])
+    listv1 = channels_list_v2(u_id1['token'])
 
     # assert user 1 is part of ch1 and ch2
     assert listv1['channels'] == [{'channel_id': ch1['channel_id'], 'name': 'ch1'}, 
@@ -119,10 +119,10 @@ def test_user_join_some_channels_public():
 def test_invalid_input_string():
     clear_v1()
     with pytest.raises(AccessError):
-        channels_list_v1('BOBbob')
+        channels_list_v2('BOBbob')
 
 def test_invalid_input_invalid_user_id():
     clear_v1()
     with pytest.raises(AccessError):
-        channels_list_v1(10)
+        channels_list_v2(10)
 

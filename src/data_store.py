@@ -93,6 +93,7 @@ data = {
 initial_object = {
     'users' : [],
     'channels' : [],
+    'dms': [],
 }
 
 ## YOU ARE ALLOWED TO CHANGE THE BELOW IF YOU WISH

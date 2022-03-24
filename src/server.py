@@ -10,6 +10,7 @@ from src.auth import auth_login_v1
 from src.auth import auth_logout_v1
 from src.channels import channels_create_v1
 from src.other import clear_v1
+from src.channel import channel_details_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -70,6 +71,13 @@ def logout():
 def create():
     parameters = request.get_json()
     return dumps(channels_create_v1(**parameters))
+
+# channel/details/v2
+@APP.route("/channel/details/v2", methods = ['GET'])
+def channel_details_http():
+    token = request.args.get('token')
+    channel_id = request.args.get('channel_id')
+    return dumps(channel_details_v1(token, channel_id))
 
 # clear/v1
 @APP.route("/clear/v1", methods=['DELETE'])

@@ -83,13 +83,12 @@ def channels_listall_v2(token):
     return channels_dict
 
 
-
 def channels_create_v1(token, channel_name, is_public):
     '''
     This function allows an authorized user to create a channel
 
     Arguments:
-    token(integer) - This is the user id of the user authorized to create the channel. 
+    auth_user_id(integer) - This is the user id of the user authorized to create the channel. 
     This means that the authrised user is the owner member and a member of the channel crated.
     
     name - this is the name of the channel
@@ -105,7 +104,8 @@ def channels_create_v1(token, channel_name, is_public):
     '''
 
     data = data_store.get()
-
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid token")
     
     auth_user_id = int(decode_token(token))
     host_info = data["users"][auth_user_id]

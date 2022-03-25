@@ -16,7 +16,6 @@ def reset_call():
 @pytest.fixture
 def register_test_users(num_of_users):
     dummy_data = GenerateTestData(url)
-    users_return_dict = dummy_data.register_users(num_of_users)
     
 
 @pytest.fixture()
@@ -93,7 +92,7 @@ def test_return_id_multiple_users(dummy_data):
 
 def test_is_email_valid(route, email):
     reset_call()
-    with pytest.raises(HTTPError) as exc_info:
+    with pytest.raises(HTTPError):
         requests.post(
             route, 
             json={
@@ -119,7 +118,6 @@ def test_is_email_valid(route, email):
 def test_email_registered(route, email):
     reset_call()
     dummy_data = GenerateTestData(url)
-    registered_users = dummy_data.register_users(num_of_users=3)
 
     response = requests.post(
         route,

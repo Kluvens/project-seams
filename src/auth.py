@@ -336,3 +336,4 @@ def generate_session_token(u_id):
 
     encripted_token = jwt.encode(payload, secret, algorithm="HS256")
     return encripted_token
+

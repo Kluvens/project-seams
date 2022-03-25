@@ -72,6 +72,13 @@ def create():
     parameters = request.get_json()
     return dumps(channels_create_v1(**parameters))
 
+# channel/details/v2
+@APP.route("/channel/details/v2", methods = ['GET'])
+def channel_details_http():
+    token = request.args.get('token')
+    channel_id = request.args.get('channel_id')
+    return dumps(channel_details_v1(token, channel_id))
+
 # clear/v1
 @APP.route("/clear/v1", methods=['DELETE'])
 def reset():

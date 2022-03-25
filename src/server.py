@@ -10,6 +10,7 @@ from src.auth import auth_login_v1
 from src.auth import auth_logout_v1
 from src.channels import channels_create_v1, channels_list_v2, channels_listall_v2
 from src.other import clear_v1
+from src.channel import channel_details_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -88,6 +89,13 @@ def list():
 def listall():
     paramters_dict = request.get_json()
     return dumps(channels_listall_v2(**paramters_dict))
+
+# channel/details/v2
+@APP.route("/channel/details/v2", methods = ['GET'])
+def channel_details_http():
+    token = request.args.get('token')
+    channel_id = request.args.get('channel_id')
+    return dumps(channel_details_v1(token, channel_id))
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

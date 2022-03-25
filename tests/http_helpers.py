@@ -44,6 +44,7 @@ class GenerateTestData:
             "name_last" : "test_last1"
         }
 
+
     def data_dummy2(self):
         return  {
             "email" : "dummy2@seams.com",
@@ -118,7 +119,7 @@ class GenerateTestData:
         users = self.dummy_users_data(num_of_users)
         register_user_route = self.url + 'auth/login/v2'
         logged_in_users = [] 
-        for idx in enumerate(users):
+        for idx in range(len(users)):
             user_login_info = requests.post( 
                 register_user_route,
                 json={"email" : users[idx]["email"], 
@@ -143,4 +144,3 @@ class GenerateTestData:
         return response
 
 
-    

@@ -25,16 +25,6 @@ def check_if_token_exists(token):
             return True
     return False
 
-def check_if_dm_token_exists(token):
-    
-    dms = data_store.get()['dms']
-    for dm in dms:
-        if dm['sessions'] == {}:
-            return False
-        if token in dm['sessions']:
-            return True
-    return False
-
 # add error handelling in case of invalid token
 def decode_token(token):
     secret = "rjry3rJYwYIDHvVU0wJQuh6cFujCDfWS4Qa81w9HHGjEa0xs7N"

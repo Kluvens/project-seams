@@ -47,12 +47,3 @@ def get_user_id(email, password, name_first, name_last):
 
     u_id = user["auth_user_id"]
     return u_id
-
-def permission_check(user_id):
-    data = data_store()
-
-    for user in data['users']:
-        if user['u_id'] == user_id:
-            return user['permission']
-    
-    return False

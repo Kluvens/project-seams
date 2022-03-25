@@ -6,9 +6,10 @@ from flask_cors import CORS
 from src.error import InputError
 from src import config
 from src.auth import auth_login_v2, auth_register_v2
-from src.channel import channel_invite_v1, channel_join_v1, channel_details_v1, channel_messages_v1, channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
+from src.channel import channel_invite_v1, channel_join_v1, channel_details_v1, channel_messages_v1, channel_addowner_v1, channel_removeowner_v1
+# from src.channels import channels_create_v1. channels_list_v1, channels_listall_v1
 from src.other import clear_v1
-from src.channels import channels_create_v1
+from src.channels import channels_create_v1, channels_list_v1, channels_listall_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -72,12 +73,12 @@ def auth_login_http():
     token = auth_login_v2(**login_dict)
     return dumps(token)
 
-@APP.route("/auth/logout/v1", methods = ['POST'])
-def auth_logout_http():
-    token = request.get_json('token')
-    auth_logout_v1(token)
+# @APP.route("/auth/logout/v1", methods = ['POST'])
+# def auth_logout_http():
+#     token = request.get_json('token')
+#     auth_logout_v1(token)
 
-    return dumps({})
+#     return dumps({})
 
 @APP.route("/channel/invite/v2", methods = ['POST'])
 def channel_invite_http():
@@ -109,13 +110,13 @@ def channel_join_http():
 
     return dumps({})
 
-@APP.route("/channel/leave/v1", methods = ['POST'])
-def channel_leave_https():
-    token = request.get_json('token')
-    channel_id = int(request.get_json('channel_id'))
-    channel_leave_v1(token, channel_id)
+# @APP.route("/channel/leave/v1", methods = ['POST'])
+# def channel_leave_https():
+#     token = request.get_json('token')
+#     channel_id = int(request.get_json('channel_id'))
+#     channel_leave_v1(token, channel_id)
 
-    return dumps({})
+#     return dumps({})
 
 @APP.route("/channel/addowner/v1", methods = ['POST'])
 def channel_addowner_http():

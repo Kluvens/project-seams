@@ -322,21 +322,6 @@ def channel_join_v1(auth_user_id, channel_id):
         member_list.append(new_member)
     return {}
 
-def channel_leave_v1(token, channel_id):
-    data = data = data_store.get()
-    channels = data['channels']
-
-    auth_user_id = token_to_user_id(token)
-
-    leave_member - {
-        'u_id': auth_user_id
-    }
-
-    if is_in_channel_owner(auth_user_id):
-        channels['owner_members'].remove(leave_member)
-
-    channels['all_members'].remove(leave_member)
-
 def channel_addowner_v1(token, channel_id, u_id):
     data = data = data_store.get()
     channels = data['channels']

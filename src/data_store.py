@@ -121,6 +121,7 @@ data = {
             'name_first': "name_first",
             'name_last': "name_last",
             'password': "password",
+            'permission': 
         },
         {
             'u_id': 1,
@@ -128,6 +129,7 @@ data = {
             'name_first': "name_first",
             'name_last': "name_last",
             'password': "password",
+            'permission'
         },
     ],
     'channels': [

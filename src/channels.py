@@ -1,5 +1,7 @@
 from src.data_store import data_store
 from src.error import InputError, AccessError
+from src.helpers import decode_token
+from src.helpers import check_if_token_exists
 
 def channels_list_v1(auth_user_id):
 
@@ -95,7 +97,7 @@ def channels_listall_v1(auth_user_id):
 
 
 
-def channels_create_v1(auth_user_id, channel_name, is_public):
+def channels_create_v1(token, channel_name, is_public):
     '''
     This function allows an authorized user to create a channel
 
@@ -114,18 +116,17 @@ def channels_create_v1(auth_user_id, channel_name, is_public):
     Return Value:
     The function will return a dictionary that contains the channel_id of this channel
     '''
-
     data = data_store.get()
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid token")
     
+    auth_user_id = int(decode_token(token))
     host_info = data["users"][auth_user_id]
+
 
     host_info_list = [
         {
             'u_id': host_info["u_id"],
-            'email': host_info["email"],
-            'name_first': host_info["name_first"],
-            'name_last': host_info["name_last"],
-            'handle_str': host_info["handle_str"],
         }
     ]
     all_members_list = host_info_list
@@ -151,3 +152,6 @@ def channels_create_v1(auth_user_id, channel_name, is_public):
     return {
         'channel_id': channel_id,
     }
+
+if __name__ == "__main__":
+    pass

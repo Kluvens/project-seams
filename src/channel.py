@@ -1,7 +1,12 @@
 from src.data_store import data_store
 from src.error import AccessError, InputError
 
-def channel_invite_v1(auth_user_id, channel_id, u_id):
+from src.auth import auth_register_v2, auth_login_v2
+
+from src.helper import find_channel_index, find_user_index, is_in_channel, count_number_owner, get_user_id, is_in_channel_owner
+from src.helpers import decode_token, check_if_token_exists
+
+def channel_invite_v1(token, channel_id, u_id):
 
     ''' 
     channel_invite.py
@@ -24,8 +29,10 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     Return Value:
     This function does not return anything
     '''
-
-
+    auth_user_id = int(decode_token(token))
+    channel_id = int(channel_id)
+    u_id = int(u_id)
+    
     # Access user and channel lists 
     store = data_store.get()
     channels = store['channels']
@@ -75,35 +82,12 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
         member_list = channel_to_join['all_members']
         new_member = {
             'u_id': u_id,
-            'email': users[u_id]["email"],
-            'name_first': users[u_id]["name_first"],
-            'name_last': users[u_id]["name_last"],
-            'handle_str': users[u_id]["handle_str"],
         }
         member_list.append(new_member)
 
     return {}
 
-def find_channel_index(channel_id):
-    data = data_store.get()
-
-    i = 0
-    for channel in data["channels"]:
-        if channel["channel_id"] == channel_id:
-            return i
-        else:
-            i += 1
-    return None
-
-
-def is_in_channel(auth_user_id, right_channel):
-    for member in right_channel["all_members"]:
-        if auth_user_id == member["u_id"]:
-            return True
-
-    return False
-
-def channel_details_v1(auth_user_id, channel_id):
+def channel_details_v1(token, channel_id):
     '''
     This function is given by authorised user id and channel id, returning name, 
     whether the channel is public, a list of owner members and a list of all members.
@@ -124,9 +108,20 @@ def channel_details_v1(auth_user_id, channel_id):
     '''
 
     data = data_store.get()
-    # users = data["users"]
 
-    right_channel_index = find_channel_index(channel_id)
+    # This was a nice bug.
+    channel_id = int(channel_id)
+
+    users = data["users"]
+    channels = data["channels"]
+
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid token")
+    
+    auth_user_id = int(decode_token(token))
+
+    right_channel_index = find_channel_index(channels, channel_id)
+
 
     # error
     if right_channel_index is None:
@@ -137,11 +132,31 @@ def channel_details_v1(auth_user_id, channel_id):
     if not is_in_channel(auth_user_id, right_channel):
         raise AccessError("channel_id is valid and the authorised user is not a member of the channel")
 
+    right_channel_owner_members = [
+        {
+            'u_id': users[member['u_id']]['u_id'],
+            'email': users[member['u_id']]['email'],
+            'name_first': users[member['u_id']]['name_first'],
+            'name_last': users[member['u_id']]['name_last'],
+            'handle_str': users[member['u_id']]['handle_str'],
+        }
+    for member in right_channel['owner_members']]
+
+    right_channel_all_members = [
+        {
+            'u_id': users[member['u_id']]['u_id'],
+            'email': users[member['u_id']]['email'],
+            'name_first': users[member['u_id']]['name_first'],
+            'name_last': users[member['u_id']]['name_last'],
+            'handle_str': users[member['u_id']]['handle_str'],
+        }
+    for member in right_channel['all_members']]
+
     return {
         'name': right_channel["name"],
         'is_public': right_channel["is_public"],
-        'owner_members': right_channel['owner_members'],
-        'all_members': right_channel['all_members'],
+        'owner_members': right_channel_owner_members,
+        'all_members': right_channel_all_members,
     }
 
 
@@ -306,3 +321,96 @@ def channel_join_v1(auth_user_id, channel_id):
             }
         member_list.append(new_member)
     return {}
+
+def channel_leave_v1(token, channel_id):
+    data = data = data_store.get()
+    channels = data['channels']
+
+    auth_user_id = token_to_user_id(token)
+
+    leave_member - {
+        'u_id': auth_user_id
+    }
+
+    if is_in_channel_owner(auth_user_id):
+        channels['owner_members'].remove(leave_member)
+
+    channels['all_members'].remove(leave_member)
+
+def channel_addowner_v1(token, channel_id, u_id):
+    data = data = data_store.get()
+    channels = data['channels']
+
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid token")
+    auth_user_id = int(decode_token(token))
+
+    channel_id = int(channel_id)
+    u_id = int(u_id)
+
+    right_channel_index = find_channel_index(channels, channel_id)
+    # error
+    if right_channel_index is None:
+        raise InputError("channel_id does not refer to a valid channel")
+    right_channel = channels[right_channel_index]
+
+    right_user_index = find_user_index(auth_user_id)
+    # error
+    if right_user_index is None:
+        raise InputError("u_id does not refer to a valid user")
+
+    if not is_in_channel(u_id, right_channel):
+        raise InputError("u_id refers to a user who is not a member of the channel")
+
+    if is_in_channel_owner(u_id, right_channel):
+        raise InputError("u_id refers to a user who is already an owner of the channel")
+
+    # if not permission_check(auth_user_id):
+    #     raise AccessError("channel_id is valid and the authorised user does not have owner permissions in the channel")
+
+    right_channel["owner_members"].append(
+        {
+            'u_id': u_id,
+        }
+    )
+
+    data_store.set(data)
+
+def channel_removeowner_v1(token, channel_id, u_id):
+    data = data = data_store.get()
+    channels = data['channels']
+
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid token")
+    auth_user_id = int(decode_token(token))
+
+    channel_id = int(channel_id)
+    u_id = int(u_id)
+
+    right_channel_index = find_channel_index(channels, channel_id)
+    # error
+    if right_channel_index is None:
+        raise InputError("channel_id does not refer to a valid channel")
+    right_channel = channels[right_channel_index]
+
+    right_user_index = find_user_index(u_id)
+    # error
+    if right_user_index is None:
+        raise InputError("u_id does not refer to a valid user")
+
+    if not is_in_channel_owner(u_id, right_channel):
+        raise InputError("u_id refers to a user who is not an owner of the channel")
+
+    if count_number_owner(right_channel) == 1:
+        raise InputError("u_id refers to a user who is currently the only owner of the channel")
+
+    if not is_in_channel_owner(auth_user_id, right_channel):
+        raise AccessError("channel_id is valid and the authorised user does not have owner permissions in the channel")
+
+    right_channel["owner_members"].remove(
+        {
+            'u_id': u_id,
+        }
+    )
+
+    data_store.set(data)

@@ -72,6 +72,7 @@ def create():
     parameters = request.get_json()
     return dumps(channels_create_v1(**parameters))
 
+
 # channel/details/v2
 @APP.route("/channel/details/v2", methods = ['GET'])
 def channel_details_http():
@@ -97,12 +98,6 @@ def listall():
     paramters_dict = request.get_json()
     return dumps(channels_listall_v2(**paramters_dict))
 
-# channel/details/v2
-@APP.route("/channel/details/v2", methods = ['GET'])
-def channel_details_http():
-    token = request.args.get('token')
-    channel_id = request.args.get('channel_id')
-    return dumps(channel_details_v1(token, channel_id))
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

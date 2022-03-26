@@ -15,17 +15,19 @@ def setup():
     user1_obj = requests.post(f'{url}/auth/register/v2', json={"email": "unswisgreat@unsw.edu.au", "password": "unsw123456", "name_first": "Tony", "name_last": "Stark"})
     assert user1_obj.status_code == 200
     user1_dict = user1_obj.json()
+    assert isinstance(user1_dict, dict) and 'token' in user1_dict and isinstance(user1_dict['token'], str)
 
     # second user
     user2_obj =  requests.post(f'{url}/auth/register/v2', json={"email": "hellounsw@gmail.com", "password": "hey123456", "name_first": "Bruce", "name_last": "Banner"})
     user2_dict = user2_obj.json()
 
     # create first channel
-    channel1_obj = requests.post(f'{url}/channels/create/v2', json={"token": user1_dict['token'], "channel_name": "Kias_channel", "is_public": True})
+    channel1_obj = requests.post(f'{url}/channels/create/v2', json={"token": user1_dict['token'], "name": "Kias_channel", "is_public": True})
     channel1_dict = channel1_obj.json()
+    assert isinstance(channel1_dict, dict) and 'channel_id' in channel1_dict and isinstance(channel1_dict['channel_id'], int)
 
     # create second channel
-    channel2_obj = requests.post(f'{url}/channels/create/v2', json={"token": user2_dict['token'], "channel_name": "my_channel", "is_public": False})
+    channel2_obj = requests.post(f'{url}/channels/create/v2', json={"token": user2_dict['token'], "name": "my_channel", "is_public": False})
     channel2_dict = channel2_obj.json()
 
     return [user1_dict, user2_dict, channel1_dict, channel2_dict]
@@ -35,21 +37,21 @@ def test_channel_create_token_error(setup):
     token = user_dict['token']
     assert isinstance(token, str)
 
-    response = requests.post(f"{url}/channels/create/v2", json={"token": 'invalid_token', "channel_name": "Kias_channel", "is_public": True})
+    response = requests.post(f"{url}/channels/create/v2", json={"token": 'invalid_token', "name": "Kias_channel", "is_public": True})
     assert response.status_code == Access_Error
 
 def test_channel_create_inputError_less_than_1(setup):
     user_dict = setup[0]
     token = user_dict['token']
 
-    response = requests.post(f"{url}/channels/create/v2", json={"token": token, "channel_name": "", "is_public": False})
+    response = requests.post(f"{url}/channels/create/v2", json={"token": token, "name": "", "is_public": False})
     assert response.status_code == Input_Error  
 
 def test_channel_create_inputError_more_than_20(setup):
     user_dict = setup[0]
     token = user_dict['token']
 
-    response = requests.post(f"{url}/channels/create/v2", json={"token": token, "channel_name": "hahahahahaahahahahahamustbemorethantwentyletters", "is_public": False})
+    response = requests.post(f"{url}/channels/create/v2", json={"token": token, "name": "hahahahahaahahahahahamustbemorethantwentyletters", "is_public": False})
     assert response.status_code == Input_Error
 
 def test_channel_details_working_single_member(setup):
@@ -296,7 +298,48 @@ def test_add_owner_u_id_already_owner(setup):
     assert response.status_code == Input_Error
 
 def test_add_owner_no_permission(setup):
-    pass
+    user1_dict = setup[0]
+    user2_dict = setup[1]
+    channel_dict = setup[2]
+    user3_obj = requests.post(f'{url}/auth/register/v2', json={"email": "howareyou@outlook.com", "password": "hey12345678", "name_first": "Bruces", "name_last": "Banners"})
+    user3_dict = user3_obj.json()
+
+    token = user1_dict['token']
+    token_second = user2_dict['token']
+    channel_id = channel_dict['channel_id']
+    u_id = user2_dict['auth_user_id']
+    u_next_id = user3_dict['auth_user_id']
+
+    response = requests.post(f'{url}/channel/invite/v2', json={'token': token, 'channel_id': channel_id, 'u_id': u_id})
+    assert response.status_code == 200
+
+    response = requests.post(f'{url}/channel/invite/v2', json={'token': token, 'channel_id': channel_id, 'u_id': u_next_id})
+    assert response.status_code == 200
+
+    response = requests.post(f"{url}/channel/addowner/v1", json={"token": token_second, "channel_id": channel_id, "u_id": u_next_id})
+    assert response.status_code == Access_Error
+
+def test_add_owner_good_permission(setup):
+    user1_dict = setup[0]
+    user2_dict = setup[1]
+    channel_dict = setup[3]
+    user3_obj = requests.post(f'{url}/auth/register/v2', json={"email": "howareyou@outlook.com", "password": "hey12345678", "name_first": "Bruces", "name_last": "Banners"})
+    user3_dict = user3_obj.json()
+
+    token = user1_dict['token']
+    token_second = user2_dict['token']
+    channel_id = channel_dict['channel_id']
+    u_id = user1_dict['auth_user_id']
+    u_next_id = user3_dict['auth_user_id']
+
+    response = requests.post(f'{url}/channel/invite/v2', json={'token': token_second, 'channel_id': channel_id, 'u_id': u_id})
+    assert response.status_code == 200
+
+    response = requests.post(f'{url}/channel/invite/v2', json={'token': token_second, 'channel_id': channel_id, 'u_id': u_next_id})
+    assert response.status_code == 200
+
+    response = response = response = requests.post(f"{url}/channel/addowner/v1", json={"token": token, "channel_id": channel_id, "u_id": u_next_id})
+    assert response.status_code == 200
 
 def test_remove_owner_working(setup):
     user1_dict = setup[0]
@@ -424,4 +467,26 @@ def test_remove_owner_u_id_the_only_owner(setup):
     assert response.status_code == Input_Error
 
 def test_remove_owner_no_permission(setup):
-    pass
+    user1_dict = setup[0]
+    user2_dict = setup[1]
+    channel_dict = setup[2]
+    user3_obj = requests.post(f'{url}/auth/register/v2', json={"email": "howareyou@outlook.com", "password": "hey12345678", "name_first": "Bruces", "name_last": "Banners"})
+    user3_dict = user3_obj.json()
+
+    token = user1_dict['token']
+    token_second = user2_dict['token']
+    channel_id = channel_dict['channel_id']
+    u_id = user2_dict['auth_user_id']
+    u_next_id = user3_dict['auth_user_id']
+
+    response = requests.post(f'{url}/channel/invite/v2', json={'token': token, 'channel_id': channel_id, 'u_id': u_id})
+    assert response.status_code == 200
+
+    response = requests.post(f'{url}/channel/invite/v2', json={'token': token, 'channel_id': channel_id, 'u_id': u_next_id})
+    assert response.status_code == 200
+
+    response = requests.post(f"{url}/channel/addowner/v1", json={"token": token, "channel_id": channel_id, "u_id": u_next_id})
+    assert response.status_code == 200
+
+    response = requests.post(f"{url}/channel/removeowner/v1", json={"token": token_second, "channel_id": channel_id, "u_id": u_next_id})
+    assert response.status_code == Access_Error

@@ -5,14 +5,15 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
+from src.other import clear_v1
 from src.auth import auth_register_v1
 from src.auth import auth_login_v1
 from src.auth import auth_logout_v1
 from src.channels import channels_create_v1, channels_list_v2, channels_listall_v2
-from src.other import clear_v1
 from src.channel import channel_details_v1
 from src.dms import dm_create_v1
 from src.users import user_profile_v1
+from src.users import user_setname_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -37,7 +38,7 @@ APP.register_error_handler(Exception, defaultHandler)
 
 #### NO NEED TO MODIFY ABOVE THIS POINT, EXCEPT IMPORTS
 
-# Example
+###################### Example ###################################
 @APP.route("/echo", methods=['GET'])
 def echo():
     data = request.args.get('data')
@@ -46,6 +47,9 @@ def echo():
     return dumps({
         'data': data
     })
+
+
+################## Authentication and Registration ###############
 
 # auth/register/v2 route
 @APP.route("/auth/register/v2", methods=['POST'])
@@ -68,6 +72,9 @@ def logout():
     empty_dict = auth_logout_v1(token)
     return dumps(empty_dict)
 
+
+########################## Channels ##############################
+
 # channel/create/v2 route
 @APP.route("/channels/create/v2", methods=['POST'])
 def create():
@@ -82,11 +89,7 @@ def channel_details_http():
     channel_id = request.args.get('channel_id')
     return dumps(channel_details_v1(token, channel_id))
 
-# clear/v1
-@APP.route("/clear/v1", methods=['DELETE'])
-def reset():
-    clear_v1()
-    return dumps({})
+
 
 # channels/list/v2
 @APP.route('/channels/list/v2', methods=['GET'])
@@ -100,11 +103,15 @@ def listall():
     paramters_dict = request.get_json()
     return dumps(channels_listall_v2(**paramters_dict))
 
+
+##################### User routes ############################
+
 # # user/all/v1
 # @APP.route('/user/all/v1', methods=['GET'])
 # def get_all_users():
 #     token = request.get_json()
 #     return dumps(user_profile_v1(token))
+
 
 # user/profile/v1
 @APP.route('/user/profile/v1', methods=['GET'])
@@ -115,11 +122,38 @@ def profile():
 
     return dumps(user_profile_v1(token, int(u_id)))
 
+
+# user/setname/v1
+@APP.route('/user/setname/v1', methods=['PUT'])
+def setname():
+    parameters = request.get_json()
+    return dumps(user_setname_v1(**parameters))
+
+
+######################## DMS #####################################
+
 # dm/create/v1 
 @APP.route("/dm/create/v1", methods=['POST'])
 def dm_create():
     parameters = request.get_json()
     return dumps(dm_create_v1(**parameters))
+
+
+
+####################### CLEARING/RESTTING ########################
+
+
+# clear/v1
+@APP.route("/clear/v1", methods=['DELETE'])
+def reset():
+    clear_v1()
+    return dumps({})
+
+
+
+###################### END OF SERVER ROUTES SECTION ################
+
+
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

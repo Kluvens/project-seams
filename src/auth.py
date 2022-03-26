@@ -11,6 +11,7 @@ from src.error import AccessError
 from src.error import InputError
 from src.helpers import check_if_token_exists
 from src.helpers import decode_token
+# Get all relevant helper functions here
 
 def auth_login_v1(email, password):
     '''
@@ -172,11 +173,12 @@ def auth_register_v1(email, password, name_first, name_last):
 
 def auth_logout_v1(token):
     '''
-        This function takes in a token string. If the
-        token is invalid, it raises an access error.
-        Otherwise, it logs out the user session that
-        corresponds to the token and returns an empty dict
+    This function takes in a token string. If the
+    token is invalid, it raises an access error.
+    Otherwise, it logs out the user session that
+    corresponds to the token and returns an empty dict
     '''
+    
     if not check_if_token_exists(token):
         raise AccessError(description="Invalid Token!")
 
@@ -342,13 +344,4 @@ def generate_session_token(u_id):
 # ====================END OF HELPER FUNCTIONS SECTION ===================
 
 
-if __name__ == "__main__":
-    u1 = auth_register_v1("wqq@ss.com", "123123abc", "k", "z")
-    u2 = auth_register_v1("wqqs@ss.com", "12323abc", "k", "z")
-    l1 = auth_login_v1("wqq@ss.com", "123123abc")
-    # print(l1)
-    # print(u1)
-    data = data_store.get()['users'][0]['password']
-    x = hash("123123abc")
-    print(f"----{data}\n\n----{x}")
-    print(len(data))
+if __name__ == "__main__":...

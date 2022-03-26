@@ -11,6 +11,8 @@ from src.auth import auth_logout_v1
 from src.channels import channels_create_v1, channels_list_v2, channels_listall_v2
 from src.other import clear_v1
 from src.channel import channel_details_v1
+from src.dms import dm_create_v1
+from src.users import user_profile_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -63,7 +65,7 @@ def login():
 @APP.route("/auth/logout/v1", methods=['POST'])
 def logout():
     token = request.get_json()
-    empty_dict = auth_logout_v1(str(token))
+    empty_dict = auth_logout_v1(token)
     return dumps(empty_dict)
 
 # channel/create/v2 route
@@ -98,6 +100,26 @@ def listall():
     paramters_dict = request.get_json()
     return dumps(channels_listall_v2(**paramters_dict))
 
+# user/all/v1
+@APP.route('/user/all/v1', methods=['GET'])
+def get_all_users():
+    token = request.get_json()
+    return dumps(user_profile_v1(token))
+
+# user/profile/v1
+@APP.route('/user/profile/v1', methods=['GET'])
+def profile():
+    token = request.args.get("token")
+    u_id = request.args.get("u_id")
+    u_id = int(u_id)
+
+    return dumps(user_profile_v1(token, int(u_id)))
+
+# dm/create/v1 
+@APP.route("/dm/create/v1", methods=['POST'])
+def dm_create():
+    parameters = request.get_json()
+    return dumps(dm_create_v1(**parameters))
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

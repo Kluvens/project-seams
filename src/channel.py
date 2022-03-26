@@ -1,5 +1,6 @@
 from src.data_store import data_store
 from src.error import AccessError, InputError
+from src.helpers import decode_token,check_if_token_exists
 
 def channel_invite_v2(token, channel_id, u_id):
 
@@ -38,8 +39,13 @@ def channel_invite_v2(token, channel_id, u_id):
     auth_user_authorized = False
     u_id_member = False
 
+    # Check if token exists
+    token_exists = check_if_token_exists(token)
     # Convert token to auth_user_id TO DO
-    auth_user_id = token
+    if token_exists:
+        auth_user_id = decode_token(token)
+    else:
+        raise AccessError ("ERROR: Token does not exist")
 
     # Check for valid u_id
     u_id_list = [user['u_id']for user in users]
@@ -74,7 +80,7 @@ def channel_invite_v2(token, channel_id, u_id):
         raise AccessError ("ERROR: You are not authorized to invite users to this channel.")
 
     # If all conditions are met, append user to members list for given channel
-    if u_id_valid == True and channel_to_join != None and u_id_member == False and auth_user_authorized == True:
+    if u_id_valid and channel_to_join != None and not u_id_member and auth_user_authorized and token_exists:
         member_list = channel_to_join['all_members']
         new_member = {'u_id': u_id}
         member_list.append(new_member)

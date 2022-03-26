@@ -100,11 +100,11 @@ def listall():
     paramters_dict = request.get_json()
     return dumps(channels_listall_v2(**paramters_dict))
 
-# user/all/v1
-@APP.route('/user/all/v1', methods=['GET'])
-def get_all_users():
-    token = request.get_json()
-    return dumps(user_profile_v1(token))
+# # user/all/v1
+# @APP.route('/user/all/v1', methods=['GET'])
+# def get_all_users():
+#     token = request.get_json()
+#     return dumps(user_profile_v1(token))
 
 # user/profile/v1
 @APP.route('/user/profile/v1', methods=['GET'])

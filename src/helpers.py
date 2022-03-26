@@ -1,3 +1,4 @@
+import re
 import jwt
 import uuid
 import json
@@ -40,8 +41,8 @@ def decode_token(token):
     try:
         payload = jwt.decode(token, secret, algorithms=["HS256"])
 
-    except (jwt.InvalidTokenError, jwt.DecodeError):
-        raise AccessError(description="Invalid Token!")
+    except (jwt.InvalidTokenError, jwt.DecodeError) as invalid_token:
+        raise AccessError(description="Invalid Token!") from invalid_token
 
     return payload['u_id']
 

@@ -35,12 +35,4 @@ def dm_create_v1(token, u_ids):
 
     return dm_id
 
-if __name__ == "__main__":
-    u0 = auth_register_v1("k@gami.com", "1321421532", "z0", "A0" )
-    u1 = auth_register_v1("k1@gami.com", "1321421532", "h1", "A0" )
-    u2 = auth_register_v1("k2@gami.com", "1321421532", "h2", "A0" )
-    u3 = auth_register_v1("k3@gami.com", "1321421532", "A3", "A0" )
-
-    dm_create(u1["token"], [u0["auth_user_id"], u1["auth_user_id"], u2["auth_user_id"], u3["auth_user_id"]])
-    data = data_store.get()
-    print(data["dms"])
+if __name__ == "__main__":...

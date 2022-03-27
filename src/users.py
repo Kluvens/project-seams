@@ -186,3 +186,47 @@ def user_profile_setemail_v1(token, email):
     return {}
 
 
+
+def user_profile_sethandle_v1(token, handle_str):
+    '''
+    This function updates the handle string of the user
+    with the u_id that corresponds to the token passed. 
+
+    Arguments: 
+        - token, type: str
+        - handle_str : str
+    
+    Exceptions: 
+        - Throws an AccessError when an invalid token
+        string is passed
+        - Throws an AccessError when an invalid u_id
+        is passed
+        - Throws an InputError when the handle_Str
+        already exists
+        - Throws an InputError when the handle_str
+        is not in between 3 and 20 characters
+    
+    Return: empty dictionary 
+    '''
+
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid Token")
+
+    if len(handle_str) < 3 or len(handle_str) > 20:
+        raise InputError(description="Handle string must be within 3 and 20 characters.")
+    
+    if not handle_str.isalnum():
+        raise InputError(description=
+            "Handle string must be consist of alphanumeric characters only.")
+
+    u_id = decode_token(token)
+
+    users = data_store.get()["users"]
+
+    if not check_handlestr_unique(users, handle_str):
+        raise InputError(description="Handle already exists!")
+
+    idx = get_user_idx(users, u_id)
+    users[idx]["handle_str"] = handle_str
+
+    return {}

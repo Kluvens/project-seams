@@ -1,3 +1,9 @@
+'''
+This file contains all the server functionality for seams.
+'''
+
+
+########################## Import Statements #####################
 import sys
 import signal
 from json import dumps
@@ -15,6 +21,9 @@ from src.dms import dm_create_v1
 from src.users import user_profile_v1
 from src.users import user_setname_v1
 from src.users import user_profile_setemail_v1
+from src.users import user_profile_sethandle_v1
+
+###################### INITIAL SERVER SETUP ######################
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -125,15 +134,21 @@ def profile():
 
 # user/setname/v1
 @APP.route('/user/setname/v1', methods=['PUT'])
-def setname():
+def set_name():
     parameters = request.get_json()
     return dumps(user_setname_v1(**parameters))
 
 # user/setname/v1
 @APP.route('/user/profile/setemail/v1', methods=['PUT'])
-def setemail():
+def set_email():
     parameters = request.get_json()
     return dumps(user_profile_setemail_v1(**parameters))
+
+# user/setname/v1
+@APP.route('/user/profile/sethandle/v1', methods=['PUT'])
+def set_handle():
+    parameters = request.get_json()
+    return dumps(user_profile_sethandle_v1(**parameters))
 
 ######################## DMS #####################################
 

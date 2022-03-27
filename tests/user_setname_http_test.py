@@ -30,7 +30,7 @@ INPUT_ERROR = 400
 
 @pytest.fixture
 def route():
-    return url + "user/setname/v1"
+    return url + "user/profile/setname/v1"
 
 
 def user_setname_request(route, token, name_first, name_last):

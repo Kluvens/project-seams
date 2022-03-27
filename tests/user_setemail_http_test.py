@@ -1,19 +1,18 @@
 '''
 This is testing module for the user/profile/setemail/v1 route.
 
-This module makes use of modularised fixtures which
+NOTE: This module makes use of modularised fixtures which
 can be found in src.conftest.py
 
 Additionally, a helper class has been used
 to generate dummy user test data to pass in
 the server. 
-NOTE: There is a modularised fixture called
-dummy_data, which is used in this module. You
-can find it under project_backend/conftest.py  
+
 
 Author: Kais Alzubaidi, z5246721
 
 '''
+#====================== Import Statements ========================
 
 import json
 import requests

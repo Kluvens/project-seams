@@ -149,7 +149,7 @@ def test_two_dms(detail_route, dummy_data, create_route):
     }
 
 #============================== Testing Exception ================
-def test_sinvalid_dm_id_InputError(create_route, detail_route, dummy_data):
+def test_invalid_dm_id_InputError(create_route, detail_route, dummy_data):
     reset_call()
 
     users_list = dummy_data.register_users(num_of_users=2)

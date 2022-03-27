@@ -1,3 +1,8 @@
+'''
+FILE DESCRIPTION :
+'''
+
+############################### Import Statements ################
 from src.data_store import data_store
 from src.error import AccessError
 from src.error import InputError
@@ -12,45 +17,41 @@ from src.helpers import get_user_idx
 from src.helpers import check_u_id_exists
 
 
+##################### User Function Implementations ##############
+def users_all_v1(token):
+    '''
+    This function displays all the user details
+    that are registered in the database
 
-# Can any user request this function
-# def user_all_v1(token):
-#     '''
-#     This function displays all the user details
-#     that are registered in the database
-
-#     Arguments: token, type: str
+    Arguments: token, type: str
     
-#     Exceptions: 
-#         - Throws an AccessError when an invalid token
-#         string is passed
+    Exceptions: 
+        - Throws an AccessError when an invalid token
+        string is passed
     
-#     Return: A list of user dictionaries, where
-#     each dict has a key-value pair of
-#     u_id, email, name_first, name_last, handle_str
+    Return: A list of user dictionaries, where
+    each dict has a key-value pair of
+    u_id, email, name_first, name_last, handle_str
 
-#     '''
-#     if not check_if_token_exists(token):
-#         raise AccessError(description="Invalid Token")
+    '''
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid Token")
 
-#     users = data_store.get()["users"]
-#     users_details = []
-#     for user in users:
-#         users_details.append({
-#             "u_id" : user["u_id"],
-#             "email" : user["email"],
-#             "name_first": user["name_first"],
-#             "name_last" : user["name_last"],
-#             "handle_str" : user["handle_str"]
-#         })
+    users = data_store.get()["users"]
+    users_details = []
+    for user in users:
+        users_details.append({
+            "u_id" : user["u_id"],
+            "email" : user["email"],
+            "name_first": user["name_first"],
+            "name_last" : user["name_last"],
+            "handle_str" : user["handle_str"]
+        })
 
-#     return users_details
+    return users_details
 
 
-# Can any user request this function
 def user_profile_v1(token, u_id):
-    
-    # u_id = int(u_id)
     '''
     This function displays all the user details
     that belong to the u_id passed to the function
@@ -91,6 +92,7 @@ def user_profile_v1(token, u_id):
 
     return user_profile
 
+
 def user_setname_v1(token, name_first, name_last):
     '''
     This function updates the first and last names of
@@ -130,7 +132,6 @@ def user_setname_v1(token, name_first, name_last):
     idx = get_user_idx(users, u_id)
     users[idx]["name_first"] = name_first
     users[idx]["name_last"] = name_last
-    # Should this be done? 
     users[u_id]["handle_str"] = generate_handle(users, name_first, name_last)
 
     return {}

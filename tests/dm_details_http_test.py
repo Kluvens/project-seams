@@ -156,7 +156,7 @@ def test_sinvalid_dm_id_InputError(create_route, detail_route, dummy_data):
     user0 = users_list[0]
     user1 = users_list[1]
 
-    response = requests.post(
+    requests.post(
         create_route, 
         json={
         'token': user0['token'],

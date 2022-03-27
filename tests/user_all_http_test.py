@@ -37,7 +37,7 @@ def user_expected_details(user_info, u_id):
 #================Test Exceptions: Invalid Token===================
 
 # Invalid token - non jwt compliant string.
-@pytest.mark.parametrize("random_str", 
+@pytest.mark.parametrize("random_token", 
     [
         "",
         " ",
@@ -49,11 +49,10 @@ def user_expected_details(user_info, u_id):
         "v6zDYwO1PpLyMIAi8DP2LudrNehIoaQhxsG0TbFUS37Igc6qx9GTsvjlKsTugWA7gvkM"
     ]
 )
-def test_random_invalid_token(dummy_data, random_str):
+def test_random_invalid_token(route, dummy_data, random_token):
     reset_call()
-    users_list = dummy_data.register_users(num_of_users=3)
-    user0_uid = users_list[0]["auth_user_id"]
-    response = users_all_request(random_str)
+    dummy_data.register_users(num_of_users=3)
+    response = users_all_request(route, token=random_token)
 
     assert response.status_code == ACCESS_ERROR
 
@@ -63,7 +62,7 @@ def test_random_invalid_token(dummy_data, random_str):
 # registering users, logging them out and
 # testing users/all/v1 excpetion handelling capability
 # with a variable number of registered users
-def test_random_invalid_token(route, dummy_data):
+def test_invalid_token(route, dummy_data):
     reset_call()
     users_list = dummy_data.register_users(num_of_users=4)
     for user in users_list:

@@ -70,7 +70,7 @@ def user_profile_request(token, u_id):
 )
 def test_random_invalid_token(route, dummy_data, random_token):
     reset_call()
-    users_list = dummy_data.register_users(num_of_users=4)
+    dummy_data.register_users(num_of_users=4)
     response = user_setname_request(route, random_token, "Kais", "Alzubaidi")
 
     assert response.status_code == ACCESS_ERROR

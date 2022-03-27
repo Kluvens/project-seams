@@ -65,7 +65,7 @@ def user_profile_request(token, u_id):
 )
 def test_random_invalid_token(route, dummy_data, random_token):
     reset_call()
-    users_list = dummy_data.register_users(num_of_users=4)
+    dummy_data.register_users(num_of_users=4)
     new_email = "Kais999@seams.com"
     setemail_response = user_setemail_request(route, random_token, new_email)
 

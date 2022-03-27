@@ -1,81 +1,75 @@
-# import json
-# import requests
-# import pytest
-# from src.config import url
-# from tests.http_helpers import GenerateTestData
-# from src.error import InputError
-# from requests import HTTPError
+import json
+import requests
+import pytest
+from src.config import url
+from src.error import AccessError
+from tests.http_helpers import GenerateTestData
+from tests.http_helpers import reset_call
 
 
-# #====================== Helper functions / Fixtures ===============
-# ########## THIS SECTION WILL BE MOVED TO http_helpers.py ##########
-# OKAY = 200
-# ACEESS_ERROR = 403
-# INPUT_ERROR = 400
+#====================== Helper functions / Fixtures ===============
 
-# def reset_call():
-#     requests.delete(url + 'clear/v1')
+OKAY = 200
+ACCESS_ERROR = 403
+INPUT_ERROR = 400
 
 
-# @pytest.fixture()
-# def dummy_data():
-#     data_instance = GenerateTestData(url)
-#     return data_instance
+@pytest.fixture
+def route():
+    return url + "users/all/v1"
 
 
-# @pytest.fixture
-# def route():
-#     return url + "users/all/v1"
+def users_all_request(route, token):
+    return requests.get(
+        route, params={"token" : token})
 
-# def users_all_request(route, token):
-#     return requests.get(route, params={"token" : token})
 
-# # Index DOES NOT refer to a database index.
-# # It's just the order in which a user's info
-# # was passed to an auth/register/v1 request
-# def user_expected_details(user_info, token):
-#     return {  
-#     'u_id' : user1_list[0]["token"]
-#     'email' : user1_info["email"], 
-#     'name_first' : user1_info["name_first"],
-#     'name_last' : user1_info["name_last"],
-#     'handle_str' : user1_info["name_first"] + user1_info["name_last"]
-#     }
-# #================Test Exceptions: Invalid Token===================
+def user_expected_details(user_info, u_id):
+    return {  
+    'u_id' : u_id,
+    'email' : user_info["email"], 
+    'name_first' : user_info["name_first"],
+    'name_last' : user_info["name_last"],
+    'handle_str' : (user_info["name_first"] + user_info["name_last"]).lower()
+    }
 
-# # Invalid token - non jwt compliant string.
-# @pytest.mark.fixtures("random_str", 
-#     [
-#         "",
-#         " ",
-#         "0"
-#         "$%#!#(*&!~~~!@#%^&*(^#@!!",
-#         "K5nposQGhC",
-#         "AERt57xvzMAP75M1SSZ4",
-#         "vziOn8qtcS0dair4QumzNORUKMj13vTA3i0mWm9i",
-#         "v6zDYwO1PpLyMIAi8DP2LudrNehIoaQhxsG0TbFUS37Igc6qx9GTsvjlKsTugWA7gvkM"
-#     ]
-# )
-# def test_random_invalid_token(route, dummy_data, random_str):
-#     dummy_data.register_users(num_of_users=3)
-#     response = requests.get(route, json={"token" : random_str})
 
-#     assert response.status_code == ACEESS_ERROR
+#================Test Exceptions: Invalid Token===================
+
+# Invalid token - non jwt compliant string.
+@pytest.mark.parametrize("random_str", 
+    [
+        "",
+        " ",
+        "0"
+        "$%#!#(*&!~~~!@#%^&*(^#@!!",
+        "K5nposQGhC",
+        "AERt57xvzMAP75M1SSZ4",
+        "vziOn8qtcS0dair4QumzNORUKMj13vTA3i0mWm9i",
+        "v6zDYwO1PpLyMIAi8DP2LudrNehIoaQhxsG0TbFUS37Igc6qx9GTsvjlKsTugWA7gvkM"
+    ]
+)
+def test_random_invalid_token(dummy_data, random_str):
+    reset_call()
+    users_list = dummy_data.register_users(num_of_users=3)
+    user0_uid = users_list[0]["auth_user_id"]
+    response = users_all_request(random_str)
+
+    assert response.status_code == ACCESS_ERROR
 
 
 
-# # Invalid token - jwt compliant
-# # registering users, logging them out and
-# # testing users/all/v1 excpetion handelling capability
-# # with a variable number of registered users
-# def test_random_invalid_token(route, dummy_data):
-#     reset_call()
-#     users_list = dummy_data.register_users(num_of_users=4)
-#     for user in user_list:
-#         dummy.data.logout_request(user["token"])
-#         response = requests.get(route, json={user["token"]})
-#         assert response.status_code == ACEESS_ERROR
-
+# Invalid token - jwt compliant
+# registering users, logging them out and
+# testing users/all/v1 excpetion handelling capability
+# with a variable number of registered users
+def test_random_invalid_token(route, dummy_data):
+    reset_call()
+    users_list = dummy_data.register_users(num_of_users=4)
+    for user in users_list:
+        dummy_data.logout_request(user["token"])
+        response = users_all_request(route, user["token"])
+        assert response.status_code == AccessError.code
 
 # #=================Testing HTTP layer==============================
 # def test_request_response():
@@ -99,4 +93,33 @@
 #     expected_output.append(expected_user2)
 # }
 
-#     assert users_details_dict == expected_output
+    # assert users_details_dict == expected_output
+
+def test_users_all_request(route, dummy_data):
+    reset_call()
+    users_list = dummy_data.register_users(num_of_users=2)
+    
+    # The users making the profile request varies according to user_idx
+    user0_token = users_list[0]["token"]
+
+    user0_u_id = users_list[0]["auth_user_id"]
+    user1_u_id = users_list[1]["auth_user_id"]
+
+    response = users_all_request(route, user0_token)
+    assert response.status_code == 200
+
+    users_details_dict = json.loads(response.text)
+
+    # This is still blackbox, as we're only testing http server interface
+    expected_user0_det = user_expected_details(
+        dummy_data.data_owner(), 
+        user0_u_id
+    )
+
+    expected_user1_det = user_expected_details(
+    dummy_data.data_dummy1(), 
+    user1_u_id
+    )
+
+    expected_output = [expected_user0_det, expected_user1_det]
+    assert users_details_dict == expected_output

@@ -1,9 +1,11 @@
+import re
 import jwt
 import uuid
 import json
 import requests
 import hashlib
 from src.data_store import data_store
+from src.error import AccessError
 
 def check_if_token_exists(token):
     '''
@@ -25,21 +27,25 @@ def check_if_token_exists(token):
             return True
     return False
 
-def check_if_dm_token_exists(token):
-    
-    dms = data_store.get()['dms']
-    for dm in dms:
-        if dm['sessions'] == {}:
-            return False
-        if token in dm['sessions']:
-            return True
-    return False
 
-# add error handelling in case of invalid token
 def decode_token(token):
-    secret = "rjry3rJYwYIDHvVU0wJQuh6cFujCDfWS4Qa81w9HHGjEa0xs7N"
-    payload = jwt.decode(token, secret, algorithms=["HS256"])
+    '''
+    This is a helper function that takes in a token string.
+    If the string has a jwt acceptable format, it will decode
+    it and return a u_id. 
+
+    Otherwise, it will raise an AccessError exception
+    '''
+
+    secret = "rjry3rJYwYIDHvVU0wJQuh6cFujCDfWS4Qa81w9HHGjEa0xs7N"    
+    try:
+        payload = jwt.decode(token, secret, algorithms=["HS256"])
+
+    except (jwt.InvalidTokenError, jwt.DecodeError) as invalid_token:
+        raise AccessError(description="Invalid Token!") from invalid_token
+
     return payload['u_id']
+
 
 
 def generate_session_token(u_id):
@@ -73,3 +79,92 @@ def hash(password):
     password string. It returns the hashed string.
     '''
     return hashlib.sha256(str(password).encode()).hexdigest()
+
+
+def generate_handle(users_list, name_first, name_last):
+    '''
+    This function generates a unique alphanumeric handle for a new user.
+    More details can be found in the details spec.
+
+    It returns a string containing the handle generated
+
+    '''
+    naive_handle = ''.join([name_first, name_last])
+    naive_handle = ''.join(ch for ch in naive_handle if ch.isalnum())
+    naive_handle = naive_handle.lower()[:20]
+
+    # starting at -1 since dupilicate handle strings will
+    # start with 0 suffix
+    handle_matches = -1
+    for user in users_list:
+        if user['handle_str'][:len(naive_handle)] == naive_handle:
+            handle_matches += 1
+
+    if handle_matches >= 0:
+        handle_with_suffix = [naive_handle, str(handle_matches)]
+        handle = ''.join(handle_with_suffix)
+    else:
+        # no matches and no need for numerical suffix
+        handle = naive_handle
+
+    return handle
+
+
+def is_valid_name(name):
+    '''
+    This function checks if the name parameter is in between 1 and 50 characters
+    (inclusive)
+    It is assumed the name object will always be of type string.
+    '''
+
+    if len(name) >= 1 and len(name) <= 50:
+        return True
+    return False
+
+
+def is_valid_email(email):
+    '''
+    This funciton utilised the regex module to check
+    if the validty of an email string by checking if it matches a given regex.
+    See regex below
+
+    It returns True if it passes the check (if it is valid)
+    Otherwise it returns False
+    '''
+
+    # Using regex module
+    regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
+
+    # using fullmatch which will match the entier email regex.
+    match = re.fullmatch(regex, email)
+    if match is not None:
+        return True
+    return False
+
+
+def is_email_already_registered(users_list, email):
+    '''
+    Given a users list of dictionaries and an email string, this function
+    checks if the email given belongs to an existing user.
+    It returns True if it finds a match. Otherwise, it returns False
+
+    '''
+
+    for user in users_list:
+        if user['email'] == email:
+            return True
+    return False
+
+def check_handlestr_unique(users, handle_str):
+    for user in users:
+        if handle_str == user["handle_str"]:
+            return False
+    return True
+
+
+def get_user_idx(users, u_id):
+    for idx, user in enumerate(users):
+        if u_id == user["u_id"]:
+            return idx
+    # does not exist
+    return None

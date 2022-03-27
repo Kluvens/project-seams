@@ -294,3 +294,8 @@ def channel_join_v1(auth_user_id, channel_id):
         new_member = {'u_id':auth_user_id}
         member_list.append(new_member)
     return {}
+
+# ============================================= CHANNEL LEAVE ==============================================
+
+def channel_leave_v1(token, channel_id):
+    return()

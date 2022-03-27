@@ -4,8 +4,6 @@ import pytest
 from src.config import url
 from tests.http_helpers import GenerateTestData
 from src.error import InputError
-from requests import HTTPError
-
 
 #====================== Helper functions / Fixtures ===============
 ########## THIS SECTION WILL BE MOVED TO http_helpers.py ##########
@@ -26,7 +24,6 @@ def dummy_data():
 def route():
     return url + "auth/logout/v1"
 
-@pytest.mark.parametrize("num_of_users, user_num", [(1, 0), (2, 1), (3, 2)])
 #==================================================================
 
 # Check behaviour when there is a varaible number of registers
@@ -49,7 +46,7 @@ def test_logout_new_user(route, dummy_data, num_of_users, user_num):
 
 # #================================================================
 
-#invalid token - jwt compliant
+# invalid token - jwt compliant
 @pytest.mark.parametrize("num_of_users, user_num", [(1, 0), (2, 0), (4, 2)])
 def test_logout_invalid_token(route, dummy_data, num_of_users, user_num):
     reset_call()

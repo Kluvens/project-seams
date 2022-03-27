@@ -13,7 +13,7 @@ def message_senddm_v1(token, dm_id, message):
         raise AccessError(description="Invalid token")
     auth_user_id = int(decode_token(token))
 
-    right_dm_index = find_dm_index(dm_id)
+    right_dm_index = find_dm_index(dms, dm_id)
 
     # error
     if right_dm_index is None:

@@ -47,6 +47,16 @@ def test_message_senddm_working(setup):
     response = requests.post(f'{url}/message/senddm/v1', json={"token": token, "dm_id": dm_id, "message": message})
     assert response.status_code == OKAY
 
+    message = "This is very good and very good"
+
+    response = requests.post(f'{url}/message/senddm/v1', json={"token": token, "dm_id": dm_id, "message": message})
+    assert response.status_code == OKAY
+
+    message = "This is very, very good"
+    response = requests.post(f'{url}/message/senddm/v1', json={"token": token, "dm_id": dm_id, "message": message})
+    assert response.status_code == OKAY
+    # the messages in dm should have three messages
+
 def test_message_senddm_dm_id_invalid(setup):
     user1_dict = setup[0]
     dm_dict = setup[2]

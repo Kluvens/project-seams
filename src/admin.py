@@ -54,6 +54,17 @@ def admin_user_remove_v1(token, u_id):
             if o_member['u_id'] == u_id:
                 o_member['u_id'] = None
 
+    for dm in data['dms']:
+        for message in dm['messages']:
+            if message['u_id'] == u_id:
+                message['message'] = 'Removed user'
+        for member in dm['all_members']:
+            if member['u_id'] == u_id:
+                member['u_id'] = None
+        for o_member in dm['owner_members']:
+            if o_member['u_id'] == u_id:
+                o_member['u_id'] = None
+
     data_store.set(data)
 
     return {}

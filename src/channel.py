@@ -506,5 +506,9 @@ def channel_leave_v1(token, channel_id):
         if member['u_id'] == u_id:
             channels[channel_index]['all_members'].remove({'u_id': u_id})
 
+    for member in channels[channel_index]['owner_members']:
+        if member['u_id'] == u_id:
+            channels[channel_index]['owner_members'].remove({'u_id': u_id})
+
     return()
 

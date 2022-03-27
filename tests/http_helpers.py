@@ -1,6 +1,11 @@
 import json
 import requests
 from src.helpers import hash
+from src.config import url
+
+
+def reset_call():
+    requests.delete(url + 'clear/v1')
 
 class GenerateTestData:
     '''
@@ -40,8 +45,8 @@ class GenerateTestData:
         return {
             "email" : "dummy1@seams.com",
             "password" : "dummy1_123",
-            "name_first" : "test_first1",
-            "name_last" : "test_last1"
+            "name_first" : "testfirst1",
+            "name_last" : "testlast1"
         }
 
 
@@ -49,16 +54,16 @@ class GenerateTestData:
         return  {
             "email" : "dummy2@seams.com",
             "password" : "dummy2_123",
-            "name_first" : "test_first2",
-            "name_last" : "test_last2"
+            "name_first" : "testfirst2",
+            "name_last" : "testlast2"
         }
 
     def data_dummy3(self):
         return {
             "email" : "dummy3@seams.com",
             "password" : "dummy3_123",
-            "name_first" : "test_first3",
-            "name_last" : "test_last3"
+            "name_first" : "testfirst3",
+            "name_last" : "testlast3"
         }
 
 
@@ -78,6 +83,7 @@ class GenerateTestData:
             "name" : "DummyChannel1",
             "is_public" : False
         }
+
 
     def dummy_users_data(self, num_of_users):
         dummy_users = {
@@ -100,6 +106,8 @@ class GenerateTestData:
 
 
     def register_users(self, num_of_users):
+        '''
+        '''
         users = self.dummy_users_data(num_of_users)
         register_user_route = self.url + 'auth/register/v2'
         registered_users = [] 
@@ -112,6 +120,7 @@ class GenerateTestData:
             registered_users.append(user_dict)
         
         return registered_users
+
 
     def login(self, num_of_users):
         '''
@@ -131,6 +140,15 @@ class GenerateTestData:
         return logged_in_users
 
 
+    def logout_request(self, token):
+        '''
+        '''
+        # print(token)
+        route = self.url + 'auth/logout/v1'
+        response = requests.post(route, json=token)
+        assert response.status_code == 200
+    
+
     # for now this supports up to 2 channels
     def create_channel(self, num_of_channels, token):
         '''
@@ -142,4 +160,5 @@ class GenerateTestData:
             json=parameters
         )
         return response
+
 

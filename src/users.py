@@ -40,13 +40,14 @@ def users_all_v1(token):
     users = data_store.get()["users"]
     users_details = []
     for user in users:
-        users_details.append({
-            "u_id" : user["u_id"],
-            "email" : user["email"],
-            "name_first": user["name_first"],
-            "name_last" : user["name_last"],
-            "handle_str" : user["handle_str"]
-        })
+        if user["exist_status"]:
+            users_details.append({
+                "u_id" : user["u_id"],
+                "email" : user["email"],
+                "name_first": user["name_first"],
+                "name_last" : user["name_last"],
+                "handle_str" : user["handle_str"]
+            })
 
     return users_details
 

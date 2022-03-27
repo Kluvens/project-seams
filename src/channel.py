@@ -3,7 +3,7 @@ from src.error import AccessError, InputError
 from src.helpers import decode_token
 from src.helpers import check_if_token_exists
 from src.helper import find_channel_index, is_in_channel
-from src.helper import  count_number_owner, get_user_id, is_in_channel_owner
+from src.helper import  count_number_owner, is_in_channel_owner
 from src.helper import global_owner_check, get_user_idx
 from src.helpers import decode_token, check_if_token_exists
 

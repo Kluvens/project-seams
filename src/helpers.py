@@ -1,5 +1,5 @@
 '''
-Module Description:
+Module Description: This is a helper functions module
 
 '''
 
@@ -42,17 +42,8 @@ def check_if_token_exists(token):
             return True
     return False
 
-def check_if_dm_token_exists(token):
-    
-    dms = data_store.get()['dms']
-    for dm in dms:
-        if dm['sessions'] == {}:
-            return False
-        if token in dm['sessions']:
-            return True
-    return False
 
-# add error handelling in case of invalid token
+
 def decode_token(token):
     '''
     This is a helper function that takes in a token string.
@@ -220,6 +211,7 @@ def is_in_dm(u_id, right_dm):
 
     return False
 
+
 def generate_dm_handle(owner_uid, u_ids, users):
     handles = []
     idx = get_user_idx(users, owner_uid) 
@@ -228,6 +220,7 @@ def generate_dm_handle(owner_uid, u_ids, users):
         idx = get_user_idx(users, u_id) 
         handles.append(users[idx]["handle_str"])
     return handles
+
 
 def is_global_owner(u_id):
     users = data_store.get()['users']
@@ -239,19 +232,31 @@ def is_global_owner(u_id):
                 return False
     return False
 
-def write_savefile():
-    pass
-    """
-    Saves data into pickle file, to ensure when server is restarted, data is not erased
-    """
-    # with open('src/savefile.p', 'wb') as FILE:
-    #     pickle.dump(data_store, FILE)
+# def write_savefile():
+#     pass
+#     """
+#     Saves data into pickle file, to ensure when server is restarted, data is not erased
+#     """
+#     # with open('src/savefile.p', 'wb') as FILE:
+#     #     pickle.dump(data_store, FILE)
     
 
-def load_savefile():
-    pass
-    """
-    Open and loads data into pickle file, to ensure when server is restarted, data is not erased
-    """
-    # with open('src/savefile.p', 'rb') as FILE:
-    #     return pickle.load(FILE)
+# def load_savefile():
+#     pass
+#     """
+#     Open and loads data into pickle file, to ensure when server is restarted, data is not erased
+#     """
+#     # with open('src/savefile.p', 'rb') as FILE:
+#     #     return pickle.load(FILE)
+
+# def check_if_dm_token_exists(token):
+    
+#     dms = data_store.get()['dms']
+#     for dm in dms:
+#         if dm['sessions'] == {}:
+#             return False
+#         if token in dm['sessions']:
+#             return True
+#     return False
+
+# add error handelling in case of invalid token

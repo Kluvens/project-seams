@@ -24,9 +24,6 @@ from src.error import AccessError, InputError
 #====================== Helper functions / Fixtures ===============
 
 OKAY = 200
-ACCESS_ERROR = 403
-INPUT_ERROR = 400
-
 
 @pytest.fixture
 def route():
@@ -74,7 +71,7 @@ def test_random_invalid_token(route, dummy_data, random_token):
     dummy_data.register_users(num_of_users=4)
     response = user_setname_request(route, random_token, "Kais", "Alzubaidi")
 
-    assert response.status_code == ACCESS_ERROR
+    assert response.status_code == AccessError.code
 
 
 
@@ -87,7 +84,7 @@ def test_invalid_token(route, dummy_data):
     dummy_data.logout_request(user0_token)
 
     response = user_setname_request(route, user0_token, "Kais", "Alzubaidi")
-    assert response.status_code == ACCESS_ERROR
+    assert response.status_code == AccessError.code
 
 
 @pytest.mark.parametrize("name_first, name_last",
@@ -112,7 +109,7 @@ def test_invalid_name(route, dummy_data, name_first, name_last):
     user2_token = users_list[2]["token"]
     response = user_setname_request(route, user2_token, name_first, name_last)
 
-    assert response.status_code == INPUT_ERROR
+    assert response.status_code == InputError.code
 
 
 #================ Testing route functionality =====================

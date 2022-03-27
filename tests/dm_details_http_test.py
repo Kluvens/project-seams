@@ -2,7 +2,7 @@ import requests
 import pytest
 from src.config import url
 from tests.http_helpers import GenerateTestData
-
+from src.error import InputError, AccessError
 #====================== Helper functions / Fixtures ===============
 
 def reset_call():
@@ -20,11 +20,6 @@ def create_route():
 def dummy_data():
     data_instance = GenerateTestData(url)
     return data_instance
-
-@pytest.fixture
-def register_test_users(num_of_users):
-    dummy_data = GenerateTestData(url)
-    dummy_data.register_users(num_of_users)
 
 #======================= Testing  =================================
 def test_dms_no_uid(detail_route, dummy_data, create_route):
@@ -52,6 +47,7 @@ def test_dms_no_uid(detail_route, dummy_data, create_route):
                     'name_last': 'Renzella',
                     'u_id': 0}],
     }
+
 
 def test_dms_one_uid(detail_route, dummy_data, create_route):
     reset_call()
@@ -151,3 +147,52 @@ def test_two_dms(detail_route, dummy_data, create_route):
                     'name_last': 'Renzella',
                     'u_id': 0}],
     }
+
+#============================== Testing Exception ================
+def test_sinvalid_dm_id_InputError(create_route, detail_route, dummy_data):
+    reset_call()
+
+    users_list = dummy_data.register_users(num_of_users=2)
+    user0 = users_list[0]
+    user1 = users_list[1]
+
+    requests.post(
+        create_route, 
+        json={
+        'token': user0['token'],
+        'u_ids': [user1["auth_user_id"]],
+        }
+    )
+
+    # Input invalid dm_id
+    detail = requests.get(detail_route, params={
+    'token': user1['token'],
+    'dm_id': 9921,
+    })
+    assert detail.status_code == InputError.code
+
+
+def test_unauthorised_user_AccessError(create_route, detail_route, dummy_data):
+    reset_call()
+
+    users_list = dummy_data.register_users(num_of_users=3)
+    user0 = users_list[0]
+    user1 = users_list[1]
+    user2 = users_list[2]
+
+    response = requests.post(
+        create_route, 
+        json={
+        'token': user0['token'],
+        'u_ids': [user1["auth_user_id"]],
+        }
+    )
+    
+    dm_dict = response.json()
+    # Input invalid user / user is not in dm
+    detail = requests.get(detail_route, params={
+    'token': user2['token'],
+    'dm_id': dm_dict["dm_id"]
+    })
+
+    assert detail.status_code == AccessError.code

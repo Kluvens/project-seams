@@ -67,7 +67,7 @@ def test_channel_messages_remove_invalid_message_id_InputError(dummy_data, creat
     send_message_request(user0['token'], ch1_dict['channel_id'], message)
 
     response = delete_message_remove(user0['token'], -1)
-    assert response.status_code == 400
+    assert response.status_code == InputError.code
 
 '''
 AccessError will occur when a user is not a member/owner of a valid channel_id or either not a global owner

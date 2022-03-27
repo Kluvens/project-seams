@@ -17,16 +17,16 @@ def message_senddm_v1(token, dm_id, message):
 
     # error
     if right_dm_index is None:
-        raise InputError("dm_id does not refer to a valid dm")
+        raise InputError(description="dm_id does not refer to a valid dm")
 
     if len(message) < 1 or len(message) > 1000:
-        raise InputError("length of message is less than 1 or over 1000 characters")
+        raise InputError(description="length of message is less than 1 or over 1000 characters")
     
     right_dm = dms[right_dm_index]
     print(right_dm)
 
     if not is_in_dm(auth_user_id, right_dm):
-        raise AccessError("dm_id is valid and the authorised user is not a member of the dm")
+        raise AccessError(description="dm_id is valid and the authorised user is not a member of the dm")
     if not 'messages' in right_dm:
         right_dm["messages"] = []
 
@@ -69,11 +69,11 @@ def message_send_v1(token, channel_id, message):
     '''
     # Checking if message string is less than 1 character long
     if len(message) < 1:
-        raise InputError("Error occurred, no message was received")
+        raise InputError(description="Error occurred, no message was received")
 
     # Checking if message string is more than 1000 characters long
     elif len(message) > 1000:
-        raise InputError("Error occurred, message is more than 1000 characters")
+        raise InputError(description="Error occurred, message is more than 1000 characters")
 
     data = data_store.get()
     assert "channels" in data
@@ -81,7 +81,7 @@ def message_send_v1(token, channel_id, message):
 
     # Check if token is valid using helper
     if check_if_token_exists(token) == False:
-        raise AccessError("Error occured, invalid token'")
+        raise AccessError(description="Error occured, invalid token'")
 
     # Check whether channel_id exist in the database
     channel_exist = False
@@ -89,7 +89,7 @@ def message_send_v1(token, channel_id, message):
         if channel['channel_id'] == channel_id:
             channel_exist = True
     if not channel_exist:
-        raise InputError("Error occurred, channel_id is not in database")
+        raise InputError(description="Error occurred, channel_id is not in database")
     
     # Check user is a member in channel_id
     auth_user_id = int(decode_token(token))
@@ -100,7 +100,7 @@ def message_send_v1(token, channel_id, message):
             if member['u_id'] == auth_user_id:
                 authorised_user = True
     if not authorised_user:
-        raise AccessError("Error occurred, authorised user is not a member of channel_id")
+        raise AccessError(description="Error occurred, authorised user is not a member of channel_id")
 
     # Ensuring message_id will be unique
     data['unique_message_id'] += 1
@@ -147,7 +147,7 @@ def message_remove_v1(token, message_id):
 
     # Check if token is valid using helper
     if check_if_token_exists(token) == False:
-        raise AccessError("Error occured, invalid token'")
+        raise AccessError(description="Error occured, invalid token'")
     
     auth_user_id = int(decode_token(token))
     
@@ -170,10 +170,10 @@ def message_remove_v1(token, message_id):
                         channel['messages'].remove(message)
 
     if not message_exist:
-        raise InputError("Error occurred, message_id is not in database")
+        raise InputError(description="Error occurred, message_id is not in database")
     
     if not authorised_user:
-        raise AccessError("Error occured, user does not have access to delete this message_id")
+        raise AccessError(description="Error occured, user does not have access to delete this message_id")
     
     return {}
 
@@ -203,7 +203,7 @@ def message_edit_v1(token, message_id, message):
 
     # Checking if message string is more than 1000 characters long
     elif len(message) > 1000:
-        raise InputError("Error occurred, message is more than 1000 characters")
+        raise InputError(description="Error occurred, message is more than 1000 characters")
 
     data = data_store.get()
     assert "channels" in data
@@ -211,7 +211,7 @@ def message_edit_v1(token, message_id, message):
 
     # Check if token is valid using helper
     if check_if_token_exists(token) == False:
-        raise AccessError("Error occured, invalid token'")
+        raise AccessError(description="Error occured, invalid token'")
     
     auth_user_id = int(decode_token(token))
     

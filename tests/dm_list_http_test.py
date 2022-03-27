@@ -27,11 +27,6 @@ def dummy_data():
     data_instance = GenerateTestData(url)
     return data_instance
 
-@pytest.fixture
-def register_test_users(num_of_users):
-    dummy_data = GenerateTestData(url)
-    dummy_data.register_users(num_of_users)
-
 #======================= Testing  =================================
 
 def test_invalid_token_type(list_route):
@@ -57,7 +52,8 @@ def test_no_dms(list_route, dummy_data):
     })
 
     assert list1.status_code == AccessError.code
-    
+
+
 def test_dms_empty_uid_list(list_route, dummy_data, create_route):
     reset_call()
     
@@ -74,7 +70,8 @@ def test_dms_empty_uid_list(list_route, dummy_data, create_route):
 
     assert list1.status_code == OKAY
     assert list1.json() == {'dms': [{'dm_id': 0, 'name': 'jakerenzella'}]}
-    
+
+
 def test_dms_one_uid(list_route, dummy_data, create_route, detail_route):
     reset_call()
     
@@ -93,6 +90,7 @@ def test_dms_one_uid(list_route, dummy_data, create_route, detail_route):
 
     assert list1.status_code == OKAY
     assert list1.json() == {'dms': [{'dm_id': 0, 'name': 'jakerenzella, testfirst1testlast1'}]}
+
 
 def test_dms_two_uids(list_route, dummy_data, create_route):
     reset_call()
@@ -113,6 +111,7 @@ def test_dms_two_uids(list_route, dummy_data, create_route):
 
     assert list1.status_code == OKAY
     assert list1.json() == {'dms': [{'dm_id': 0, 'name': 'jakerenzella, testfirst1testlast1, testfirst2testlast2'}]}
+
 
 def test_multiple_dms_list_return(list_route, dummy_data, create_route):
     reset_call()

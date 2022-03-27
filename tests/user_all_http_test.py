@@ -70,29 +70,6 @@ def test_invalid_token(route, dummy_data):
         response = users_all_request(route, user["token"])
         assert response.status_code == AccessError.code
 
-# #=================Testing HTTP layer==============================
-# def test_request_response():
-#     users_list = dummy_data.register_users(num_of_users=3)
-#     user0_token = users_list[0]["token"]
-#     response = users_all_request(user0_token)
-#     assert response.status_code == OKAY
-#     users_details_dict = json.loads(response.text)
-
-#     # Grab dummy_user1 info used when registering them (no access to any database)
-#     expected_output = []
-#     expected_user0 = user_expected_details(
-#         dummy_data.dummy_owner(), users_list[0]["token"])
-#     expected_output.append(expected_user0)
-#     expected_user1 = user_expected_details(
-#         dummy_data.dummy_user1(), users_list[1]["token"])
-#     expected_output.append(expected_user1)
-
-#     expected_user2 = user_expected_details(
-#         dummy_data.dummy_user2(), users_list[2]["token"])
-#     expected_output.append(expected_user2)
-# }
-
-    # assert users_details_dict == expected_output
 
 def test_users_all_request(route, dummy_data):
     reset_call()

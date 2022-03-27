@@ -282,8 +282,8 @@ def dm_remove_v1(token,dm_id):
     # Check token is from owner of dm_id and is still in the dm
     user_is_owner = False
     idx = find_dm_index(dms, dm_id)
-    all_memebers = dms[idx]['all_members']
-    owner_u_id = get_owner_idx(all_memebrs, u_id)
+    all_members = dms[idx]['all_members']
+    owner_u_id = get_owner_idx(all_members, u_id)
 
     if u_id == owner_u_id:
         user_is_owner = True
@@ -307,7 +307,7 @@ def dm_remove_v1(token,dm_id):
     return {}
 
 ############## Helper Funciton ######################
-def get_owner_idx(memebrs, u_id):
+def get_owner_idx(members, u_id):
     for idx, member_u_id in enumerate(members):
         if member_u_id == u_id:
             return idx

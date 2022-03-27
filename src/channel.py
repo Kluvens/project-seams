@@ -544,37 +544,27 @@ def channel_leave_v1(token, channel_id):
     channel_id = int(channel_id)
 
     # Check token is valid and u_id exists
-    token_valid = False
-    user_exists = False
+
     if not check_if_token_exists(token):
         raise AccessError(description="Invalid token")
     else:
         u_id = int(decode_token(token))
-        token_valid = True
 
     u_ids = [user['u_id'] for user in users]
-    if u_id in u_ids:
-        user_exists = True
-    else: 
+    if not u_id in u_ids:
         raise InputError("ERROR: User id does not exist") 
 
     # Check channel_id is valid 
-    channel_id_valid = False
     channel_ids = [channel['channel_id'] for channel in channels]
-    if channel_id in channel_ids:
-        channel_id_valid = True
-    else:
+    if not channel_id in channel_ids:
         raise InputError("ERROR: Channel id does not exist")
 
     # Check authorized user is part of channel
-    user_in_channel = False 
     # find correct channel
     channel_index = find_channel_index(channels, channel_id)
     correct_channel = channels[channel_index]
     all_members_uids = [user['u_id'] for user in correct_channel['all_members']]
-    if u_id in all_members_uids:
-        user_in_channel = True
-    else:
+    if not u_id in all_members_uids:
         raise AccessError ("ERROR: User is not in channel")
 
     for member in channels[channel_index]['all_members']:

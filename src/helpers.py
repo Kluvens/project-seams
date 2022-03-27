@@ -217,9 +217,3 @@ def generate_dm_handle(owner_uid, u_ids, users):
         idx = get_user_idx(users, u_id) 
         handles.append(users[idx]["handle_str"])
     return handles
-
-def check_u_id_exists(users, u_id):
-    for user in users:
-        if u_id == user["u_id"]:
-            return True
-    return False

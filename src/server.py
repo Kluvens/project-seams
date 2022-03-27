@@ -14,6 +14,7 @@ from src.channel import channel_details_v1
 from src.dms import dm_create_v1
 from src.users import user_profile_v1
 from src.users import user_setname_v1
+from src.users import user_profile_setemail_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -122,21 +123,27 @@ def profile():
 
     return dumps(user_profile_v1(token, int(u_id)))
 
-
 # user/setname/v1
 @APP.route('/user/setname/v1', methods=['PUT'])
 def setname():
     parameters = request.get_json()
     return dumps(user_setname_v1(**parameters))
 
+# user/setname/v1
+@APP.route('/user/profile/setemail/v1', methods=['PUT'])
+def setemail():
+    parameters = request.get_json()
+    return dumps(user_profile_setemail_v1(**parameters))
 
 ######################## DMS #####################################
 
 # dm/create/v1 
 @APP.route("/dm/create/v1", methods=['POST'])
 def dm_create():
-    parameters = request.get_json()
-    return dumps(dm_create_v1(**parameters))
+    token = request.form.get('token')
+    u_ids = request.form.getlist('u_ids')
+    u_ids = [int(u_id) for u_id in u_ids]
+    return dumps(dm_create_v1(token, u_ids))
 
 
 

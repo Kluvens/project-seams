@@ -212,6 +212,20 @@ def is_in_dm(u_id, right_dm):
     return False
 
 
+def check_duplicate_u_ids(u_ids):
+    i = 0
+    while (i < len(u_ids)):
+        j = i + 1
+        while(j < len(u_ids)):
+            if u_ids[i] == u_ids[j]:
+                return True
+            j += 1
+        i += 1
+    return False
+
+
+
+
 def generate_dm_handle(owner_uid, u_ids, users):
     handles = []
     idx = get_user_idx(users, owner_uid) 

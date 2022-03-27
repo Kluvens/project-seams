@@ -7,6 +7,8 @@ from src.helpers import generate_dm_handle
 from src.helpers import find_dm_index
 from src.helpers import is_in_dm
 from src.helpers import check_u_id_exists
+from src.helpers import check_duplicate_u_ids
+
 
 def dm_list_v1(token):
     '''
@@ -117,17 +119,6 @@ def dm_details_v1(token, dm_id):
 
 
 
-
-def check_duplicate_u_ids(u_ids):
-    i = 0
-    while (i < len(u_ids)):
-        j = i + 1
-        while(j < len(u_ids)):
-            if u_ids[i] == u_ids[j]:
-                return True
-            j += 1
-        i += 1
-    return False
 
 
 def dm_create_v1(token, u_ids):

@@ -43,7 +43,7 @@ def user_expected_details(user_info, u_id):
     'email' : user_info["email"], 
     'name_first' : user_info["name_first"],
     'name_last' : user_info["name_last"],
-    'handle_str' : user_info["name_first"] + user_info["name_last"]
+    'handle_str' : (user_info["name_first"] + user_info["name_last"]).lower()
     }
 
 

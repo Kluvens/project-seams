@@ -135,37 +135,25 @@ def dm_leave_v1(token, dm_id):
     dm_id = int(dm_id)
 
     # Check token is valid and u_id exists
-    token_valid = False
-    user_exists = False
     if not check_if_token_exists(token):
         raise AccessError(description="Invalid token")
     else:
         u_id = int(decode_token(token))
-        token_valid = True
 
     u_ids = [user['u_id'] for user in users]
-    if u_id in u_ids:
-        user_exists = True
-    else: 
+    if u_id not in u_ids:
         raise InputError(description="ERROR: User id does not exist") 
 
     # Check dm_id is valid 
-    dm_id_valid = False
     dm_ids = [dm['dm_id'] for dm in dms]
-    if dm_id in dm_ids:
-        dm_id_valid = True
-    else:
+    if dm_id not in dm_ids:
         raise InputError(description="ERROR: DM id does not exist")
 
-    # Check authorized user is part of channel
-    user_in_dm = False 
     # find correct channel
     dm_index = find_dm_index(dms, dm_id)
     correct_dm = dms[dm_index]
     all_members_uids = [user['u_id'] for user in correct_dm['all_members']]
-    if u_id in all_members_uids:
-        user_in_dm = True
-    else:
+    if u_id not in all_members_uids:
         raise AccessError (description="ERROR: User is not in DM")
 
     for member in dms[dm_index]['all_members']:

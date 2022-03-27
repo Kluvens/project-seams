@@ -105,7 +105,6 @@ def test_owner_not_in_dm(create_route,remove_route,dummy_data,leave_route):
     users = dummy_data.register_users(num_of_users=3)
     owner = users[0]['token']
     u_ids = [users[1]['auth_user_id'], users[2]['auth_user_id']]
-    other = users[1]['token']
 
     dm_id_obj = requests.post(create_route, json={
         'token': owner,

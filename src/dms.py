@@ -26,6 +26,8 @@ def dm_create_v1(token, u_ids):
     owner_uid = decode_token(token)
     data = data_store.get()
     users = data["users"]
+
+    u_ids.append(owner_uid)
     handles = generate_dm_handle(u_ids, users)
     handles = sorted(handles)
     name = "".join(handles)
@@ -33,6 +35,13 @@ def dm_create_v1(token, u_ids):
     dm_id = len(data['dms'])
     data['dms'].append({"dm_id" : dm_id, "owner" : owner_uid, "name" : name})
 
-    return dm_id
+    return {"dm_id" : dm_id}
 
-if __name__ == "__main__":...
+if __name__ == "__main__":
+    u0 = auth_register_v1("k@gl.com", "dgdsgasd", "SGdf", "Gsdf")
+    u1 = auth_register_v1("k1@gl.com", "dgdsgasd", "SGdgff", "Ghgnsdf")
+    u2 = auth_register_v1("k2@gl.com", "dgdsgasd", "SGddvsf", "Gsndf")
+
+    dm_create_v1(u0["token"], [u1["auth_user_id"], u2["auth_user_id"]])
+    data = data_store.get()
+    print(data["dms"])

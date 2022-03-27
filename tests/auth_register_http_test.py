@@ -1,10 +1,16 @@
+'''
+This is a testing module for auth/register/v2
+
+Kais Alzubaidi z5246721
+'''
+#=======================Import Path ===============================
+
 import json
 import requests
 import pytest
 from src.config import url
 from tests.http_helpers import GenerateTestData
 from src.error import InputError
-from requests import HTTPError
 
 
 #====================== Helper functions / Fixtures ===============
@@ -71,6 +77,7 @@ def test_return_id_multiple_users(dummy_data):
 
         assert register_id == login_id
 
+
 # ====================Testing Exceptions==========================
 
 # ======================== SET 1 =================================
@@ -96,7 +103,7 @@ def test_is_email_valid(route, email):
             "name_last" : "Alz"
         }
     )
-    assert response.status_code == 400
+    assert response.status_code == InputError.code
 
 
 
@@ -124,7 +131,7 @@ def test_email_registered(route, email):
             "name_last" : "Alz"
         }
     )
-    assert response.status_code == 400
+    assert response.status_code == InputError.code
 
 
 
@@ -146,7 +153,8 @@ def test_is_password_valid(route, password):
         }
     )
 
-    assert response.status_code == 400
+    assert response.status_code == InputError.code
+
 
 #=========================== SET 4 ===============================
 # Testing if an exception is raised for invalid first name and last name inputs
@@ -171,4 +179,4 @@ def test_name_is_valid(route, name_first, name_last):
             "name_last" : name_last
         }
     )
-    assert response.status_code == 400
+    assert response.status_code == InputError.code

@@ -1,14 +1,18 @@
+'''
+This file is testing module for auth/logout/v1 route
+'''
+
+#====================== Import Statements =========================
 import json
 import requests
 import pytest
 from src.config import url
 from tests.http_helpers import GenerateTestData
 from src.error import InputError
+from src.error import AccessError
 
 #====================== Helper functions / Fixtures ===============
-########## THIS SECTION WILL BE MOVED TO http_helpers.py ##########
 OKAY = 200
-
 
 def reset_call():
     requests.delete(url + 'clear/v1')
@@ -34,7 +38,6 @@ def route():
 def test_logout_new_user(route, dummy_data, num_of_users, user_num):
     reset_call()
     user_dict = dummy_data.register_users(num_of_users)[user_num]
-    print(user_dict)
     response_obj = requests.post(route, json=user_dict["token"])
     assert response_obj.status_code == OKAY
     assert response_obj.json() == {}
@@ -42,7 +45,7 @@ def test_logout_new_user(route, dummy_data, num_of_users, user_num):
     # Since uesr is logged out, they should not be able to create
     # a channel as token is invalid
     response = dummy_data.create_channel(1, user_dict['token'])
-    assert response.status_code == 403
+    assert response.status_code == AccessError.code
 
 # #================================================================
 
@@ -55,11 +58,11 @@ def test_logout_invalid_token(route, dummy_data, num_of_users, user_num):
     assert response_obj.status_code == OKAY
 
     response_obj = requests.post(route, json=user_dict["token"])
-    assert response_obj.status_code == 403
+    assert response_obj.status_code == AccessError.code
 
 # invalid token - random string, not jwt compliant
 def test_logout_invalid_random_token(route, dummy_data):
     reset_call()
     dummy_data.register_users(num_of_users=3)
     response_obj = requests.post(route, json="random token")
-    assert response_obj.status_code == 403
+    assert response_obj.status_code == AccessError.code

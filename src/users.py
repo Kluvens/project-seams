@@ -15,7 +15,7 @@ from src.helpers import is_email_already_registered
 from src.helpers import check_handlestr_unique
 from src.helpers import get_user_idx
 from src.helpers import check_u_id_exists
-
+from src.helpers import return_exist_status
 
 ##################### User Function Implementations ##############
 def users_all_v1(token):
@@ -72,11 +72,17 @@ def user_profile_v1(token, u_id):
     '''
     if not check_if_token_exists(token):
         raise AccessError(description="Invalid Token")
-        
-    users = data_store.get()["users"]
+    
+    data  = data_store.get()
+
+    users = data["users"]
+    exist_status = return_exist_status(users, u_id)
+
+    if exist_status == False:
+        users = data["removed_users"]
 
     if get_user_idx(users, u_id) is None:
-        raise AccessError(
+        raise InputError(
             description="This u_id does not belong to a valid user")
 
     user_profile = {}

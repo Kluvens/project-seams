@@ -30,26 +30,6 @@ def setup():
 
     return [user1_dict, user2_dict, channel1_dict, channel2_dict]
 
-# def test_admin_user_remove_working(setup):
-#     user1_dict = setup[0]
-#     user2_dict = setup[1]
-#     channel_dict = setup[2]
-
-#     token = user1_dict['token']
-#     u_id = user2_dict['auth_user_id']
-#     channel_id = channel_dict['channel_id']
-
-#     response = requests.post(f'{url}/channel/invite/v2', json={'token': token, 'channel_id': channel_id, 'u_id': u_id})
-#     assert response.status_code == OKAY
-    
-#     response = requests.delete(f"{url}/admin/user/remove/v1", json={'token': token, 'u_id': u_id})
-#     assert response.status_code == OKAY
-
-#     response = requests.post(f"{url}/channel/details/v2", json={'token': token, 'channel_id': channel_id})
-#     assert response.status_code == OKAY
-
-#     details_list = response.json()
-#     assert isinstance(details_list, dict)
 
 def test_admin_user_remove_token_error(setup):
     user_dict = setup[1]
@@ -164,7 +144,7 @@ def test_admin_permission_working(setup):
 
     token = user1_dict['token']
     token_second = user2_dict['token']
-    token_thrid = user3_dict['token']
+    token_third = user3_dict['token']
 
     u_id = user1_dict['auth_user_id']
     u_id2 = user2_dict['auth_user_id']
@@ -179,7 +159,7 @@ def test_admin_permission_working(setup):
     response = requests.post(f'{url}/admin/userpermission/change/v1', json={"token": token_second, "u_id": u_id, "permission_id": MEMBER})
     assert response.status_code == OKAY
 
-    response = requests.post(f'{url}/admin/userpermission/change/v1', json={"token": token_thrid, "u_id": u_id, "permission_id": OWNER})
+    response = requests.post(f'{url}/admin/userpermission/change/v1', json={"token": token_third, "u_id": u_id, "permission_id": OWNER})
     assert response.status_code == OKAY
 
     response = requests.post(f'{url}/admin/userpermission/change/v1', json={"token": token, "u_id": u_id2, "permission_id": MEMBER})
@@ -188,3 +168,30 @@ def test_admin_permission_working(setup):
     response = requests.post(f'{url}/admin/userpermission/change/v1', json={"token": token, "u_id": u_id3, "permission_id": MEMBER})
     assert response.status_code == OKAY
 
+
+def test_profile_after_remove(setup):
+    user1_dict = setup[0]
+    user2_dict = setup[1]
+
+    response = requests.delete(
+        f'{url}/admin/user/remove/v1', 
+        json={'token': user1_dict["token"], 'u_id': user2_dict["auth_user_id"]}
+    )
+    assert response.status_code == OKAY
+
+    obj = requests.get(
+        url + "user/profile/v1", 
+        params={"token" : user1_dict["token"], "u_id" : user2_dict["auth_user_id"]}
+    )
+
+    user_profile = obj.json()
+
+    expected_output = {
+        "u_id" : user2_dict["auth_user_id"],
+        "email" : "hellounsw@gmail.com",
+        "name_first" : "Removed",
+        "name_last" : "user",
+        "handle_str" : "brucebanner"
+    }
+
+    assert user_profile == expected_output

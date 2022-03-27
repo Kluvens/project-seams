@@ -95,7 +95,7 @@ def test_channel_messages_remove_invalid_token_AccessError(dummy_data, create_ro
     send_message = send_message.json()
     
     response = delete_message_remove(invalid_token, send_message["message_id"])
-    assert response.status_code == 403
+    assert response.status_code == AccessError.code
 
 # Testing case when authorised user is not a member of the valid channel_id
 def test_channel_messages_remove_unauthorised_user_AccessError(dummy_data, create_route):
@@ -117,7 +117,7 @@ def test_channel_messages_remove_unauthorised_user_AccessError(dummy_data, creat
     send_message = send_message.json()
 
     response = delete_message_remove(user1['token'], send_message["message_id"])
-    assert response.status_code == 403
+    assert response.status_code == AccessError.code
 
 # Testing case when message_remove is working
 def test_channel_messages_remove_working(dummy_data, create_route):

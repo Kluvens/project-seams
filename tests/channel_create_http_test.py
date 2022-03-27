@@ -1,16 +1,7 @@
-#############################################
 '''
-I managed to find a few errors that were 
-causing your tests to fail. There was
-one interesting bug in particular. 
-This bug has been fixed and your code
-should work as expected now. 
-
-K 
+This is a testing module for channels/create/v2
 
 '''
-
-#############################################
 
 import requests
 import pytest
@@ -20,7 +11,6 @@ from src.error import InputError
 
 OKAY = 200
 
-# Constants should be uppercase 
 
 @pytest.fixture
 def setup():

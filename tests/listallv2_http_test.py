@@ -2,7 +2,7 @@ import requests
 import pytest
 from src.config import url
 from tests.http_helpers import GenerateTestData
-
+from src.error import AccessError
 #====================== Helper functions / Fixtures ===============
 
 def reset_call():
@@ -21,10 +21,6 @@ def dummy_data():
     data_instance = GenerateTestData(url)
     return data_instance
 
-@pytest.fixture
-def register_test_users(num_of_users):
-    dummy_data = GenerateTestData(url)
-    dummy_data.register_users(num_of_users)
 
 #======================= Testing  =================================
 
@@ -32,13 +28,13 @@ def test_invalid_token_type(listall_route):
     reset_call()
 
     response = requests.get(listall_route, params = {'token': '1'})
-    assert response.status_code == 403
+    assert response.status_code == AccessError.code
 
 def test_invalid_token(listall_route):
     reset_call()
 
     response = requests.get(listall_route, params = {'token': 'asdfgvasdg'})
-    assert response.status_code == 403
+    assert response.status_code == AccessError.code
 
 def test_listall_public_and_private(listall_route, create_route, dummy_data):
     reset_call()

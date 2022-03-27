@@ -5,7 +5,7 @@ from src.helpers import check_if_token_exists
 from src.helper import get_user_idx
 
 def dm_list_v1(token):
-'''
+    '''
     Returns a list of of dictionaries in {dms}, 
     where the list is made up of dictionairies 
     containing types {dm_id, name} if it corresponds 
@@ -24,6 +24,7 @@ def dm_list_v1(token):
         {dm_id, name} where name is str
         and dm_id is int
     '''
+
     # initialise datastore and dicts
     data = data_store.get()
     dms_list = data['dms']

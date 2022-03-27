@@ -79,3 +79,9 @@ def count_number_global_owner(users):
             sum += 1
 
     return sum
+
+def get_owner_idx(memebrs, u_id):
+    for idx, member_u_id in enumerate(members):
+        if member_u_id == u_id:
+            return idx
+    return None

@@ -4,7 +4,7 @@ from src.helpers import decode_token
 from src.helpers import check_if_token_exists
 from src.helper import find_channel_index, is_in_channel
 from src.helper import  count_number_owner, get_user_id, is_in_channel_owner
-from src.helpers import global_owner_check, get_user_idx
+from src.helper import global_owner_check, get_user_idx
 from src.helpers import decode_token, check_if_token_exists
 
 
@@ -521,21 +521,17 @@ def channel_removeowner_v1(token, channel_id, u_id):
 
 def channel_leave_v1(token, channel_id):
     '''
-    dm_leave_v1.py
+    channel_leave_v1.py
 
-    This function allows the user to leave a DM.
+    This function allows a member that is part of a channel, to leave that channel.
 
     Arguments: 
-    - token (string) - This is the authentication token of 
-    the authorized user, who must be a member of the DM.
-    - dm_id (integer) - This is the dm id of the DM that the 
-    authorized user would like to leave
+    Token (string) - This is the authentication token of the authorized user, who must be a member of the channel.
+    channel_id (integer) - This is the channel id of the channel that the authorized user would like to leave.
 
     Exceptions:
-    InputError - An input error is raised when the dm_id 
-    does not refer to a valid DM.
-    AccessError - An access error is raised when the authorized
-    user is no longer in the DM
+    InputError - An input error is raised when the channel id does not refer to a valid channel
+    AccessError - An access error is raised when the given user is not a member of the channel 
 
     Common error:
     AccessError - When an invalid token is passed into the function
@@ -590,4 +586,3 @@ def channel_leave_v1(token, channel_id):
             channels[channel_index]['owner_members'].remove({'u_id': u_id})
 
     return {}
-

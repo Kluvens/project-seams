@@ -5,7 +5,7 @@ from src.helpers import check_if_token_exists
 
 def channels_list_v2(token):
 
-'''
+    '''
     Returns a list of of dictionaries in {channels}, 
     where the list is made up of dictionairies 
     containing types {channel_id, name} if it 

@@ -18,6 +18,7 @@ from src.auth import auth_logout_v1
 from src.channels import channels_create_v1, channels_list_v2, channels_listall_v2
 from src.channel import channel_details_v1
 from src.dms import dm_create_v1
+from src.users import users_all_v1
 from src.users import user_profile_v1
 from src.users import user_setname_v1
 from src.users import user_profile_setemail_v1
@@ -116,11 +117,11 @@ def listall():
 
 ##################### User routes ############################
 
-# # user/all/v1
-# @APP.route('/user/all/v1', methods=['GET'])
-# def get_all_users():
-#     token = request.get_json()
-#     return dumps(user_profile_v1(token))
+# user/all/v1
+@APP.route('/users/all/v1', methods=['GET'])
+def get_all_users():
+    token = request.args.get("token")
+    return dumps(users_all_v1(token))
 
 
 # user/profile/v1

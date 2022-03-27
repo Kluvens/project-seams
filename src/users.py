@@ -9,7 +9,7 @@ from src.helpers import is_valid_email
 from src.helpers import is_email_already_registered
 from src.helpers import check_handlestr_unique
 from src.helpers import get_user_idx
-
+from src.helpers import check_u_id_exists
 
 
 
@@ -90,3 +90,99 @@ def user_profile_v1(token, u_id):
             }
 
     return user_profile
+
+def user_setname_v1(token, name_first, name_last):
+    '''
+    This function updates the first and last names of
+    the user with u_id that corresponds to the token passed.
+
+    Arguments: 
+        - token, type: str
+        - name_first: str
+        - name_last: str 
+    
+    Exceptions: 
+        - Throws an AccessError when an invalid token
+        string is passed
+        - Throws an AccessError when an invalid u_id
+        is passed
+        - Throws an InputError when either the first
+        or last names contain less than 1 characaters
+        or more than 50 chatacters
+    
+    Returns: empty dictionary 
+    '''
+
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid Token")
+    
+    if not is_valid_name(name_first):
+        raise InputError(description=
+            "Invalid first name. First name must be between 1 and 50 characters inclusive")
+
+    if not is_valid_name(name_last):
+        raise InputError(description=
+            "Invalid last name. Last name must be between 1 and 50 characters inclusive")
+
+    u_id = decode_token(token)
+
+    users = data_store.get()["users"]
+    idx = get_user_idx(users, u_id)
+    users[idx]["name_first"] = name_first
+    users[idx]["name_last"] = name_last
+    # Should this be done? 
+    users[u_id]["handle_str"] = generate_handle(users, name_first, name_last)
+
+    return {}
+
+
+def user_profile_setemail_v1(token, email):
+    '''
+    This function updates the email of the user with
+    the u_id that corresponds the token that has been
+    passed.
+
+    Arguments: 
+        - token, type: str
+        -email 
+    
+    Exceptions: 
+        - Throws an AccessError when an invalid token
+        string is passed
+        - Throws an AccessError when an invalid u_id
+        is passed
+        - Throws an InputError when the email
+        entered is invalid
+        - Throws an InputError when the email
+        entered is already used by another user
+    
+    Returns: empty dictionary 
+    '''
+
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid Token!!")
+
+    
+    u_id = decode_token(token)
+    users = data_store.get()["users"]
+
+
+    if not check_u_id_exists(users, u_id):
+        raise AccessError(description="u_id does not belong to a valid user")
+    
+    if not is_valid_email(email):
+        raise InputError(description="Invalid Email!")
+
+    
+    users = data_store.get()["users"]
+
+    if is_email_already_registered(users, email):
+        raise InputError(description="Email already exists. Try entering another email.")
+
+
+    idx = get_user_idx(users, u_id)
+    users[idx]["email"] = email
+
+    return {}
+
+

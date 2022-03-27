@@ -254,6 +254,5 @@ def set_handle():
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
-    # APP.run(port=config.port) # Do not edit this port
-    APP.run(port=config.port, debug=True) # Do not edit this port
+    APP.run(port=config.port) # Do not edit this port
 

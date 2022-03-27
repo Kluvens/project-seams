@@ -1,5 +1,6 @@
 from src.data_store import data_store
 from src.error import AccessError, InputError
+from src.helpers import decode_token, check_if_token_exists, get_user_idx
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
 
@@ -298,4 +299,55 @@ def channel_join_v1(auth_user_id, channel_id):
 # ============================================= CHANNEL LEAVE ==============================================
 
 def channel_leave_v1(token, channel_id):
+
+    channels = data_store.get()['channels']
+    users = data_store.get()['users']
+
+    # Check token is valid and u_id exists
+    token_valid = False
+    user_exists = False
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid token")
+    else:
+        u_id = int(decode_token(token))
+        token_valid is True
+
+    u_ids = [user['u_ids'] for user in users]
+    if u_id in u_ids:
+        user_exists is True
+    else: 
+        raise InputError("ERROR: User id does not exist") 
+
+    # Check channel_id is valid 
+    channel_id_valid = False
+    channel_ids = [channel['channel_id'] for channel in channels]
+    if channel_id in channel_ids:
+        channel_id_valid is True
+    else:
+        raise InputError("ERROR: Channel id does not exist")
+
+    # Check authorized user is part of channel
+    user_in_channel = False 
+    # find correct channel
+    channel_index = find_channel_index(channel_id)
+    correct_channel = channels[channel_index]
+    all_members_uids = [user['u_id'] for user in correct_channel['all_members']]
+    if u_id in all_members_uids:
+        user_in_channel is True
+    else:
+        raise AccessError ("ERROR: User is not in channel")
+
+    # Find user index
+    user_index = None
+    for idx, user in enumerate(all_members_uids):
+        if u_id == user["u_id"]:
+          user_index = idx  
+
+    # remove user from all_members list 
+    if token_valid and user_exists and user_in_channel and channel_id_valid:
+        del channels[channel_index]['all_members'][user_index]
+        # Check if user is an owner 
+        owners = [member['u_id'] for member in channels[channel_index]['owner_members']]
+        if u_id in owners:
+            del channels[channel_index]['owner_members'][0]
     return()

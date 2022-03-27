@@ -12,10 +12,13 @@ from flask_cors import CORS
 from src.error import InputError
 from src import config
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
-from src.channel import channel_invite_v2, channel_join_v2, channel_details_v2, channel_messages_v1, channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
+from src.channel import channel_invite_v2, channel_join_v2
+from src.channel import channel_details_v2, channel_messages_v2
+from src.channel import channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
 from src.other import clear_v1
 from src.channels import channels_create_v2, channels_list_v2, channels_listall_v2
 from src.admin import admin_user_remove_v1, admin_userpermission_change_v1
+from src.dm import dm_messages_v1
 from src.dms import dm_create_v1, dm_list_v1, dm_details_v1, dm_leave_v1, dm_remove_v1
 from src.message import message_senddm_v1
 from src.users import users_all_v1
@@ -23,6 +26,7 @@ from src.users import user_profile_v1
 from src.users import user_setname_v1
 from src.users import user_profile_setemail_v1
 from src.users import user_profile_sethandle_v1
+from src.message import message_send_v1, message_remove_v1, message_edit_v1, message_senddm_v1
 
 ###################### INITIAL SERVER SETUP ######################
 
@@ -50,15 +54,16 @@ APP.register_error_handler(Exception, defaultHandler)
 #### NO NEED TO MODIFY ABOVE THIS POINT, EXCEPT IMPORTS
 
 ###################### Example ###################################
-@APP.route("/echo", methods=['GET'])
-def echo():
-    data = request.args.get('data')
-    if data == 'echo':
-   	    raise InputError(description='Cannot echo "echo"')
-    return dumps({
-        'data': data
-    })
+# @APP.route("/echo", methods=['GET'])
+# def echo():
+#     data = request.args.get('data')
+#     if data == 'echo':
+#    	    raise InputError(description='Cannot echo "echo"')
+#     return dumps({
+#         'data': data
+#     })
 
+############################## AUTH ##############################
 @APP.route("/auth/register/v2", methods = ['POST'])
 def auth_register_http():
     register_dict = request.get_json()
@@ -79,6 +84,7 @@ def auth_logout_http():
 
     return dumps({})
 
+############################ Channel ############################
 @APP.route("/channel/invite/v2", methods = ['POST'])
 def channel_invite_http():
     invite_dict = request.get_json()
@@ -92,14 +98,6 @@ def channel_details_http():
     channel_id = request.args.get('channel_id')
 
     return dumps(channel_details_v2(token, channel_id))
-
-@APP.route("/channel/messages/v2", methods = ['GET'])
-def channel_messages_http():
-    token = request.args.get('token')
-    channel_id = int(request.args.get('channel_id'))
-    start = int(request.args.get('start'))
-
-    return dumps(channel_messages_v1(token, channel_id, start))
 
 @APP.route("/channel/join/v2", methods = ['POST'])
 def channel_join_http():
@@ -143,37 +141,7 @@ def channels_create_http():
 
     return dumps(channels_create_v2(**create_dict))
 
-@APP.route("/clear/v1", methods = ['DELETE'])
-def clear_http():
-    clear_v1()
-    
-    return dumps({})
-
-# @APP.route("/message/send/v1", methods=['POST'])
-# def message_send_http():
-#     message_info = request.get_json()
-#     token = message_info['token']
-#     channel_id = int(message_info['channel_id'])
-#     message = message_info['message']
-#     return dumps(message_send(token, channel_id, message))
-
-# @APP.route("/message/remove/v1", methods=['DELETE'])
-# def message_remove_http():
-#     message_info = request.get_json()
-#     token = message_info['token']
-#     message_id = int(message_info['message_id'])
-#     message_remove(token, message_id)
-#     return dumps({})
-
-# @APP.route("/message/edit/v1", methods=['PUT'])
-# def message_edit_http():
-#     message_info = request.get_json()
-#     token = message_info['token']
-#     message_id = int(message_info['message_id'])
-#     message = message_info['message']
-#     message_edit(token, message_id, message)
-#     return dumps({})
-
+############################## DMS ##############################
 # dm/list/v1
 @APP.route('/dm/list/v1', methods=['GET'])
 def dm_list_http():
@@ -214,6 +182,7 @@ def message_senddm_http():
     message = message_info['message']
     return dumps(message_senddm_v1(token, dm_id, message))
 
+############################# Admin #############################
 @APP.route("/admin/user/remove/v1", methods=['DELETE'])
 def admin_user_remove_http():
     return_dict = request.get_json()
@@ -224,12 +193,12 @@ def admin_userpermission_change_http():
     return_dict = request.get_json()
     return dumps(admin_userpermission_change_v1(**return_dict))
 
+############################# Users #############################
 # user/all/v1
 @APP.route('/users/all/v1', methods=['GET'])
 def get_all_users():
     token = request.args.get("token")
     return dumps(users_all_v1(token))
-
 
 # user/profile/v1
 @APP.route('/user/profile/v1', methods=['GET'])
@@ -240,35 +209,68 @@ def profile():
 
     return dumps(user_profile_v1(token, int(u_id)))
 
-# user/setname/v1
-@APP.route('/user/setname/v1', methods=['PUT'])
+# user/profile/setname/v1
+@APP.route('/user/profile/setname/v1', methods=['PUT'])
 def set_name():
     parameters = request.get_json()
     return dumps(user_setname_v1(**parameters))
 
-# user/setname/v1
+# user/profile/setemail/v1
 @APP.route('/user/profile/setemail/v1', methods=['PUT'])
 def set_email():
     parameters = request.get_json()
     return dumps(user_profile_setemail_v1(**parameters))
 
-# user/setname/v1
+# user/profile/sethandle/v1
 @APP.route('/user/profile/sethandle/v1', methods=['PUT'])
 def set_handle():
     parameters = request.get_json()
     return dumps(user_profile_sethandle_v1(**parameters))
 
-######################## DMS #####################################
+########################## Messages ##########################
 
-# dm/create/v1 
-@APP.route("/dm/create/v1", methods=['POST'])
-def dm_create():
-    token = request.form.get('token')
-    u_ids = request.form.getlist('u_ids')
-    u_ids = [int(u_id) for u_id in u_ids]
-    return dumps(dm_create_v1(token, u_ids))
+# channel/messages/v2
+@APP.route("/channel/messages/v2", methods=['GET'])
+def channel_messages():
+    token = request.args.get('token')
+    channel_id = request.args.get('channel_id')
+    start = request.args.get('start')
+    # write_savefile()
+    return dumps(channel_messages_v2(token, channel_id, start))
 
+# message/send/v1
+@APP.route("/message/send/v1", methods=['POST'])
+def message_send():
+    data = request.get_json()
+    # write_savefile()
+    return dumps(message_send_v1(**data))
 
+# message/remove/v1
+@APP.route("/message/remove/v1", methods=['DELETE'])
+def message_remove():
+    data = request.get_json()
+    message_remove_v1(**data)
+    # write_savefile()
+    return dumps({})
+
+# dm/messages/v1
+@APP.route("/dm/messages/v1", methods=['GET'])
+def dm_messages():
+    token = request.args.get('token')
+    dm_id = request.args.get('dm_id')
+    start = request.args.get('start')
+    # write_savefile()
+    return dumps(dm_messages_v1(token, dm_id, start))
+
+# message/edit/v1
+@APP.route("/message/edit/v1", methods=['PUT'])
+def message_edit():
+    data = request.get_json()
+    message_edit_v1(**data)
+    # write_savefile()
+    return dumps({})
+
+# load_savefile()
 
 ####################### CLEARING/RESTTING ########################
 
@@ -278,8 +280,6 @@ def dm_create():
 def reset():
     clear_v1()
     return dumps({})
-
-
 
 ###################### END OF SERVER ROUTES SECTION ################
 

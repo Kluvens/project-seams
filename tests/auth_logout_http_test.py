@@ -33,6 +33,7 @@ def route():
 # and logged in users
 
 
+@pytest.mark.parametrize("num_of_users, user_num", [(1, 0), (2, 1), (3, 2)])
 def test_logout_new_user(route, dummy_data, num_of_users, user_num):
     reset_call()
     user_dict = dummy_data.register_users(num_of_users)[user_num]
@@ -48,7 +49,7 @@ def test_logout_new_user(route, dummy_data, num_of_users, user_num):
 
 # #================================================================
 
-#invalid token
+#invalid token - jwt compliant
 @pytest.mark.parametrize("num_of_users, user_num", [(1, 0), (2, 0), (4, 2)])
 def test_logout_invalid_token(route, dummy_data, num_of_users, user_num):
     reset_call()
@@ -57,4 +58,11 @@ def test_logout_invalid_token(route, dummy_data, num_of_users, user_num):
     assert response_obj.status_code == OKAY
 
     response_obj = requests.post(route, json=user_dict["token"])
+    assert response_obj.status_code == 403
+
+# invalid token - random string, not jwt compliant
+def test_logout_invalid_random_token(route, dummy_data):
+    reset_call()
+    dummy_data.register_users(num_of_users=3)
+    response_obj = requests.post(route, json="random token")
     assert response_obj.status_code == 403

@@ -1,3 +1,9 @@
+'''
+This file contains all the server functionality for seams.
+'''
+
+
+########################## Import Statements #####################
 import sys
 import signal
 from json import dumps
@@ -17,6 +23,8 @@ from src.users import user_profile_v1
 from src.users import user_setname_v1
 from src.users import user_profile_setemail_v1
 from src.users import user_profile_sethandle_v1
+
+###################### INITIAL SERVER SETUP ######################
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -41,7 +49,7 @@ APP.register_error_handler(Exception, defaultHandler)
 
 #### NO NEED TO MODIFY ABOVE THIS POINT, EXCEPT IMPORTS
 
-# Example
+###################### Example ###################################
 @APP.route("/echo", methods=['GET'])
 def echo():
     data = request.args.get('data')
@@ -249,6 +257,33 @@ def set_email():
 def set_handle():
     parameters = request.get_json()
     return dumps(user_profile_sethandle_v1(**parameters))
+
+######################## DMS #####################################
+
+# dm/create/v1 
+@APP.route("/dm/create/v1", methods=['POST'])
+def dm_create():
+    token = request.form.get('token')
+    u_ids = request.form.getlist('u_ids')
+    u_ids = [int(u_id) for u_id in u_ids]
+    return dumps(dm_create_v1(token, u_ids))
+
+
+
+####################### CLEARING/RESTTING ########################
+
+
+# clear/v1
+@APP.route("/clear/v1", methods=['DELETE'])
+def reset():
+    clear_v1()
+    return dumps({})
+
+
+
+###################### END OF SERVER ROUTES SECTION ################
+
+
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

@@ -1,5 +1,8 @@
 from src.data_store import data_store
 from src.error import AccessError, InputError
+from src.helpers import decode_token
+from src.helpers import check_if_token_exists
+
 
 from src.auth import auth_register_v2, auth_login_v2
 
@@ -137,6 +140,26 @@ def channel_details_v2(token, channel_id):
 
     if not is_in_channel(auth_user_id, right_channel):
         raise AccessError(description="channel_id is valid and the authorised user is not a member of the channel")
+
+    right_channel_owner_members = [
+        {
+            'u_id': users[member['u_id']]['u_id'],
+            'email': users[member['u_id']]['email'],
+            'name_first': users[member['u_id']]['name_first'],
+            'name_last': users[member['u_id']]['name_last'],
+            'handle_str': users[member['u_id']]['handle_str'],
+        }
+    for member in right_channel['owner_members']]
+
+    right_channel_all_members = [
+        {
+            'u_id': users[member['u_id']]['u_id'],
+            'email': users[member['u_id']]['email'],
+            'name_first': users[member['u_id']]['name_first'],
+            'name_last': users[member['u_id']]['name_last'],
+            'handle_str': users[member['u_id']]['handle_str'],
+        }
+    for member in right_channel['all_members']]
 
     right_channel_owner_members = [
         {

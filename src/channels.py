@@ -66,10 +66,10 @@ def channels_listall_v2(token):
     data = data_store.get()
     channels_list = data['channels']
     channels_dict = {'channels' : []}
-
+    
     # if token doesnt exist return AccessError
     if not check_if_token_exists(token):
-        raise AccessError(description="Invalid toke")
+        raise AccessError(description="Invalid token")
     
     # loop through and grab all channel and name variables
     for channel in channels_list:

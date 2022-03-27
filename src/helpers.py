@@ -1,3 +1,10 @@
+'''
+Module Description:
+
+'''
+
+
+########################### Import Paths #########################
 import re
 import jwt
 import uuid
@@ -6,6 +13,16 @@ import requests
 import hashlib
 from src.data_store import data_store
 from src.error import AccessError
+
+
+############ Used By Every Feature except auth_register ##########
+
+def check_u_id_exists(users, u_id):
+    for user in users:
+        if u_id == user["u_id"]:
+            return True
+    return False
+
 
 def check_if_token_exists(token):
     '''
@@ -16,8 +33,7 @@ def check_if_token_exists(token):
     it will return True. Otherwise, it will return
     False.
     '''
-    # The data access related code will need to 
-    # be changed when we implement data persistance.
+
     users = data_store.get()['users']
     for user in users:
         if user['sessions'] == {}:
@@ -26,7 +42,17 @@ def check_if_token_exists(token):
             return True
     return False
 
+def check_if_dm_token_exists(token):
+    
+    dms = data_store.get()['dms']
+    for dm in dms:
+        if dm['sessions'] == {}:
+            return False
+        if token in dm['sessions']:
+            return True
+    return False
 
+# add error handelling in case of invalid token
 def decode_token(token):
     '''
     This is a helper function that takes in a token string.
@@ -45,7 +71,7 @@ def decode_token(token):
 
     return payload['u_id']
 
-
+###################### Used By Auth and User features ############
 
 def generate_session_token(u_id):
     '''
@@ -153,6 +179,8 @@ def is_email_already_registered(users_list, email):
         if user['email'] == email:
             return True
     return False
+
+###################### Used By Multiple Feature Functions #########
 
 def check_handlestr_unique(users, handle_str):
     for user in users:

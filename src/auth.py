@@ -1,7 +1,10 @@
 '''
 This module contains the implementation for the auth feature function
 
+Kais Alzubaidi z5246721
 '''
+
+###################### Import Statements ##########################
 import uuid
 import hashlib
 import jwt
@@ -11,6 +14,13 @@ from src.error import AccessError
 from src.error import InputError
 from src.helpers import check_if_token_exists
 from src.helpers import decode_token
+from src.helpers import is_valid_email
+from src.helpers import is_email_already_registered
+from src.helpers import hash
+from src.helpers import is_valid_name
+from src.helpers import generate_handle
+from src.helpers import generate_session_token
+###################### Function Implelmentation ##################
 
 def auth_login_v1(email, password):
     '''
@@ -155,7 +165,8 @@ def auth_register_v1(email, password, name_first, name_last):
     curr_user['name_last'] = name_last
     curr_user['sessions'] = [str(token)]
     curr_user['handle_str'] = handle
-
+    curr_user['exist_status'] = True
+    
     # Dealing with first layer of permissions
     OWNER = 1
     MEMBER = 2
@@ -172,11 +183,12 @@ def auth_register_v1(email, password, name_first, name_last):
 
 def auth_logout_v1(token):
     '''
-        This function takes in a token string. If the
-        token is invalid, it raises an access error.
-        Otherwise, it logs out the user session that
-        corresponds to the token and returns an empty dict
+    This function takes in a token string. If the
+    token is invalid, it raises an access error.
+    Otherwise, it logs out the user session that
+    corresponds to the token and returns an empty dict
     '''
+    
     if not check_if_token_exists(token):
         raise AccessError(description="Invalid Token!")
 
@@ -189,38 +201,7 @@ def auth_logout_v1(token):
 
 # ============================= HELPER FUNCTIONS ========================
 
-def is_email_already_registered(users_list, email):
-    '''
-    Given a users list of dictionaries and an email string, this function
-    checks if the email given belongs to an existing user.
-    It returns True if it finds a match. Otherwise, it returns False
 
-    '''
-
-    for user in users_list:
-        if user['email'] == email:
-            return True
-    return False
-
-
-def is_valid_email(email):
-    '''
-    This funciton utilised the regex module to check
-    if the validty of an email string by checking if it matches a given regex.
-    See regex below
-
-    It returns True if it passes the check (if it is valid)
-    Otherwise it returns False
-    '''
-
-    # Using regex module
-    regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$"
-
-    # using fullmatch which will match the entier email regex.
-    match = re.fullmatch(regex, email)
-    if match is not None:
-        return True
-    return False
 
 
 def is_valid_password(password):
@@ -235,46 +216,6 @@ def is_valid_password(password):
         return False
     return True
 
-
-def is_valid_name(name):
-    '''
-    This function checks if the name parameter is in between 1 and 50 characters
-    (inclusive)
-    It is assumed the name object will always be of type string.
-    '''
-
-    if len(name) >= 1 and len(name) <= 50:
-        return True
-    return False
-
-
-def generate_handle(users_list, name_first, name_last):
-    '''
-    This function generates a unique alphanumeric handle for a new user.
-    More details can be found in the details spec.
-
-    It returns a string containing the handle generated
-
-    '''
-    naive_handle = ''.join([name_first, name_last])
-    naive_handle = ''.join(ch for ch in naive_handle if ch.isalnum())
-    naive_handle = naive_handle.lower()[:20]
-
-    # starting at -1 since dupilicate handle strings will
-    # start with 0 suffix
-    handle_matches = -1
-    for user in users_list:
-        if user['handle_str'][:len(naive_handle)] == naive_handle:
-            handle_matches += 1
-
-    if handle_matches >= 0:
-        handle_with_suffix = [naive_handle, str(handle_matches)]
-        handle = ''.join(handle_with_suffix)
-    else:
-        # no matches and no need for numerical suffix
-        handle = naive_handle
-
-    return handle
 
 
 def is_password_correct(users_list, email, password):
@@ -291,6 +232,7 @@ def is_password_correct(users_list, email, password):
                 return True
     return False
 
+
 def get_corresponding_user_id(users_list, email):
     '''
     Given a valid email for a registered user, and a users list
@@ -303,52 +245,7 @@ def get_corresponding_user_id(users_list, email):
     return None
 
 
-
-
-def hash(password):
-    '''
-    This function uses the hashlib module to hash a given
-    password string. It returns the hashed string.
-    '''
-    return hashlib.sha256(str(password).encode()).hexdigest()
-
-
-def generate_session_token(u_id):
-    '''
-    This function uses generates a session token string
-    using the u_id of the user and the secret string.
-
-    Every session token generated will be guaranteed by
-    adding uuid.uuid4() to the payload
-
-    The token generation will be taken care of by a jwt method
-    and the encrypted token will be returned as a string.
-
-    This function will be called when a user is registered 
-    and everytime the user logs in.
-    '''
-    secret = "rjry3rJYwYIDHvVU0wJQuh6cFujCDfWS4Qa81w9HHGjEa0xs7N"
-
-    payload = {
-        'unique_session_id' : str(uuid.uuid4()),
-        'u_id' : u_id 
-    }
-
-    encripted_token = jwt.encode(payload, secret, algorithm="HS256")
-    return encripted_token
-
-
-
 # ====================END OF HELPER FUNCTIONS SECTION ===================
 
 
-if __name__ == "__main__":
-    u1 = auth_register_v1("wqq@ss.com", "123123abc", "k", "z")
-    u2 = auth_register_v1("wqqs@ss.com", "12323abc", "k", "z")
-    l1 = auth_login_v1("wqq@ss.com", "123123abc")
-    # print(l1)
-    # print(u1)
-    data = data_store.get()['users'][0]['password']
-    x = hash("123123abc")
-    print(f"----{data}\n\n----{x}")
-    print(len(data))
+if __name__ == "__main__":...

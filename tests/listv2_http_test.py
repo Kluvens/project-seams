@@ -2,11 +2,15 @@ import requests
 import pytest
 from src.config import url
 from tests.http_helpers import GenerateTestData
-
+import json
 #====================== Helper functions / Fixtures ===============
 
 def reset_call():
     requests.delete(url + 'clear/v1')
+
+@pytest.fixture
+def route():
+    return url + 'dm/create/v1'
 
 @pytest.fixture
 def list_route():
@@ -151,6 +155,3 @@ def test_list_user_multiple_channels(list_route, create_route, dummy_data):
     assert list1.json() == {'channels': [{'channel_id': ch1.json()['channel_id'], 'name': 'ch1'}, 
                                         {'channel_id': ch2.json()['channel_id'], 'name': 'ch2'}]}
     
-    
-    
-

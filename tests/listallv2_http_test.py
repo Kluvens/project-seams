@@ -31,34 +31,36 @@ def register_test_users(num_of_users):
 def test_invalid_token_type(listall_route):
     reset_call()
 
-    response = requests.get(listall_route, json = {'token': '1'})
+    response = requests.get(listall_route, params = {'token': '1'})
     assert response.status_code == 403
 
 def test_invalid_token(listall_route):
     reset_call()
 
-    response = requests.get(listall_route, json = {'token': 'asdfgvasdg'})
+    response = requests.get(listall_route, params = {'token': 'asdfgvasdg'})
     assert response.status_code == 403
 
 def test_listall_public_and_private(listall_route, create_route, dummy_data):
     reset_call()
     
-    user = dummy_data.register_users(num_of_users=1)
+    user = dummy_data.register_users(num_of_users=2)
     users_return_dict1 = user[0]
+    users_return_dict2 = user[1]
     
     ch1 = requests.post(create_route, json={
         'token': users_return_dict1['token'],
-        'channel_name': 'ch1',
+        'name': 'ch1',
         'is_public': False
     })
 
     ch2 = requests.post(create_route, json={
-        'token': users_return_dict1['token'],
-        'channel_name': 'ch2',
+        'token': users_return_dict2['token'],
+        'name': 'ch2',
         'is_public': True
     })
+    
 
-    list1 = requests.get(listall_route, json={
+    list1 = requests.get(listall_route, params={
         'token': users_return_dict1['token']
     })
 
@@ -72,7 +74,7 @@ def test_listall_no_channels(listall_route, dummy_data):
     user = dummy_data.register_users(num_of_users=1)
     users_return_dict = user[0]
     
-    list1 = requests.get(listall_route, json={
+    list1 = requests.get(listall_route, params={
         'token': users_return_dict['token']
     })
 
@@ -88,23 +90,23 @@ def test_multiple_users_and_channels(listall_route, create_route, dummy_data):
     
     ch1 = requests.post(create_route, json={
         'token': users_return_dict1['token'],
-        'channel_name': 'ch1',
+        'name': 'ch1',
         'is_public': False
     })
 
     ch2 = requests.post(create_route, json={
         'token': users_return_dict1['token'],
-        'channel_name': 'ch2',
+        'name': 'ch2',
         'is_public': True
     })
 
     ch3 = requests.post(create_route, json={
         'token': users_return_dict2['token'],
-        'channel_name': 'ch3',
+        'name': 'ch3',
         'is_public': True
     })
 
-    list1 = requests.get(listall_route, json={
+    list1 = requests.get(listall_route, params={
         'token': users_return_dict1['token']
     })
 
@@ -112,3 +114,4 @@ def test_multiple_users_and_channels(listall_route, create_route, dummy_data):
     assert list1.json() == {'channels': [{'channel_id': ch1.json()["channel_id"], 'name': 'ch1'},
                                     {'channel_id': ch2.json()["channel_id"], 'name': 'ch2'},
                                     {'channel_id': ch3.json()["channel_id"], 'name': 'ch3'}]}
+

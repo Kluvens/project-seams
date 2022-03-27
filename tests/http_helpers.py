@@ -72,7 +72,7 @@ class GenerateTestData:
     def dummy_channel0(self, token):
         return {
             "token" : str(token),
-            "channel_name" : "DummyChannel0",
+            "name" : "DummyChannel0",
             "is_public" : True
         }
 
@@ -80,7 +80,7 @@ class GenerateTestData:
     def dummy_channel1(self, token):
         return {
             "token" : str(token),
-            "channel_name" : "DummyChannel1",
+            "name" : "DummyChannel1",
             "is_public" : False
         }
 

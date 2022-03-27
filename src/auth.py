@@ -22,7 +22,7 @@ from src.helpers import generate_handle
 from src.helpers import generate_session_token
 ###################### Function Implelmentation ##################
 
-def auth_login_v1(email, password):
+def auth_login_v2(email, password):
     '''
     This function takes in an email and password strings
     and returns the a u_id dictionary containing the u_id value
@@ -66,7 +66,7 @@ def auth_login_v1(email, password):
 
 
 
-def auth_register_v1(email, password, name_first, name_last):
+def auth_register_v2(email, password, name_first, name_last):
     '''
     Arguments:
         This function takes an user related info (4 parameters)

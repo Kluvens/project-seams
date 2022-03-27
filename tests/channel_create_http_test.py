@@ -13,13 +13,14 @@ K
 #############################################
 
 import requests
-from requests import HTTPError
 import pytest
 from src.config import url
+from src.error import AccessError
+from src.error import InputError
+
+OKAY = 200
 
 # Constants should be uppercase 
-Access_Error = 403
-Input_Error = 400
 
 @pytest.fixture
 def setup():
@@ -57,7 +58,7 @@ def setup():
         f'{url}/channels/create/v2', 
         json={
             "token": user1_dict["token"],
-            "channel_name": "Kais_channel",
+            "name": "Kais_channel",
             "is_public": True}
         )
 
@@ -67,7 +68,7 @@ def setup():
     channel2_obj = requests.post(
         f'{url}/channels/create/v2',
         json={"token": user2_dict['token'],
-        "channel_name": "my_channel",
+        "name": "my_channel",
         "is_public": False}
     )
 
@@ -81,11 +82,11 @@ def test_channel_create_token_error(setup):
         f"{url}/channels/create/v2", 
         json={
             "token": "Invalid token",
-            "channel_name": "Kias_channel",
+            "name": "Kias_channel",
             "is_public": True}
         )
 
-    assert response.status_code == Access_Error
+    assert response.status_code == AccessError.code
 
 
 def test_channel_create_inputError_more_than_20(setup):
@@ -96,11 +97,11 @@ def test_channel_create_inputError_more_than_20(setup):
         f"{url}/channels/create/v2",
         json={
             "token": token,
-            "channel_name": "hahahahahaahahahahahamustbemorethantwentyletters",
+            "name": "hahahahahaahahahahahamustbemorethantwentyletters",
             "is_public": False}
         )
 
-    assert response.status_code == Input_Error
+    assert response.status_code == InputError.code
 
 def test_channel_details_working_single_member(setup):
     user_dict = setup[0]
@@ -115,7 +116,7 @@ def test_channel_details_working_single_member(setup):
         params={'token': token,
         'channel_id': int(channel_id)})
     
-    assert response.status_code == 200
+    assert response.status_code == OKAY
     first_channel_details = response.json()
 
     assert first_channel_details['name'] == "Kais_channel"

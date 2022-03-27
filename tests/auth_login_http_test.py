@@ -86,4 +86,3 @@ def test_handelling_incorrect_password(route, dummy_data, email, password):
             json={"email" : email, "password" : password}
         )
     assert response.status_code == 400
-

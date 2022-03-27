@@ -195,3 +195,25 @@ def get_user_idx(users, u_id):
             return idx
     # does not exist
     return None
+
+def find_dm_index(dms, dm_id):    
+    for idx, dm in enumerate(dms):
+        if dm['dm_id'] == dm_id:
+            return idx
+    return None
+
+def is_in_dm(u_id, right_dm):
+    for member in right_dm["all_members"]:
+        if u_id == member["u_id"]:
+            return True
+
+    return False
+
+def generate_dm_handle(owner_uid, u_ids, users):
+    handles = []
+    idx = get_user_idx(users, owner_uid) 
+    handles.append(users[idx]["handle_str"])
+    for u_id in u_ids:
+        idx = get_user_idx(users, u_id) 
+        handles.append(users[idx]["handle_str"])
+    return handles

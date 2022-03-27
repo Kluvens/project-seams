@@ -10,9 +10,6 @@ from tests.http_helpers import reset_call
 #====================== Helper functions / Fixtures ===============
 
 OKAY = 200
-ACCESS_ERROR = 403
-INPUT_ERROR = 400
-
 
 @pytest.fixture
 def route():
@@ -54,7 +51,7 @@ def test_random_invalid_token(route, dummy_data, random_token):
     dummy_data.register_users(num_of_users=3)
     response = users_all_request(route, token=random_token)
 
-    assert response.status_code == ACCESS_ERROR
+    assert response.status_code == AccessError.code
 
 
 

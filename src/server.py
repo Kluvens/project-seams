@@ -6,10 +6,12 @@ from flask_cors import CORS
 from src.error import InputError
 from src import config
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
-from src.channel import channel_invite_v2, channel_join_v1, channel_details_v2, channel_messages_v1, channel_addowner_v1, channel_removeowner_v1
+from src.channel import channel_invite_v2, channel_join_v2, channel_details_v2, channel_messages_v1, channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
 from src.other import clear_v1
 from src.channels import channels_create_v2, channels_list_v2, channels_listall_v2
 from src.admin import admin_user_remove_v1, admin_userpermission_change_v1
+from src.dms import dm_create_v1, dm_list_v1
+from src.message import message_senddm_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -88,19 +90,15 @@ def channel_messages_http():
 
 @APP.route("/channel/join/v2", methods = ['POST'])
 def channel_join_http():
-    token = request.get_json('token')
-    channel_id = int(request.get_json('channel_id'))
-    channel_join_v1(token, channel_id)
+    return_list = request.get_json()
+    
+    return dumps(channel_join_v2(**return_list))
 
-    return dumps({})
+@APP.route("/channel/leave/v1", methods = ['POST'])
+def channel_leave_https():
+    return_list = request.get_json()
 
-# @APP.route("/channel/leave/v1", methods = ['POST'])
-# def channel_leave_https():
-#     token = request.get_json('token')
-#     channel_id = int(request.get_json('channel_id'))
-#     channel_leave_v1(token, channel_id)
-
-#     return dumps({})
+    return dumps(channel_leave_v1(**return_list))
 
 @APP.route("/channel/addowner/v1", methods = ['POST'])
 def channel_addowner_http():
@@ -163,18 +161,19 @@ def clear_http():
 #     message_edit(token, message_id, message)
 #     return dumps({})
 
-# @APP.route("/dm/create/v1", methods=['POST'])
-# def dm_create_http():
-#     dm_info = requests.get_json()
-#     token = dm_info['token']
-#     u_ids = dm_info['u_ids']
-#     return dumps(dm_create_v1(token, u_ids))
+# dm/list/v1
+@APP.route('/dm/list/v1', methods=['GET'])
+def dm_list():
+    token = request.args.get('token')
+    return dumps(dm_list_v1(token))
 
-# @APP.route("/dm/list/v1", methods=['GET'])
-# def dm_create_http():
-#     dm_info = request.args.get()
-#     token = dm_info['token']
-#     return dumps(dm_list_v1(token))
+# dm/create/v1 route
+@APP.route("/dm/create/v1", methods=['POST'])
+def dm_create():
+    data = request.get_json()
+    u_ids = data['u_ids']
+    token = data['token']
+    return dumps(dm_create_v1(token, u_ids))
 
 # @APP.route("/dm/remove/v1", methods=['DELETE'])
 # def dm_create_http():
@@ -199,13 +198,13 @@ def clear_http():
 #     dm_leave_v1(token, dm_id)
 #     return dumps({})
 
-# @APP.route("/message/senddm/v1", methods=['POST'])
-# def message_senddm_http():
-#     message_info = request.get_json()
-#     token = message_info['token']
-#     dm_id = message_info['dm_id']
-#     message = message_info['message']
-#     return dumps(message_senddm_v1(token, dm_id, message))
+@APP.route("/message/senddm/v1", methods=['POST'])
+def message_senddm_http():
+    message_info = request.get_json()
+    token = message_info['token']
+    dm_id = message_info['dm_id']
+    message = message_info['message']
+    return dumps(message_senddm_v1(token, dm_id, message))
 
 @APP.route("/admin/user/remove/v1", methods=['DELETE'])
 def admin_user_remove_http():
@@ -216,6 +215,12 @@ def admin_user_remove_http():
 def admin_userpermission_change_http():
     return_dict = request.get_json()
     return dumps(admin_userpermission_change_v1(**return_dict))
+
+# @APP.route("/user/profile/v1", methods=['GET'])
+# def user_profile_http():
+#     token = request.args.get('token')
+#     u_id = request.args.get('u_id')
+#     return dumps(admin_userpermission_change_v1(token, u_id))
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

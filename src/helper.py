@@ -59,7 +59,6 @@ def get_user_id(email, password, name_first, name_last):
 
 def global_owner_check(auth_user_id):
     OWNER = 1
-    MEMBER = 2
 
     data = data_store.get()
     for user in data['users']:
@@ -74,7 +73,6 @@ def global_owner_check(auth_user_id):
 def count_number_global_owner(users):
     sum = 0
     OWNER = 1
-    MEMBER = 2
 
     for user in users:
         if user['permissions'] == OWNER:

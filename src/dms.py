@@ -4,6 +4,57 @@ from src.helpers import decode_token
 from src.helpers import check_if_token_exists
 from src.helper import get_user_idx
 
+def dm_remove_v1(token,dm_id):
+
+    dms = data_store.get()['dms']
+    users = data_store.get()['users']
+
+    # Check token is valid and u_id exists
+    token_valid = False
+    user_exists = False
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid token")
+    else:
+        u_id = int(decode_token(token))
+        token_valid is True
+
+    u_ids = [user['u_ids'] for user in users]
+    if u_id in u_ids:
+        user_exists is True
+    else: 
+        raise InputError("ERROR: User id does not exist")
+
+    # Check dm_id is valid and exists
+    dm_id_valid = False
+    dm_ids = [dm['dm_id'] for dm in dms]
+    if dm_id in dm_ids:
+        dm_id_valid is True
+    else:
+        raise InputError("ERROR: Dm id does not exist")
+
+    # Check token is from owner of dm_id and is still in the dm
+    user_is_owner = False
+    idx = find_dm_index(dm_id)
+    owners = dms[idx]['owner_members']['u_id']
+    if u_id in owners:
+        user_is_owner is True
+    else:
+        raise AccessError ("ERROR: User is not the owner of this Dm")
+
+    user_in_dm = False
+    users_dms_list = dm_list_v1(token)
+    if dm_id in users_dms_list:
+        user_in_dm is True
+    else:
+        raise AccessError ("ERROR: User is not in Dm")
+    
+    # If all conditions followed, delete dm from dms list in data struct
+    if token_valid and user_exists and dm_id_valid and user_is_owner and user_in_dm:
+        del dms[idx]
+
+    return{}
+
+
 def dm_list_v1(token):
 
     # initialise datastore and dicts
@@ -20,8 +71,8 @@ def dm_list_v1(token):
     # loop through data_store and if u_id is in dm
     # add dms and names to dict
     for dm in dms_list:
-        for messages in dm['messages']:
-            if u_id == messages['u_id']:
+        for member in dm['all_members']:
+            if u_id == member['u_id']:
                 dm_id = dm['dm_id']
                 name = dm['name']
                 dms_dict['dms'].append({'dm_id' : dm_id, 'name' : name})
@@ -41,7 +92,7 @@ def find_dm_index(dm_id):
 
 
 def is_in_dm(auth_user_id, right_dm):
-    for member in right_dm["messages"]:
+    for member in right_dm["all_members"]:
         if auth_user_id == member["u_id"]:
             return True
 
@@ -50,7 +101,6 @@ def is_in_dm(auth_user_id, right_dm):
 def dm_details_v1(token, dm_id):
     # initialise datastore and dicts
     data = data_store.get()
-    dms = data['dms']
 
     # if token doesnt exist return AccessError
     if not check_if_token_exists(token):
@@ -58,7 +108,7 @@ def dm_details_v1(token, dm_id):
     
     u_id = int(decode_token(token))
     
-    right_dm_index = get_dm_idx(dms, dm_id)
+    right_dm_index = find_dm_index(dm_id)
 
     # error
     if right_dm_index is None:
@@ -73,7 +123,7 @@ def dm_details_v1(token, dm_id):
         'name': right_dm["name"],
         'owner_members': right_dm['owner_members'],
         'all_members': right_dm['all_members'],
-    }
+    } 
 
 def generate_dm_handle(u_ids, users):
     handles = []
@@ -82,19 +132,36 @@ def generate_dm_handle(u_ids, users):
         handles.append(users[idx]["handle_str"])
     return handles
 
-def dm_create(token, u_ids):
+def dm_create_v1(token, u_ids):
     if not check_if_token_exists(token):
         raise AccessError(description="Invalid Token!")
 
-    # Assuming token is valid
     owner_uid = decode_token(token)
-    data = data_store.get()
+    data = data_store.get() 
     users = data["users"]
+    
     handles = generate_dm_handle(u_ids, users)
     handles = sorted(handles)
     name = ", ".join(handles)
-
+    
+    host_info = data["users"][owner_uid]
+    host_info_list = [{
+        'u_id': host_info["u_id"],
+    }]
+    all_members_list = host_info_list
+    owner_members_list = host_info_list.copy()
+    
     dm_id = len(data['dms'])
-    data['dms'].append({"dm_id" : dm_id, "owner" : owner_uid, "name" : name})
+    data['dms'].append({
+        "dm_id" : dm_id,
+        "name" : name,
+        'owner_member': owner_members_list,
+        'all_members': all_members_list,
+        'messages': []
+    })
+    
+    data_store.set(data)
 
-    return dm_id
+    return {
+        'dm_id': dm_id
+    }

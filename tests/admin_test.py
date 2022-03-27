@@ -2,9 +2,8 @@ import requests
 from requests import HTTPError
 import pytest
 from src.config import url
+from src.error import InputError, AccessError
 
-ACCESS_ERROR = 403
-INPUT_ERROR = 400
 OKAY = 200
 
 @pytest.fixture
@@ -31,12 +30,33 @@ def setup():
 
     return [user1_dict, user2_dict, channel1_dict, channel2_dict]
 
+# def test_admin_user_remove_working(setup):
+#     user1_dict = setup[0]
+#     user2_dict = setup[1]
+#     channel_dict = setup[2]
+
+#     token = user1_dict['token']
+#     u_id = user2_dict['auth_user_id']
+#     channel_id = channel_dict['channel_id']
+
+#     response = requests.post(f'{url}/channel/invite/v2', json={'token': token, 'channel_id': channel_id, 'u_id': u_id})
+#     assert response.status_code == OKAY
+    
+#     response = requests.delete(f"{url}/admin/user/remove/v1", json={'token': token, 'u_id': u_id})
+#     assert response.status_code == OKAY
+
+#     response = requests.post(f"{url}/channel/details/v2", json={'token': token, 'channel_id': channel_id})
+#     assert response.status_code == OKAY
+
+#     details_list = response.json()
+#     assert isinstance(details_list, dict)
+
 def test_admin_user_remove_token_error(setup):
     user_dict = setup[1]
     u_id = user_dict['auth_user_id']
 
     response = requests.delete(f'{url}/admin/user/remove/v1', json={'token': "invalidtoken", 'u_id': u_id})
-    assert response.status_code == ACCESS_ERROR
+    assert response.status_code == AccessError.code
 
 def test_admin_user_remove_invalid_user(setup):
     user1_dict = setup[0]
@@ -46,7 +66,7 @@ def test_admin_user_remove_invalid_user(setup):
     u_id = user2_dict['auth_user_id']
 
     response = requests.delete(f'{url}/admin/user/remove/v1', json={'token': token, 'u_id': u_id+100})
-    assert response.status_code == INPUT_ERROR
+    assert response.status_code == InputError.code
 
 def test_admin_user_remove_only_global_user(setup):
     user1_dict = setup[0]
@@ -55,7 +75,7 @@ def test_admin_user_remove_only_global_user(setup):
     u_id = user1_dict['auth_user_id']
 
     response = requests.delete(f'{url}/admin/user/remove/v1', json={'token': token, 'u_id': u_id})
-    assert response.status_code == INPUT_ERROR
+    assert response.status_code == InputError.code
 
 def test_admin_user_remove_not_global_user(setup):
     user1_dict = setup[0]
@@ -65,7 +85,7 @@ def test_admin_user_remove_not_global_user(setup):
     u_id = user1_dict['auth_user_id']
 
     response = requests.delete(f'{url}/admin/user/remove/v1', json={'token': token, 'u_id': u_id})
-    assert response.status_code == ACCESS_ERROR
+    assert response.status_code == AccessError.code
 
 def test_admin_permission_token_error(setup):
     OWNER = 1
@@ -74,7 +94,7 @@ def test_admin_permission_token_error(setup):
     u_id = user_dict['auth_user_id']
 
     response = requests.post(f'{url}/admin/userpermission/change/v1', json={"token": "invalidtoken", "u_id": u_id, "permission_id": OWNER})
-    assert response.status_code == ACCESS_ERROR
+    assert response.status_code == AccessError.code
 
 def test_admin_permission_invalid_u_id(setup):
     OWNER = 1
@@ -85,7 +105,7 @@ def test_admin_permission_invalid_u_id(setup):
     u_id = user2_dict['auth_user_id']
 
     response = requests.post(f'{url}/admin/userpermission/change/v1', json={"token": token, "u_id": u_id+100, "permission_id": OWNER})
-    assert response.status_code == INPUT_ERROR
+    assert response.status_code == InputError.code
 
 def test_admin_permission_only_global_owner(setup):
     MEMBER = 2
@@ -95,7 +115,7 @@ def test_admin_permission_only_global_owner(setup):
     u_id = user_dict['auth_user_id']
 
     response = requests.post(f'{url}/admin/userpermission/change/v1', json={"token": token, "u_id": u_id, "permission_id": MEMBER})
-    assert response.status_code == INPUT_ERROR
+    assert response.status_code == InputError.code
 
 def test_admin_permission_id_invalid(setup):
     INVALID = 3
@@ -106,7 +126,7 @@ def test_admin_permission_id_invalid(setup):
     u_id = user2_dict['auth_user_id']
 
     response = requests.post(f'{url}/admin/userpermission/change/v1', json={"token": token, "u_id": u_id, "permission_id": INVALID})
-    assert response.status_code == INPUT_ERROR
+    assert response.status_code == InputError.code
 
 def test_admin_permission_already(setup):
     OWNER = 1
@@ -120,7 +140,7 @@ def test_admin_permission_already(setup):
     assert response.status_code == OKAY
 
     response = requests.post(f'{url}/admin/userpermission/change/v1', json={"token": token, "u_id": u_id, "permission_id": OWNER})
-    assert response.status_code == INPUT_ERROR
+    assert response.status_code == InputError.code
 
 def test_admin_permission_not_global_owner(setup):
     MEMBER = 2
@@ -131,7 +151,7 @@ def test_admin_permission_not_global_owner(setup):
     u_id = user1_dict['auth_user_id']
 
     response = requests.post(f'{url}/admin/userpermission/change/v1', json={"token": token, "u_id": u_id, "permission_id": MEMBER})
-    assert response.status_code == ACCESS_ERROR
+    assert response.status_code == AccessError.code
 
 def test_admin_permission_working(setup):
     OWNER = 1

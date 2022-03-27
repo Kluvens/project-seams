@@ -117,7 +117,7 @@ def channels_create_v2(token, name, is_public):
 
     # error
     if len(name) < 1 or len(name) > 20:
-        raise InputError("length of name is less than 1 or more than 20 characters")
+        raise InputError(description="length of name is less than 1 or more than 20 characters")
 
     data["channels"].append(
         {

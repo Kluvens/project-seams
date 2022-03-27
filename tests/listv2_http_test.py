@@ -31,13 +31,13 @@ def register_test_users(num_of_users):
 def test_invalid_token_type(list_route):
     reset_call()
 
-    response = requests.get(list_route, json = {'token': '1'})
+    response = requests.get(list_route, params = {'token': '1'})
     assert response.status_code == 403
 
 def test_invalid_token(list_route):
     reset_call()
 
-    response = requests.get(list_route, json = {'token': 'asdfgvasdg'})
+    response = requests.get(list_route, params = {'token': 'asdfgvasdg'})
     assert response.status_code == 403
         
 

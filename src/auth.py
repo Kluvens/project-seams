@@ -41,12 +41,12 @@ def auth_login_v2(email, password):
 
     # Email does not exist in database
     if not is_email_already_registered(users_list, email):
-        raise InputError("The email you entered does not belong to a user.")
+        raise InputError(description="The email you entered does not belong to a user.")
 
     # Check Password is correct
     hashed_pw = hash(password)
     if not is_password_correct(users_list, email, hashed_pw):
-        raise InputError("The password you entered is not correct.")
+        raise InputError(description="The password you entered is not correct.")
 
 
     u_id = get_corresponding_user_id(users_list, email)
@@ -119,14 +119,14 @@ def auth_register_v2(email, password, name_first, name_last):
 
     # Validate first_name
     if not is_valid_name(name_first):
-        raise InputError(
+        raise InputError(description=
             "The first name you entered is invalid.\n"
             "Your first name must consist of ASCII only "
             "characters and be between 1 and 50 characters inclusive.")
 
     # Validate last_name
     if not is_valid_name(name_last):
-        raise InputError(
+        raise InputError(description=
             "The first name you entered is invalid.\n"
             "Your first name must consist of ASCII only "
             "characters and be between 1 and 50 characters inclusive.")

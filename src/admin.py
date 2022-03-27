@@ -18,31 +18,47 @@ def admin_user_remove_v1(token, u_id):
     if user_index == None:
         raise InputError("u_id does not refer to a valid user")
 
-    if count_number_global_owner(data['users']) == 1:
+    if count_number_global_owner(data['users']) == 1 and u_id == auth_user_id:
         raise InputError("u_id refers to a user who is the only global owner")
 
-    data['users'][user_index]["name_first"] = 'Removed'
-    data['users'][user_index]["name_last"] = 'user'
+    user_to_be_removed = data["users"][user_index]
+
+    user_to_be_removed["exist_status"] = False
+
+    user_to_be_removed["name_first"] = "Removed"
+    user_to_be_removed["name_last"] = "user"
+    # Copying their details to the removed users list
+    user_data = data["users"][user_index].copy()
+    data["removed_users"].append(user_data)
+
+    # We have to add this key to the data object 
+    # in data_store
+
     data['users'][user_index]['email'] = None
     data['users'][user_index]['password'] = None
     data['users'][user_index]['handle_str'] = None
     data['users'][user_index]['permissions'] = None
 
+    # log them out
+    user_to_be_removed["session"] = []
+
+
     for channel in data['channels']:
         for message in channel['messages']:
             if message['u_id'] == u_id:
                 message['message'] = 'Removed user'
-        for memeber in channel['all_members']:
+        for member in channel['all_members']:
             if member['u_id'] == u_id:
                 member['u_id'] = None
-        for o_memeber in channel['owner_members']:
+        for o_member in channel['owner_members']:
             if o_member['u_id'] == u_id:
                 o_member['u_id'] = None
 
     data_store.set(data)
 
+    return {}
+
 def admin_userpermission_change_v1(token, u_id, permission_id):
-    OWNER = 1
     MEMBER = 2
     data = data_store.get()
     u_id = int(u_id)
@@ -55,19 +71,19 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
     
     user_index = get_user_idx(data['users'], u_id)
     if user_index == None:
-        raise InputError("u_id does not refer to a valid user")
+        raise InputError(description="u_id does not refer to a valid user")
 
     if permission_id not in [1, 2]:
-        raise InputError("permission_id is invalid")
+        raise InputError(description="permission_id is invalid")
 
     if data['users'][user_index]['permissions'] == permission_id:
-        raise InputError("the user already has the permissions level of permission_id")
+        raise InputError(description="the user already has the permissions level of permission_id")
 
     if not global_owner_check(auth_user_id):
-        raise AccessError("the authorised user is not a global owner")
+        raise AccessError(description="the authorised user is not a global owner")
 
     if count_number_global_owner(data['users']) == 1 and permission_id == MEMBER and auth_user_id == u_id:
-        raise InputError("u_id refers to a user who is the only global owner and they are being demoted to a user")
+        raise InputError(description="u_id refers to a user who is the only global owner and they are being demoted to a user")
 
     data['users'][user_index]['permissions'] = permission_id
 

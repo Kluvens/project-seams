@@ -180,6 +180,17 @@ def is_email_already_registered(users_list, email):
             return True
     return False
 
+
+def return_exist_status(users, u_id):
+    '''
+    Checks the exist_status of a user and returns it
+    '''
+    users = data_store.get()["users"]
+    for user in users:
+        if user["u_id"] == u_id:
+            return user["exist_status"]
+    return None
+
 ###################### Used By Multiple Feature Functions #########
 
 def check_handlestr_unique(users, handle_str):

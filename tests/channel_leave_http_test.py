@@ -1,8 +1,8 @@
-from difflib import restore
 import requests
 import pytest
 from src.config import url
 from tests.http_helpers import GenerateTestData
+from src.error import AccessError, InputError
 
 #====================== Helper functions / Fixtures ===============
 
@@ -47,8 +47,10 @@ def test_invalid_token(leave_route, create_route, dummy_data):
     channel_info = channel_id_obj.json()
     channel_id = channel_info['channel_id']
 
-    response = requests.post(leave_route, json = {'token': 'hello am not a token', 'channel_id': channel_id})
-    assert response.status_code == 403
+    response = requests.post(
+        leave_route, 
+        json = {'token': 'hello am not a token', 'channel_id': channel_id})
+    assert response.status_code == AccessError.code
 
 # invalid channel_id
 def test_invalid_channel_id(create_route,leave_route,dummy_data):
@@ -68,7 +70,7 @@ def test_invalid_channel_id(create_route,leave_route,dummy_data):
         'token':user,
         'channel_id': channel_id+1000
     })
-    assert response.status_code == 400
+    assert response.status_code == InputError.code
 
 # authorized user not a member of the channel
 def test_not_user_in_channel(create_route,leave_route,dummy_data):
@@ -88,7 +90,7 @@ def test_not_user_in_channel(create_route,leave_route,dummy_data):
         'token': 'i am not from this channel',
         'channel_id': channel_id
     })
-    assert response.status_code == 403
+    assert response.status_code == AccessError.code
 
 # routine behavior
 def test_working_setup(create_route,leave_route,dummy_data):

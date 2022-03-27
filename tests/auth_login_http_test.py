@@ -4,7 +4,7 @@ import pytest
 from src.config import url
 from tests.http_helpers import GenerateTestData
 from src.error import InputError
-from requests import HTTPError
+from src.error import AccessError
 from src.helpers import decode_token
 
 #====================== Helper functions / Fixtures ===============
@@ -41,11 +41,6 @@ def test_login_existing_user(route, dummy_data, num_of_users):
         decode_token(logged_in_user_dict['token']))
 
 
-# Testing if logging in user multiple times will 
-# generate unique session tokens
-
-
-
 # ==================Testing Exceptions=============================
 
 @pytest.mark.parametrize("num_of_users", [1, 2, 3])
@@ -65,7 +60,7 @@ def test_does_email_exist(route, dummy_data, email, num_of_users):
         route, 
         json={"email" : email, "password" : "IamApassword"}
     )
-    assert response.status_code == 400
+    assert response.status_code == InputError.code
 
 # Choosing password that are very close the the actual
 # password. Each parameter deals with a possible edge case
@@ -85,4 +80,4 @@ def test_handelling_incorrect_password(route, dummy_data, email, password):
             route, 
             json={"email" : email, "password" : password}
         )
-    assert response.status_code == 400
+    assert response.status_code == InputError.code

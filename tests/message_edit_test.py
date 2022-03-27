@@ -4,6 +4,7 @@ from src.config import url
 from src.error import InputError, AccessError
 from tests.http_helpers import GenerateTestData
 
+
 def reset_call():
     requests.delete(url + 'clear/v1')
 
@@ -76,7 +77,7 @@ def test_channel_messages_edit_invalid_message_id_InputError(dummy_data, create_
     message_two = "bye world"
 
     response = put_message_edit(user0['token'], ch1_dict["channel_id"], message_two)
-    assert response.status_code == 400
+    assert response.status_code == InputError.code
 
 # Testing case when the message string is more than 1000 characters long
 def test_channel_messages_send_length_of_message_toolong_InputError(dummy_data, create_route): 
@@ -101,7 +102,7 @@ def test_channel_messages_send_length_of_message_toolong_InputError(dummy_data, 
         message += f" {i}"
 
     response = put_message_edit(user0['token'], ch1_dict["channel_id"], message)
-    assert response.status_code == 400
+    assert response.status_code == InputError.code
 
 '''
 AccessError will occur when a user is not a member/owner of a valid channel_id or either not a global owner
@@ -127,7 +128,7 @@ def test_channel_messages_edit_invalid_token_AccessError(dummy_data, create_rout
     message_two = "bye world"
 
     response = put_message_edit(invalid_token, ch1_dict["channel_id"], message_two)
-    assert response.status_code == 403
+    assert response.status_code == AccessError.code
 
 # Testing case when authorised user is not a member of the valid channel_id
 def test_channel_messages_edit_unauthorised_user_AccessError(dummy_data, create_route):
@@ -151,7 +152,7 @@ def test_channel_messages_edit_unauthorised_user_AccessError(dummy_data, create_
     message_two = "bye world"
 
     response = put_message_edit(user1["token"], send_message["message_id"], message_two)
-    assert response.status_code == 403
+    assert response.status_code == AccessError.code
 
 # Testing case when message_edit is working
 def test_channel_messages_edit_working(dummy_data, create_route):

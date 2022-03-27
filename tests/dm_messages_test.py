@@ -1,8 +1,11 @@
+#======================== Import Statements ======================
 import pytest
 import requests
 from src.config import url
 from src.error import InputError, AccessError
 from tests.http_helpers import GenerateTestData
+
+#======================== Helpers/Fixtures =======================
 
 def reset_call():
     requests.delete(url + 'clear/v1')
@@ -23,6 +26,7 @@ def send_dm_request(token, dm_id, message):
 
     return response
 
+
 def get_dm_messages(token, dm_id, start):
     response = requests.get(url + "/dm/messages/v1",
         params={
@@ -32,6 +36,7 @@ def get_dm_messages(token, dm_id, start):
         })
     return response
 
+
 def post_dm_create(token, u_ids):
     response = requests.post(url + "/dm/create/v1",
         json={
@@ -39,6 +44,9 @@ def post_dm_create(token, u_ids):
             "u_ids" : u_ids,
         })
     return response
+
+
+#========================== Testing Correctness ==================
 '''
 InputError will occur when dm_id is not a valid DM
 or when start is greater than the total number of messages in the DM
@@ -55,7 +63,7 @@ def test_dm_messages_invalid_dm_id_InputError(dummy_data):
 
     # Input invalid dm_id
     response = get_dm_messages(user0["token"], -1, 0)
-    assert response.status_code == 400
+    assert response.status_code == InputError.code
 
 # Testing case when start is invalid
 def test_dm_messages_invalid_start_value_InputError(dummy_data):
@@ -70,7 +78,7 @@ def test_dm_messages_invalid_start_value_InputError(dummy_data):
 
     # Since no messages, 9999 is an invalid start value
     response = get_dm_messages(user0['token'], new_dm['dm_id'], 9999)
-    assert response.status_code == 400
+    assert response.status_code == InputError.code
 
 '''
 AccessError will occur when a user is not a member of a valid DM
@@ -89,7 +97,7 @@ def test_dm_messages_invalid_token_AccessError(dummy_data, invalid_token):
     new_dm = dm_channel.json()
 
     response = get_dm_messages(invalid_token, new_dm['dm_id'], 0)
-    assert response.status_code == 403
+    assert response.status_code == AccessError.code
 
 # Testing case when authorised user is not a member of the valid dm_id
 def test_dm_messages_unauthorised_user_AccessError(dummy_data):
@@ -105,7 +113,7 @@ def test_dm_messages_unauthorised_user_AccessError(dummy_data):
     
     # user2 is not a member of the dm_id
     response = get_dm_messages(user2['token'], new_dm['dm_id'], 0)
-    assert response.status_code == 403
+    assert response.status_code == AccessError.code
 
 
 # Testing case when dm messages is working (only one user sending a message)

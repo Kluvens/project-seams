@@ -1,4 +1,3 @@
-from json import JSONDecodeError
 import requests
 import pytest
 from src.config import url
@@ -23,10 +22,6 @@ def dummy_data():
     data_instance = GenerateTestData(url)
     return data_instance
 
-@pytest.fixture
-def register_test_users(num_of_users):
-    dummy_data = GenerateTestData(url)
-    dummy_data.register_users(num_of_users)
 
 # ===================== HTTP TESTS =====================================
 

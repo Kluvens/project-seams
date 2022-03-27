@@ -18,14 +18,12 @@ import pytest
 from src.config import url
 from tests.http_helpers import GenerateTestData
 from tests.http_helpers import reset_call
-
+from src.error import InputError
+from src.error import AccessError
 
 #====================== Helper functions / Fixtures ===============
 
 OKAY = 200
-ACCESS_ERROR = 403
-INPUT_ERROR = 400
-
 
 @pytest.fixture
 def route():
@@ -68,7 +66,7 @@ def test_random_invalid_token(dummy_data, random_str):
     user0_uid = users_list[0]["auth_user_id"]
     response = user_profile_request(random_str, user0_uid)
 
-    assert response.status_code == ACCESS_ERROR
+    assert response.status_code == AccessError.code
 
 
 # Invalid u_id
@@ -83,7 +81,7 @@ def test_invalid_u_id(dummy_data, invalid_uid):
     user1_token = users_list[1]["token"]
     response = user_profile_request(user1_token, invalid_uid)
 
-    assert response.status_code == ACCESS_ERROR
+    assert response.status_code == InputError.code
 
 
 
@@ -97,8 +95,7 @@ def test_invalid_token(dummy_data):
         dummy_data.logout_request(user["token"])
         # user3 is the last to get logged out
         response = user_profile_request(user["token"], user3_uid)
-        assert response.status_code == ACCESS_ERROR
-
+        assert response.status_code == AccessError.code
 
 
 #=================Testing HTTP layer==============================

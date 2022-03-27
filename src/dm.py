@@ -28,7 +28,7 @@ def dm_messages_v1(token, dm_id, start):
     start = int(start)
     # Check if token is valid using helper
     if not check_if_token_exists(token):
-        raise AccessError("Error occured, invalid token'")
+        raise AccessError(description="Error occured, invalid token'")
 
     # Check whether dm_id exist in the database
 
@@ -37,7 +37,7 @@ def dm_messages_v1(token, dm_id, start):
         if dm['dm_id'] == dm_id:
             dm_exist = True
     if not dm_exist:
-        raise InputError("Error occurred dm_id is not in database")
+        raise InputError(description="Error occurred dm_id is not in database")
     
     # Check user is a member in dm_id
     auth_user_id = int(decode_token(token))
@@ -48,7 +48,7 @@ def dm_messages_v1(token, dm_id, start):
             if member['u_id'] == auth_user_id:
                 authorised_user = True
     if not authorised_user:
-        raise AccessError("Error occurred authorised user is not a member of channel_id")
+        raise AccessError(description="Error occurred authorised user is not a member of channel_id")
 
     # Retrieves all messages and also number of messages
     num_messages = 0
@@ -61,7 +61,7 @@ def dm_messages_v1(token, dm_id, start):
                 data['dms'][dm_id]['messages'] = []
     
     if start > num_messages:
-        raise InputError("Error occurred, start value is greater than the number of messages")
+        raise InputError(description="Error occurred, start value is greater than the number of messages")
 
     # When there is no messages
     if num_messages == 0 and start == 0:

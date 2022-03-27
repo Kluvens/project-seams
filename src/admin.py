@@ -12,14 +12,14 @@ def admin_user_remove_v1(token, u_id):
     auth_user_id = int(decode_token(token))
 
     if not global_owner_check(auth_user_id):
-        raise AccessError("the authorised user is not a global owner")
+        raise AccessError(description="the authorised user is not a global owner")
 
     user_index = get_user_idx(data['users'], u_id)
     if user_index == None:
-        raise InputError("u_id does not refer to a valid user")
+        raise InputError(description="u_id does not refer to a valid user")
 
     if count_number_global_owner(data['users']) == 1 and u_id == auth_user_id:
-        raise InputError("u_id refers to a user who is the only global owner")
+        raise InputError(description="u_id refers to a user who is the only global owner")
 
     user_to_be_removed = data["users"][user_index]
 
@@ -44,9 +44,10 @@ def admin_user_remove_v1(token, u_id):
 
 
     for channel in data['channels']:
-        for message in channel['messages']:
-            if message['u_id'] == u_id:
-                message['message'] = 'Removed user'
+        if "messages" in channel:
+            for message in channel['messages']:
+                if message['u_id'] == u_id:
+                    message['message'] = 'Removed user'
         for member in channel['all_members']:
             if member['u_id'] == u_id:
                 member['u_id'] = None
@@ -55,9 +56,10 @@ def admin_user_remove_v1(token, u_id):
                 o_member['u_id'] = None
 
     for dm in data['dms']:
-        for message in dm['messages']:
-            if message['u_id'] == u_id:
-                message['message'] = 'Removed user'
+        if "messages" in dm:
+            for message in dm['messages']:
+                if message['u_id'] == u_id:
+                    message['message'] = 'Removed user'
         for member in dm['all_members']:
             if member['u_id'] == u_id:
                 member['u_id'] = None

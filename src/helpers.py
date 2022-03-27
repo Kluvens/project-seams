@@ -217,3 +217,30 @@ def generate_dm_handle(owner_uid, u_ids, users):
         idx = get_user_idx(users, u_id) 
         handles.append(users[idx]["handle_str"])
     return handles
+
+def is_global_owner(u_id):
+    users = data_store.get()['users']
+    for user in users:
+        if user['u_id'] == u_id:
+            if user['permissions'] == 1:
+                return True
+            else:
+                return False
+    return False
+
+def write_savefile():
+    pass
+    """
+    Saves data into pickle file, to ensure when server is restarted, data is not erased
+    """
+    # with open('src/savefile.p', 'wb') as FILE:
+    #     pickle.dump(data_store, FILE)
+    
+
+def load_savefile():
+    pass
+    """
+    Open and loads data into pickle file, to ensure when server is restarted, data is not erased
+    """
+    # with open('src/savefile.p', 'rb') as FILE:
+    #     return pickle.load(FILE)

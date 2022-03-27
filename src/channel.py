@@ -201,31 +201,36 @@ def channel_details_v2(token, channel_id):
     }
 
 
-def channel_messages_v1(auth_user_id, channel_id, start):
+def channel_messages_v2(token, channel_id, start):
     '''
-    channel_messages_v1
+    channel_messages_v2
 
-    This function outputs upto 50 messages between index start and start + 50.
+    This function outputs upto 50 messages in channel_id between index start and start + 50.
 
     Arguments
-    auth_user_id (integer) - This is the user id of an authorised user who is either an owner 
-    or member of the channel.
+    token (string) - This is the token of a user.
     channel_id (integer) - This is the channel id of the channel that the authorised user 
     would like to see the messages of.
     start (integer) - The start index of the messages array which will be returned.
 
     Exceptions:
-    InputError - An input error is raised when the channel id or either the start is greater 
+    InputError - An input error is raised when the channel id is not valid or either the start is greater 
     than the total number of messages in the channel
-    AccessError - An access error is raised when the authorised user is not a global owner or an 
-    existing member of the channel
+    AccessError - An access error is raised when the authorised user is not an owner
+    or an existing member of the channel
 
     Return Value:
     This function returns the messages array from the channel, the start index and the end index.
-    
     '''
+    channel_id = int(channel_id)
+    start = int(start)
     data = data_store.get()
     assert "channels" in data
+    # assert "token" in data
+
+    # Check if token is valid using helper
+    if check_if_token_exists(token) == False:
+        raise AccessError("Error occured, invalid token'")
 
     # Check whether channel_id exist in the database
     channel_exist = False
@@ -233,16 +238,18 @@ def channel_messages_v1(auth_user_id, channel_id, start):
         if channel['channel_id'] == channel_id:
             channel_exist = True
     if not channel_exist:
-        raise InputError(description="Error occurred channel_id is not in database")
+        raise InputError("Error occurred channel_id is not in database")
     
     # Check user is a member in channel_id
+    auth_user_id = int(decode_token(token))
+
     authorised_user = False
     for channel in data['channels']:
         for member in channel['all_members']:
             if member['u_id'] == auth_user_id:
                 authorised_user = True
     if not authorised_user:
-        raise AccessError(description="Error occurred authorised user is not a member of channel_id")
+        raise AccessError("Error occurred authorised user is not a member of channel_id")
 
     # Retrieves all messages and also number of messages
     num_messages = 0
@@ -255,8 +262,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
                 data['channels'][channel_id]['messages'] = []
     
     if start > num_messages:
-        raise InputError(
-            description="Error occurred start value is greater than the number of messages")
+        raise InputError("Error occurred, start value is greater than the number of messages")
 
     # When there is no messages
     if num_messages == 0 and start == 0:

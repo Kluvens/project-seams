@@ -6,6 +6,7 @@
 
 initial_object = {
     'users' : [],
+    'removed_users' : [],
     'channels' : [],
     'dms': [],
     'unique_message_id': 0,

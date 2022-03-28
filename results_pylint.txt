@@ -1,0 +1,6 @@
+************* Module tests.http_helpers
+tests/http_helpers.py:98:8: C0206: Consider iterating with .items() (consider-using-dict-items)
+
+--------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 10.00/10, -0.00)
+

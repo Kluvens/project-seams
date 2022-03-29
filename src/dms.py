@@ -136,7 +136,7 @@ def dm_create_v1(token, u_ids):
     
     # if token doesnt exist return AccessErr
     if not check_if_token_exists(token):
-        raise InputError(description="Invalid Token!")
+        raise AccessError(description="Invalid Token!")
 
     owner_uid = decode_token(token)
     data = data_store.get() 

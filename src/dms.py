@@ -3,6 +3,12 @@ from src.error import InputError, AccessError
 from src.helpers import decode_token
 from src.helpers import check_if_token_exists
 from src.helper import get_user_idx
+from src.helpers import generate_dm_handle
+from src.helpers import find_dm_index
+from src.helpers import is_in_dm
+from src.helpers import check_u_id_exists
+from src.helpers import check_duplicate_u_ids
+
 
 def dm_list_v1(token):
     '''
@@ -47,18 +53,6 @@ def dm_list_v1(token):
 
     return dms_dict
 
-def find_dm_index(dms, dm_id):    
-    for idx, dm in enumerate(dms):
-        if dm['dm_id'] == dm_id:
-            return idx
-    return None
-
-def is_in_dm(u_id, right_dm):
-    for member in right_dm["all_members"]:
-        if u_id == member["u_id"]:
-            return True
-
-    return False
 
 def dm_details_v1(token, dm_id):
     '''
@@ -123,14 +117,9 @@ def dm_details_v1(token, dm_id):
         'members': right_dm_all_members,
     }
 
-def generate_dm_handle(owner_uid, u_ids, users):
-    handles = []
-    idx = get_user_idx(users, owner_uid) 
-    handles.append(users[idx]["handle_str"])
-    for u_id in u_ids:
-        idx = get_user_idx(users, u_id) 
-        handles.append(users[idx]["handle_str"])
-    return handles
+
+
+
 
 def dm_create_v1(token, u_ids):
     
@@ -139,8 +128,19 @@ def dm_create_v1(token, u_ids):
         raise AccessError(description="Invalid Token!")
 
     owner_uid = decode_token(token)
+
+ 
+    if check_duplicate_u_ids(u_ids):
+        raise InputError(description="Duplicate u_ids")
+
+
     data = data_store.get() 
     users = data["users"]
+
+
+    for u_id in u_ids:
+        if not check_u_id_exists(users, u_id):
+            raise InputError(description="Invalid u_id in u_ids")
     
     handles = generate_dm_handle(owner_uid, u_ids, users)
     handles = sorted(handles)
@@ -172,6 +172,7 @@ def dm_create_v1(token, u_ids):
     return {
         'dm_id': dm_id
     }
+
 
 def dm_leave_v1(token, dm_id):
     '''
@@ -228,6 +229,7 @@ def dm_leave_v1(token, dm_id):
             dms[dm_index]['all_members'].remove({'u_id': u_id})
 
     return{}
+
 
 def dm_remove_v1(token,dm_id):
     '''

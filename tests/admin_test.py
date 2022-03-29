@@ -195,3 +195,22 @@ def test_profile_after_remove(setup):
     }
 
     assert user_profile == expected_output
+
+# def test_remove_user_from_dm(setup):
+#     user1_dict = setup[0]
+#     user2_dict = setup[1]
+
+#     response = requests.post(url + "/message/senddm/v1", 
+#         json={
+#             "token" : token,
+#             "dm_id" : dm_id,
+#             "message" : message,
+#         })
+
+#     return response    
+
+#     response = requests.delete(
+#         f'{url}/admin/user/remove/v1', 
+#         json={'token': user1_dict["token"], 'u_id': user2_dict["auth_user_id"]}
+#     )
+#     assert response.status_code == OKAY

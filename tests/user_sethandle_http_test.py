@@ -133,5 +133,5 @@ def test_set_handle(route, dummy_data, user_idx, handle_str):
 
     # Note that since reset is call with each user_idx parameter
     # new handle_str is guarnteed to not be duplicated 
-    profile = user_profile_request(user_token, user_u_id).json()
+    profile = user_profile_request(user_token, user_u_id).json()["user"]
     assert profile["handle_str"] == handle_str

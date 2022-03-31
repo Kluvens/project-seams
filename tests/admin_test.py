@@ -184,7 +184,7 @@ def test_profile_after_remove(setup):
         params={"token" : user1_dict["token"], "u_id" : user2_dict["auth_user_id"]}
     )
 
-    user_profile = obj.json()
+    user_profile = obj.json()["user"]
 
     expected_output = {
         "u_id" : user2_dict["auth_user_id"],

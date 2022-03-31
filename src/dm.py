@@ -89,7 +89,7 @@ def dm_messages_v1(token, dm_id, start):
 
     if num < 50:
         end = -1
-
+    message_array.reverse()
     return {
         'messages': message_array,
         'start': start,

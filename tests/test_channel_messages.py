@@ -185,9 +185,9 @@ def test_channel_messages_working_complex(dummy_data, create_route):
 
     assert messages_output['start'] == start_number
     assert messages_output['end'] == -1
-    assert messages_output['messages'][0]['message_id'] == send_message_one['message_id']
-    assert messages_output['messages'][0]['u_id'] == user0['auth_user_id']
-    assert messages_output['messages'][0]['message'] == message_one
-    assert messages_output['messages'][1]['message_id'] == send_message_two['message_id']
-    assert messages_output['messages'][1]['u_id'] == user1['auth_user_id']
-    assert messages_output['messages'][1]['message'] == message_two
+    assert messages_output['messages'][1]['message_id'] == send_message_one['message_id']
+    assert messages_output['messages'][1]['u_id'] == user0['auth_user_id']
+    assert messages_output['messages'][1]['message'] == message_one
+    assert messages_output['messages'][0]['message_id'] == send_message_two['message_id']
+    assert messages_output['messages'][0]['u_id'] == user1['auth_user_id']
+    assert messages_output['messages'][0]['message'] == message_two

@@ -290,7 +290,7 @@ def channel_messages_v2(token, channel_id, start):
 
     if num < 50:
         end = -1
-
+    message_array.reverse()
     return {
         'messages': message_array,
         'start': start,

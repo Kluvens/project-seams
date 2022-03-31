@@ -131,7 +131,7 @@ def test_setting_name(route, dummy_data, name_first, name_last):
     assert response.status_code == OKAY
 
     response = user_profile_request(user1_token, user1_u_id)
-    user0_dict = json.loads(response.text)
+    user0_dict = json.loads(response.text)["user"]
 
     assert user0_dict["name_first"] == name_first
     assert user0_dict["name_last"] == name_last

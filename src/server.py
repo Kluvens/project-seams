@@ -79,7 +79,7 @@ def auth_login_http():
 
 @APP.route("/auth/logout/v1", methods = ['POST'])
 def auth_logout_http():
-    token = request.get_json('token')
+    token = request.get_json()["token"]
     auth_logout_v1(token)
 
     return dumps({})

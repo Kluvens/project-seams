@@ -81,7 +81,7 @@ def test_users_all_request(route, dummy_data):
     response = users_all_request(route, user0_token)
     assert response.status_code == 200
 
-    users_details_dict = json.loads(response.text)
+    users_details_dict = json.loads(response.text)["users"]
 
     # This is still blackbox, as we're only testing http server interface
     expected_user0_det = user_expected_details(

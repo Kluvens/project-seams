@@ -145,7 +145,7 @@ class GenerateTestData:
         '''
         # print(token)
         route = self.url + 'auth/logout/v1'
-        response = requests.post(route, json=token)
+        response = requests.post(route, json={"token" : token})
         assert response.status_code == 200
     
 

@@ -225,7 +225,6 @@ def check_duplicate_u_ids(u_ids):
 
 
 
-
 def generate_dm_handle(owner_uid, u_ids, users):
     handles = []
     idx = get_user_idx(users, owner_uid) 

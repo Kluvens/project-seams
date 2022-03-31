@@ -114,7 +114,7 @@ def test_users_request_profile(dummy_data, user_idx):
     response = user_profile_request(user_token, user_uid)
     assert response.status_code == OKAY
     
-    user_details_dict = json.loads(response.text)
+    user_details_dict = json.loads(response.text)["user"]
 
     # This is still blackbox, as we're only testing http server interface
     expected_user_det = user_expected_details(

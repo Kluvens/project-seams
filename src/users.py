@@ -49,7 +49,7 @@ def users_all_v1(token):
                 "handle_str" : user["handle_str"]
             })
 
-    return users_details
+    return {"users" : users_details}
 
 
 def user_profile_v1(token, u_id):
@@ -97,7 +97,7 @@ def user_profile_v1(token, u_id):
                 "handle_str" : user["handle_str"]
             }
 
-    return user_profile
+    return {"user" : user_profile}
 
 
 def user_setname_v1(token, name_first, name_last):

@@ -136,5 +136,5 @@ def test_set_new_email(route, dummy_data, user_idx):
 
     # Note that since reset is call with each user_idx parameter
     # new email is guarnteed to not be duplicated 
-    profile = user_profile_request(user_token, user_u_id).json()
+    profile = user_profile_request(user_token, user_u_id).json()["user"]
     assert profile["email"] == new_email

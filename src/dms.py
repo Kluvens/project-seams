@@ -287,7 +287,7 @@ def dm_remove_v1(token,dm_id):
     all_members = dms[idx]['all_members']
     owner_u_id = get_owner_idx(all_members, u_id)
 
-    if u_id == owner_u_id:
+    if u_id == all_members[owner_u_id]['u_id']:
         user_is_owner = True
     else:
         raise AccessError (
@@ -310,7 +310,4 @@ def dm_remove_v1(token,dm_id):
 
 ############## Helper Funciton ######################
 def get_owner_idx(members, u_id):
-    for idx, member_u_id in enumerate(members):
-        if member_u_id == u_id:
-            return idx
-    return None
+    return 0

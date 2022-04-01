@@ -159,6 +159,7 @@ def dm_create_http():
 @APP.route("/dm/remove/v1", methods=['DELETE'])
 def dm_remove_http():
     return_list = request.get_json()
+    print(return_list)
     return dumps(dm_remove_v1(**return_list))
 
 # dm/details/v1
@@ -242,8 +243,11 @@ def channel_messages():
 @APP.route("/message/send/v1", methods=['POST'])
 def message_send():
     data = request.get_json()
-    # write_savefile()
-    return dumps(message_send_v1(**data))
+    token = data['token']
+    channel_id = data['channel_id']
+    message = data['message']
+    print(data)
+    return dumps(message_send_v1(token, channel_id, message))
 
 # message/remove/v1
 @APP.route("/message/remove/v1", methods=['DELETE'])

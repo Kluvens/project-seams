@@ -168,6 +168,8 @@ def message_remove_v1(token, message_id):
                     elif auth_user_id == message['u_id']:
                         authorised_user = True
                         channel['messages'].remove(message)
+                    elif authorised_user:
+                        channel['messages'].remove(message)
 
     if not message_exist:
         raise InputError(description="Error occurred, message_id is not in database")
@@ -231,6 +233,8 @@ def message_edit_v1(token, message_id, message):
                         message_dict['message'] = new_message
                     elif auth_user_id == message_dict["u_id"]:
                         authorised_user = True
+                        message_dict['message'] = new_message
+                    elif authorised_user:
                         message_dict['message'] = new_message
 
     if not message_exist:

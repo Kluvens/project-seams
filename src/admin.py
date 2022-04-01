@@ -34,13 +34,13 @@ def admin_user_remove_v1(token, u_id):
     # We have to add this key to the data object 
     # in data_store
 
-    data['users'][user_index]['email'] = None
-    data['users'][user_index]['password'] = None
-    data['users'][user_index]['handle_str'] = None
-    data['users'][user_index]['permissions'] = None
+    data['users'][user_index]['email'] = ''
+    data['users'][user_index]['password'] = ''
+    data['users'][user_index]['handle_str'] = ''
+    data['users'][user_index]['permissions'] = 0
 
     # log them out
-    user_to_be_removed["session"] = []
+    user_to_be_removed["sessions"] = []
 
 
     for channel in data['channels']:
@@ -50,10 +50,12 @@ def admin_user_remove_v1(token, u_id):
                     message['message'] = 'Removed user'
         for member in channel['all_members']:
             if member['u_id'] == u_id:
-                member['u_id'] = None
+                channel["all_members"].remove({'u_id': u_id})
+                # member['u_id'] = -100
         for o_member in channel['owner_members']:
             if o_member['u_id'] == u_id:
-                o_member['u_id'] = None
+                channel["owner_members"].remove({'u_id': u_id})
+                # o_member['u_id'] = -100
 
     for dm in data['dms']:
         if "messages" in dm:
@@ -62,10 +64,10 @@ def admin_user_remove_v1(token, u_id):
                     message['message'] = 'Removed user'
         for member in dm['all_members']:
             if member['u_id'] == u_id:
-                member['u_id'] = None
-        for o_member in dm['owner_members']:
-            if o_member['u_id'] == u_id:
-                o_member['u_id'] = None
+                dm['all_members'].remove({'u_id': u_id})
+        # for o_member in dm['owner_members']:
+        #     if o_member['u_id'] == u_id:
+        #         dm['owner_members'].remove({'u_id': u_id})
 
     data_store.set(data)
 
@@ -101,3 +103,5 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
     data['users'][user_index]['permissions'] = permission_id
 
     data_store.set(data)
+
+    return {}

@@ -242,8 +242,11 @@ def channel_messages():
 @APP.route("/message/send/v1", methods=['POST'])
 def message_send():
     data = request.get_json()
-    # write_savefile()
-    return dumps(message_send_v1(**data))
+    # FRONT-END PROBLEM - supplying an extra parameter
+    token = data["token"]
+    channel_id = data["channel_id"]
+    message = data["message"]
+    return dumps(message_send_v1(token, channel_id, message))
 
 # message/remove/v1
 @APP.route("/message/remove/v1", methods=['DELETE'])

@@ -258,8 +258,8 @@ def channel_messages_v2(token, channel_id, start):
             if 'messages' in data['channels'][channel_id]:
                 found_messages = channel['messages']
                 num_messages = len(found_messages)
-            else:
-                data['channels'][channel_id]['messages'] = []
+            # else:
+            #     data['channels'][channel_id]['messages'] = []
     
     if start > num_messages:
         raise InputError("Error occurred, start value is greater than the number of messages")

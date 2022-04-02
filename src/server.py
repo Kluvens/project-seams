@@ -27,6 +27,7 @@ from src.users import user_setname_v1
 from src.users import user_profile_setemail_v1
 from src.users import user_profile_sethandle_v1
 from src.message import message_send_v1, message_remove_v1, message_edit_v1, message_senddm_v1
+from src.message import message_pin_v1, message_unpin_v1
 
 ###################### INITIAL SERVER SETUP ######################
 
@@ -271,6 +272,20 @@ def message_edit():
     return dumps({})
 
 # load_savefile()
+
+@APP.route("/message/pin/v1", methods=['POST'])
+def message_pin_http():
+    data = request.get_json()
+    token = data['token']
+    message_id = data['message_id']
+    return dumps(message_pin_v1(token, message_id))
+
+@APP.route("/message/unpin/v1", methods=['POST'])
+def message_unpin_http():
+    data = request.get_json()
+    token = data['token']
+    message_id = data['message_id']
+    return dumps(message_unpin_v1(token, message_id))
 
 ####################### CLEARING/RESTTING ########################
 

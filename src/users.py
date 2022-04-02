@@ -16,6 +16,7 @@ from src.helpers import check_handlestr_unique
 from src.helpers import get_user_idx
 from src.helpers import check_u_id_exists
 from src.helpers import return_exist_status
+from datetime import datetime
 
 ##################### User Function Implementations ##############
 def users_all_v1(token):
@@ -238,3 +239,53 @@ def user_profile_sethandle_v1(token, handle_str):
     users[idx]["handle_str"] = handle_str
 
     return {}
+
+def user_stats_v1(token):
+    if check_if_token_exists(token) == False:
+        raise AccessError(description="Error occured, invalid token'")
+    
+    auth_user_id = int(decode_token(token))
+
+    num_channels_joined = count_number_channels_joined(auth_user_id)
+    num_dms_joined = count_number_dms_joined(auth_user_id)
+    num_messages_sent = count_number_messages_sent(auth_user_id)
+    num_channels_exist = count_number_channels_exist()
+    num_dms_exist = count_number_dms_exist()
+    num_messages_exist = count_number_messages_exist()
+
+    time_stamp = datetime.now()
+
+    channels_stats = {'num_channels_joined': num_channels_joined, 'time_stamp': time_stamp}
+    dms_stats = {'num_dms_joined': num_dms_joined, 'time_stamp': time_stamp}
+    messages_stats = {'num_messages_sent': num_messages_sent, 'time_stamp': time_stamp}
+
+    if (num_channels_exist + num_dms_exist + num_messages_exist) > 0:
+        involvement_rate = (num_channels_joined + num_dms_joined + num_messages_sent) / (num_channels_exist + num_dms_exist + num_messages_exist)
+
+    if involvement_rate > 1:
+        involvement_rate = 1
+
+    user_stats = {
+        'channels_joined': [channels_stats],
+        'dms_joined': [dms_stats],
+        'messages_sent': [messages_sent],
+        'involvement_rate': involvement_rate,
+    }
+
+    return {'user_stats': user_stats}
+
+def users_stats_v1(token):
+    if check_if_token_exists(token) == False:
+        raise AccessError(description="Error occured, invalid token'")
+    
+    auth_user_id = int(decode_token(token))
+
+    num_channels_exist = count_number_channels_exist()
+    num_dms_exist = count_number_dms_exist()
+    num_messages_exist = count_number_messages_exist()
+
+    time_stamp = datetime.now()
+
+    channels_stats = {'num_channels_exist': num_channels_exist, 'time_stamp': time_stamp}
+    dms_stats = {'num_dms_exist': num_dms_exist, 'time_stamp': time_stamp}
+    messages_stats = {'num_messages_exist': num_channels_exist, 'time_stamp': time_stamp}

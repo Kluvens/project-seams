@@ -32,6 +32,13 @@ def is_in_channel_owner(u_id, right_channel):
 
     return False 
 
+def is_in_dm_owner(u_id, right_dm):
+    for member in right_dm['owner_members']:
+        if u_id == member['u_id']:
+            return True
+
+    return False
+
 
 def global_owner_check(auth_user_id):
     OWNER = 1

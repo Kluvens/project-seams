@@ -38,7 +38,7 @@ def route():
 def test_logout_new_user(route, dummy_data, num_of_users, user_num):
     reset_call()
     user_dict = dummy_data.register_users(num_of_users)[user_num]
-    response_obj = requests.post(route, json=user_dict["token"])
+    response_obj = requests.post(route, json={"token" : user_dict["token"]})
     assert response_obj.status_code == OKAY
     assert response_obj.json() == {}
 
@@ -54,15 +54,15 @@ def test_logout_new_user(route, dummy_data, num_of_users, user_num):
 def test_logout_invalid_token(route, dummy_data, num_of_users, user_num):
     reset_call()
     user_dict = dummy_data.register_users(num_of_users)[user_num]
-    response_obj = requests.post(route, json=user_dict["token"])
+    response_obj = requests.post(route, json={"token" : user_dict["token"]})
     assert response_obj.status_code == OKAY
 
-    response_obj = requests.post(route, json=user_dict["token"])
+    response_obj = requests.post(route, json={"token" : user_dict["token"]})
     assert response_obj.status_code == AccessError.code
 
 # invalid token - random string, not jwt compliant
 def test_logout_invalid_random_token(route, dummy_data):
     reset_call()
     dummy_data.register_users(num_of_users=3)
-    response_obj = requests.post(route, json="random token")
+    response_obj = requests.post(route, json={"token" : "random token"})
     assert response_obj.status_code == AccessError.code

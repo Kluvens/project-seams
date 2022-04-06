@@ -191,5 +191,5 @@ def test_channel_messages_edit_working(dummy_data, create_route):
     # get_channel_messages will output a dictionary containing a message array.
     messages_output = get_channel_messages(user0['token'], ch1_dict["channel_id"], 0).json()
 
-    assert messages_output['messages'][0]['message'] == message_three
-    assert messages_output['messages'][1]['message'] == message_four
+    assert messages_output['messages'][1]['message'] == message_three
+    assert messages_output['messages'][0]['message'] == message_four

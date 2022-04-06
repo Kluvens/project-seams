@@ -145,4 +145,3 @@ def test_working_setup(create_route,remove_route,dummy_data):
         'dm_id': dm_id,
     })
     assert response.status_code == 200
-

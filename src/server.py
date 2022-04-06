@@ -28,6 +28,7 @@ from src.users import user_profile_setemail_v1
 from src.users import user_profile_sethandle_v1
 from src.message import message_send_v1, message_remove_v1, message_edit_v1, message_senddm_v1
 from src.message import message_pin_v1, message_unpin_v1
+from src.users import user_stats_v1, users_stats_v1
 
 ###################### INITIAL SERVER SETUP ######################
 
@@ -80,7 +81,7 @@ def auth_login_http():
 
 @APP.route("/auth/logout/v1", methods = ['POST'])
 def auth_logout_http():
-    token = request.get_json('token')
+    token = request.get_json()['token']
     auth_logout_v1(token)
 
     return dumps({})
@@ -243,8 +244,11 @@ def channel_messages():
 @APP.route("/message/send/v1", methods=['POST'])
 def message_send():
     data = request.get_json()
-    # write_savefile()
-    return dumps(message_send_v1(**data))
+    # FRONT-END PROBLEM - supplying an extra parameter
+    token = data["token"]
+    channel_id = data["channel_id"]
+    message = data["message"]
+    return dumps(message_send_v1(token, channel_id, message))
 
 # message/remove/v1
 @APP.route("/message/remove/v1", methods=['DELETE'])
@@ -286,6 +290,16 @@ def message_unpin_http():
     token = data['token']
     message_id = data['message_id']
     return dumps(message_unpin_v1(token, message_id))
+
+@APP.route("/user/stats/v1", methods=['GET'])
+def user_stats_http():
+    token = request.args.get('token')
+    return dumps(user_stats_v1(token))
+
+@APP.route("/users/stats/v1", methods=['GET'])
+def users_stats_http():
+    token = request.args.get('token')
+    return dumps(users_stats_v1(token))
 
 ####################### CLEARING/RESTTING ########################
 

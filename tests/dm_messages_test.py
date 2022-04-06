@@ -173,9 +173,9 @@ def test_dm_messages_working_complex(dummy_data):
 
     assert dm_messages_output['start'] == start_number
     assert dm_messages_output['end'] == -1
-    assert dm_messages_output['messages'][0]['message_id'] == send_dm_one['message_id']
-    assert dm_messages_output['messages'][1]['message_id'] == send_dm_two['message_id']
-    assert dm_messages_output['messages'][0]['u_id'] == user0['auth_user_id']
-    assert dm_messages_output['messages'][1]['u_id'] == user1['auth_user_id']
-    assert dm_messages_output['messages'][0]['message'] == message_one
-    assert dm_messages_output['messages'][1]['message'] == message_two
+    assert dm_messages_output['messages'][1]['message_id'] == send_dm_one['message_id']
+    assert dm_messages_output['messages'][0]['message_id'] == send_dm_two['message_id']
+    assert dm_messages_output['messages'][1]['u_id'] == user0['auth_user_id']
+    assert dm_messages_output['messages'][0]['u_id'] == user1['auth_user_id']
+    assert dm_messages_output['messages'][1]['message'] == message_one
+    assert dm_messages_output['messages'][0]['message'] == message_two

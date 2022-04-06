@@ -144,5 +144,4 @@ def test_working_setup(create_route,remove_route,dummy_data):
         'token': owner,
         'dm_id': dm_id,
     })
-    assert response.status_code == 403
-
+    assert response.status_code == 200

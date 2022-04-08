@@ -260,6 +260,7 @@ def message_pin_v1(token, message_id):
     auth_user_id = int(decode_token(token))
 
     data = data_store.get()
+    print(data['dms'])
     channels = data['channels']
     dms = data['dms']
 

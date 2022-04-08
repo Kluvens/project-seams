@@ -90,22 +90,22 @@ def test_message_pin_no_permission_channel(setup):
     response = requests.post(f'{url}/message/pin/v1', json={'token': token_second, 'message_id': message_id})
     assert response.status_code == InputError.code
 
-# def test_message_pin_no_permission_dm(setup):
-#     user1_dict = setup[0]
-#     user2_dict = setup[1]
-#     dm_dict = setup[3]
+def test_message_pin_no_permission_dm(setup):
+    user1_dict = setup[0]
+    user2_dict = setup[1]
+    dm_dict = setup[3]
 
-#     token = user1_dict['token']
-#     token_second = user2_dict['token']
-#     dm_id = dm_dict['dm_id']
+    token = user1_dict['token']
+    token_second = user2_dict['token']
+    dm_id = dm_dict['dm_id']
 
-#     for num in range(10):
-#         response = requests.post(f'{url}/message/senddm/v1', json={'token': token, 'dm_id': dm_id, 'message': "I love you"})
-#         assert response.status_code == OKAY
-#         message_id = response.json()['message_id']
+    for num in range(10):
+        response = requests.post(f'{url}/message/senddm/v1', json={'token': token, 'dm_id': dm_id, 'message': "I love you"})
+        assert response.status_code == OKAY
+        message_id = response.json()['message_id']
 
-#     response = requests.post(f'{url}/message/pin/v1', json={'token': token_second, 'message_id': message_id})
-#     assert response.status_code == AccessError.code
+    response = requests.post(f'{url}/message/pin/v1', json={'token': token_second, 'message_id': message_id})
+    assert response.status_code == AccessError.code
 
 
 def test_message_pin_invalid_message(setup):

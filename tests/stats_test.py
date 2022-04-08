@@ -151,6 +151,14 @@ def test_user_stats_working(setup):
     response = requests.post(f'{url}/message/send/v1', json={'token': token_second, 'channel_id': channel_second_dict['channel_id'], 'message': "I love you"})
     assert response.status_code == OKAY
 
+    for _ in range(10):
+        response = requests.post(f'{url}/message/send/v1', json={'token': token, 'channel_id': channel_second_dict['channel_id'], 'message': "ten more messages"})
+        assert response.status_code == OKAY
+
+    for _ in range(10):
+        response = requests.post(f'{url}/message/senddm/v1', json={'token': token, 'dm_id': dm_dict['dm_id'], 'message': "I love you"})
+        assert response.status_code == OKAY
+
     response = requests.get(f'{url}/user/stats/v1', params={'token': token})
     assert response.status_code == OKAY
 
@@ -160,8 +168,8 @@ def test_user_stats_working(setup):
     assert isinstance(stats_result['user_stats']["channels_joined"][0], dict) 
     assert stats_result['user_stats']["channels_joined"][0]['num_channels_joined'] == 1
     assert stats_result['user_stats']["dms_joined"][0]['num_dms_joined'] == 1
-    assert stats_result['user_stats']["messages_sent"][0]['num_messages_sent'] == 2
-    assert stats_result['user_stats']['involvement_rate'] == float((1+1+2)/(2+1+3))
+    assert stats_result['user_stats']["messages_sent"][0]['num_messages_sent'] == 2 + 10 + 10
+    assert stats_result['user_stats']['involvement_rate'] == float((1+1+2+10+10)/(2+1+3+10+10))
 
 def test_users_stats_invalid_token(setup):
     user1_dict = setup[0]

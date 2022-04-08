@@ -33,7 +33,7 @@ def is_in_channel_owner(u_id, right_channel):
     return False 
 
 def is_in_dm_owner(u_id, right_dm):
-    for member in right_dm['owner_members']:
+    for member in right_dm['owner_member']:
         if u_id == member['u_id']:
             return True
 
@@ -80,7 +80,6 @@ def count_number_channels_joined(auth_user_id):
         for member in channel['all_members']:
             if member['u_id'] == auth_user_id:
                 sum += 1
-                break
 
     return sum
 
@@ -92,7 +91,6 @@ def count_number_dms_joined(auth_user_id):
         for member in dm['all_members']:
             if member['u_id'] == auth_user_id:
                 sum += 1
-                break
 
     return sum
 
@@ -104,13 +102,11 @@ def count_number_messages_sent(auth_user_id):
         for message in channel['messages']:
             if message['u_id'] == auth_user_id:
                 sum += 1
-                break
 
     for dm in data['dms']:
         for message in dm['messages']:
             if message['u_id'] == auth_user_id:
                 sum += 1
-                break
 
     return sum
 

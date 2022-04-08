@@ -16,7 +16,7 @@ from src.helpers import check_handlestr_unique
 from src.helpers import get_user_idx
 from src.helpers import check_u_id_exists
 from src.helpers import return_exist_status
-from datetime import datetime
+from time import time
 from src.helper import count_number_channels_exist, count_number_dms_exist, count_number_messages_sent, count_number_dms_joined, count_number_channels_joined, count_number_messages_exist
 from src.helper import count_users_joined, count_number_users
 
@@ -267,7 +267,7 @@ def user_stats_v1(token):
     # print(num_messages_exist)
     # print('messages exist')
 
-    time_stamp = 0
+    time_stamp = int(time())
 
     channels_stats = {'num_channels_joined': num_channels_joined, 'time_stamp': time_stamp}
     dms_stats = {'num_dms_joined': num_dms_joined, 'time_stamp': time_stamp}
@@ -295,7 +295,7 @@ def users_stats_v1(token):
     num_dms_exist = count_number_dms_exist()
     num_messages_exist = count_number_messages_exist()
 
-    time_stamp = 0
+    time_stamp = int(time())
 
     channels_stats = {'num_channels_exist': num_channels_exist, 'time_stamp': time_stamp}
     dms_stats = {'num_dms_exist': num_dms_exist, 'time_stamp': time_stamp}

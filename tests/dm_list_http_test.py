@@ -14,6 +14,7 @@ def reset_call():
 @pytest.fixture
 def list_route():
     return url + '/dm/list/v1'
+    
 @pytest.fixture
 def detail_route():
     return url + '/dm/details/v1'

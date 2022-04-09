@@ -65,9 +65,9 @@ def admin_user_remove_v1(token, u_id):
         for member in dm['all_members']:
             if member['u_id'] == u_id:
                 dm['all_members'].remove({'u_id': u_id})
-        # for o_member in dm['owner_members']:
-        #     if o_member['u_id'] == u_id:
-        #         dm['owner_members'].remove({'u_id': u_id})
+        for o_member in dm['owner_member']:
+            if o_member['u_id'] == u_id:
+                dm['owner_members'].remove({'u_id': u_id})
 
     data_store.set(data)
 

@@ -258,8 +258,8 @@ def channel_messages_v2(token, channel_id, start):
             if 'messages' in data['channels'][channel_id]:
                 found_messages = channel['messages']
                 num_messages = len(found_messages)
-            else:
-                data['channels'][channel_id]['messages'] = []
+            # else:
+            #     data['channels'][channel_id]['messages'] = []
     
     if start > num_messages:
         raise InputError("Error occurred, start value is greater than the number of messages")
@@ -286,6 +286,7 @@ def channel_messages_v2(token, channel_id, start):
             'u_id': found_messages[index].get('u_id'),
             'message': found_messages[index].get('message'),
             'time_sent': found_messages[index].get('time_sent'),
+            'is_pinned': found_messages[index].get('is_pinned'),
         })
 
     if num < 50:

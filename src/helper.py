@@ -32,6 +32,13 @@ def is_in_channel_owner(u_id, right_channel):
 
     return False 
 
+def is_in_dm_owner(u_id, right_dm):
+    for member in right_dm['owner_member']:
+        if u_id == member['u_id']:
+            return True
+
+    return False
+
 
 def global_owner_check(auth_user_id):
     OWNER = 1
@@ -64,3 +71,92 @@ def get_user_idx(users, u_id):
             return idx
     # does not exist
     return None
+
+def count_number_channels_joined(auth_user_id):
+    data = data_store.get()
+    sum = 0
+
+    for channel in data['channels']:
+        for member in channel['all_members']:
+            if member['u_id'] == auth_user_id:
+                sum += 1
+
+    return sum
+
+def count_number_dms_joined(auth_user_id):
+    data = data_store.get()
+    sum = 0
+
+    for dm in data['dms']:
+        for member in dm['all_members']:
+            if member['u_id'] == auth_user_id:
+                sum += 1
+
+    return sum
+
+def count_number_messages_sent(auth_user_id):
+    data = data_store.get()
+    sum = 0
+
+    for channel in data['channels']:
+        for message in channel['messages']:
+            if message['u_id'] == auth_user_id:
+                sum += 1
+
+    for dm in data['dms']:
+        for message in dm['messages']:
+            if message['u_id'] == auth_user_id:
+                sum += 1
+
+    return sum
+
+def count_number_channels_exist():
+    data = data_store.get()
+    sum = len(data['channels'])
+
+    return sum
+
+def count_number_dms_exist():
+    data = data_store.get()
+    sum = len(data['dms'])
+
+    return sum
+
+def count_number_messages_exist():
+    data = data_store.get()
+    sum = 0
+
+    for channel in data['channels']:
+        sum += len(channel['messages'])
+
+    for dm in data['dms']:
+        sum += len(dm['messages'])
+
+    return sum
+
+def count_users_joined():
+    data = data_store.get()
+    sum = 0
+
+    for user in data['users']:
+        joinned = False
+        for channel in data['channels']:
+            for member in channel['all_members']:
+                if member['u_id'] == user['u_id']:
+                    joinned = True
+                    
+        for dm in data['dms']:
+            for member in dm['all_members']:
+                if member['u_id'] == user['u_id']:
+                    joinned = True
+
+        if joinned:
+            sum += 1
+
+    return sum
+
+def count_number_users():
+    data = data_store.get()
+    sum = len(data['users'])
+
+    return sum

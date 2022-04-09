@@ -129,6 +129,7 @@ def channels_create_v2(token, name, is_public):
             'channel_id': channel_id,
             'name': name,
             'is_public': is_public,
+            'messages': [],
             'owner_members': owner_members_list,
             'all_members': all_members_list,
         }

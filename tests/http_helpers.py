@@ -3,9 +3,40 @@ import requests
 from src.helpers import hash
 from src.config import url
 
+# code = ''
+
+# class CacheCode:
+#     def __init__(self):
+#         self.__store = code
+    
+#     def get(self):
+#         return self.__store
+
+#     def set(self, store):
+#         self.__store = store
+
+
+# global cache_reset_code
+# cache_reset_code = CacheCode()
+
+def get_reset_code():
+    with open('reset_code.txt', 'r') as fp:
+        code = fp.read()
+
+    return code 
+
 
 def reset_call():
     requests.delete(url + 'clear/v1')
+
+def extract_reset_code_from_inbox():
+    pass
+
+def is_success(status_code):
+    if status_code == 200:
+        return True
+    return False
+
 
 class GenerateTestData:
     '''
@@ -66,6 +97,13 @@ class GenerateTestData:
             "name_last" : "testlast3"
         }
 
+    def data_dummy_real(self):
+        return {
+            "email" : "owner.seams@gmail.com",
+            "password" : "123123123",
+            "name_first" : "Real",
+            "name_last" : "Deal"
+        }
 
     
 
@@ -90,7 +128,8 @@ class GenerateTestData:
             0 : self.data_owner,
             1 : self.data_dummy1,
             2 : self.data_dummy2,
-            3 : self.data_dummy3
+            3 : self.data_dummy3,
+            4 : self.data_dummy_real
         }
 
         # list of dictionaries
@@ -103,11 +142,9 @@ class GenerateTestData:
 
         return users_info
 
-
+    ################ REQUESTS #####################
 
     def register_users(self, num_of_users):
-        '''
-        '''
         users = self.dummy_users_data(num_of_users)
         register_user_route = self.url + 'auth/register/v2'
         registered_users = [] 
@@ -123,14 +160,12 @@ class GenerateTestData:
 
 
     def login(self, num_of_users):
-        '''
-        '''
         users = self.dummy_users_data(num_of_users)
-        register_user_route = self.url + 'auth/login/v2'
+        login_user_route = self.url + 'auth/login/v2'
         logged_in_users = [] 
         for idx in range(len(users)):
             user_login_info = requests.post( 
-                register_user_route,
+                login_user_route,
                 json={"email" : users[idx]["email"], 
                 "password" : users[idx]["password"]}
             )
@@ -140,19 +175,21 @@ class GenerateTestData:
         return logged_in_users
 
 
+    def login_user(self, email, password):
+        login_user_route = self.url + 'auth/login/v2'
+        return requests.post( 
+            login_user_route,
+            json={"email" : email, "password" : password}
+    )
+
+
     def logout_request(self, token):
-        '''
-        '''
-        # print(token)
         route = self.url + 'auth/logout/v1'
         response = requests.post(route, json={"token" : token})
-        assert response.status_code == 200
-    
+        return response    
 
     # for now this supports up to 2 channels
     def create_channel(self, num_of_channels, token):
-        '''
-        '''
         parameters = self.dummy_channel0(token)
         route = self.url + '/channels/create/v2'
         response = requests.post(
@@ -160,3 +197,5 @@ class GenerateTestData:
             json=parameters
         )
         return response
+
+    

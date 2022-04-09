@@ -188,36 +188,36 @@ def auth_password_reset_v1(reset_code: str, new_password: str) -> dict:
 
 ################## END OF FUNCTION IMPLEMENTATION ################
 
-if __name__ == "__main__":
-    email = "seams.noreply@gmail.com"
-    u0 = auth_register_v2(email, "password", "Kai", "Kakarot")
-    auth_login_v2(email, "password")
-    auth_login_v2(email, "password")
-    auth_login_v2(email, "password")
-    auth_login_v2(email, "password")
-
-    data = data_store.get()
-    users = data["users"]
-    reset_codes = data["reset_codes"]
-    
-    print(users)
-
-    print(reset_codes)
-    print("\n\n")
-
-
-    auth_password_reset_request_v1(email)    
-    print(reset_codes)
-    print("\n\n\n\n")
-    
-    auth_password_reset_v1(token, "123123123")
-
-    print(reset_codes)
-    print("\n\n\n\n")
-
-    print(users)
-
+if __name__ == "__main__":...
+    # email = "seams.noreply@gmail.com"
+    # u0 = auth_register_v2(email, "password", "Kai", "Kakarot")
     # auth_login_v2(email, "password")
-    auth_login_v2(email, "123123123")
+    # auth_login_v2(email, "password")
+    # auth_login_v2(email, "password")
+    # auth_login_v2(email, "password")
 
-    print(users)
+    # data = data_store.get()
+    # users = data["users"]
+    # reset_codes = data["reset_codes"]
+    
+    # print(users)
+
+    # print(reset_codes)
+    # print("\n\n")
+
+
+    # auth_password_reset_request_v1(email)    
+    # print(reset_codes)
+    # print("\n\n\n\n")
+    
+    # auth_password_reset_v1(token, "123123123")
+
+    # print(reset_codes)
+    # print("\n\n\n\n")
+
+    # print(users)
+
+    # # auth_login_v2(email, "password")
+    # auth_login_v2(email, "123123123")
+
+    # print(users)

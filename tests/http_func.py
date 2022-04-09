@@ -87,4 +87,51 @@ def message_remove_v1_http(token, message_id):
         'token': token,
         'message_id': message_id,
     })
- 
+
+share_message = url + 'message/share/v1'
+def message_share_v1_http(token,og_message_id,message,channel_id,dm_id):
+    return requests.post(share_message, json = {
+        'token': token,
+        'og_message_id': og_message_id,
+        'message': message,
+        'channel_id': channel_id,
+        'dm_id': dm_id
+    })
+# =============== FIXTURES ==================================
+
+# Clear
+def reset_call():
+    requests.delete(url + 'clear/v1')
+
+# Create user base
+@pytest.fixture()
+def dummy_data():
+    data_instance = GenerateTestData(url)
+    return data_instance
+
+ # ================================= SETUP ========================
+def setup():
+    reset_call()
+
+    # Create Owner, A and B
+    users = dummy_data.register_users(num_of_users=3)
+    owner = users[0]
+    A = users[1]
+    B = users[2]
+
+    # Create Channel
+    channel_obj = channels_create_v2_http(A['token'],'test_channel',True)
+    channel_info = channel_obj.json()
+    channel_id = channel_info['channel_id']
+
+    # Create DM
+    u_ids = [B['auth_user_id']]
+    dm_obj = dm_create_v1_http(owner['token'], u_ids)
+    dm_info = dm_obj.json()
+    dm_id = dm_info['dm_id']
+
+    return {
+        'tokens':[owner['token'],A['token'],B['token']],
+        'channel_id': channel_id,
+        'dm_id': dm_id,
+    }

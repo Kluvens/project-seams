@@ -246,3 +246,8 @@ def message_edit_v1(token, message_id, message):
             description="Error occured, user does not have access to edit this message_id")
     
     return {}
+
+# ========================================== MESSAGE SHARE =================================================
+def message_share_v1(token,og_message_id,message,channel_id,dm_id):
+    shared_message_id = 1 ## PLACEHOLDER
+    return {shared_message_id}

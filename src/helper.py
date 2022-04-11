@@ -160,3 +160,12 @@ def count_number_users():
     sum = len(data['users'])
 
     return sum
+
+def channel_details_members_return(users, member):
+    return {
+        'u_id': users[member['u_id']]['u_id'],
+        'email': users[member['u_id']]['email'],
+        'name_first': users[member['u_id']]['name_first'],
+        'name_last': users[member['u_id']]['name_last'],
+        'handle_str': users[member['u_id']]['handle_str'],
+    }

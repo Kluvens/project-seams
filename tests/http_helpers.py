@@ -3,7 +3,7 @@ import requests
 from src.helpers import hash
 from src.config import url
 
-
+OKAY = 200
 def reset_call():
     requests.delete(url + 'clear/v1')
 
@@ -146,7 +146,7 @@ class GenerateTestData:
         # print(token)
         route = self.url + 'auth/logout/v1'
         response = requests.post(route, json={"token" : token})
-        assert response.status_code == 200
+        assert response.status_code == OKAY
     
 
     # for now this supports up to 2 channels

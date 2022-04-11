@@ -4,6 +4,7 @@ from src.config import url
 from tests.http_helpers import GenerateTestData
 from src.error import AccessError
 #====================== Helper functions / Fixtures ===============
+OKAY = 200
 
 def reset_call():
     requests.delete(url + 'clear/v1')
@@ -60,7 +61,7 @@ def test_listall_public_and_private(listall_route, create_route, dummy_data):
         'token': users_return_dict1['token']
     })
 
-    assert list1.status_code == 200
+    assert list1.status_code == OKAY
     assert list1.json() == {'channels': [{'channel_id': ch1.json()['channel_id'], 'name': 'ch1'}, 
                                         {'channel_id': ch2.json()['channel_id'], 'name': 'ch2'}]}
 
@@ -74,7 +75,7 @@ def test_listall_no_channels(listall_route, dummy_data):
         'token': users_return_dict['token']
     })
 
-    assert list1.status_code == 200
+    assert list1.status_code == OKAY
     assert list1.json() == {'channels': []}
 
 def test_multiple_users_and_channels(listall_route, create_route, dummy_data):
@@ -106,7 +107,7 @@ def test_multiple_users_and_channels(listall_route, create_route, dummy_data):
         'token': users_return_dict1['token']
     })
 
-    assert list1.status_code == 200
+    assert list1.status_code == OKAY
     assert list1.json() == {'channels': [{'channel_id': ch1.json()["channel_id"], 'name': 'ch1'},
                                     {'channel_id': ch2.json()["channel_id"], 'name': 'ch2'},
                                     {'channel_id': ch3.json()["channel_id"], 'name': 'ch3'}]}

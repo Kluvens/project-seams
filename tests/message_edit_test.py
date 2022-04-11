@@ -4,7 +4,7 @@ from src.config import url
 from src.error import InputError, AccessError
 from tests.http_helpers import GenerateTestData
 
-
+OKAY = 200
 def reset_call():
     requests.delete(url + 'clear/v1')
 
@@ -69,7 +69,7 @@ def test_channel_messages_edit_invalid_message_id_InputError(dummy_data, create_
         'name': 'ch1',
         'is_public': True
     })
-    assert ch1.status_code == 200
+    assert ch1.status_code == OKAY
     ch1_dict = ch1.json()
 
     message_one = "hello world"
@@ -90,7 +90,7 @@ def test_channel_messages_send_length_of_message_toolong_InputError(dummy_data, 
         'name': 'ch1',
         'is_public': True
     })
-    assert ch1.status_code == 200
+    assert ch1.status_code == OKAY
     ch1_dict = ch1.json()
 
     message_one = "hello world"
@@ -120,7 +120,7 @@ def test_channel_messages_edit_invalid_token_AccessError(dummy_data, create_rout
         'name': 'ch1',
         'is_public': True
     })
-    assert ch1.status_code == 200
+    assert ch1.status_code == OKAY
     ch1_dict = ch1.json()
 
     message_one = "hello world"
@@ -143,7 +143,7 @@ def test_channel_messages_edit_unauthorised_user_AccessError(dummy_data, create_
         'name': 'ch1',
         'is_public': True
     })
-    assert ch1.status_code == 200
+    assert ch1.status_code == OKAY
     ch1_dict = ch1.json()
 
     message_one = "hello world"
@@ -167,7 +167,7 @@ def test_channel_messages_edit_working(dummy_data, create_route):
         'name': 'ch1',
         'is_public': True
     })
-    assert ch1.status_code == 200
+    assert ch1.status_code == OKAY
     ch1_dict = ch1.json()
     
     post_channel_invite(user0["token"], ch1_dict['channel_id'], user1["auth_user_id"])

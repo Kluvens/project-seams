@@ -101,7 +101,7 @@ def message_share_v1_http(token,og_message_id,message,channel_id,dm_id):
 
 # =============== USER ======================================
 upload_photo = url + 'user/profile/uploadphoto/v1'
-def uploadphoto(token, img_url,x_start,y_start,x_end,y_end):
+def uploadphoto_http(token, img_url,x_start,y_start,x_end,y_end):
     return requests.post(upload_photo, json = {
         'token': token,
         'img_url':img_url,

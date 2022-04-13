@@ -77,8 +77,6 @@ def message_send_v1(token, channel_id, message):
         raise InputError(description="Error occurred, message is more than 1000 characters")
 
     data = data_store.get()
-    assert "channels" in data
-    # assert "token" in data
 
     # Check if token is valid using helper
     if check_if_token_exists(token) == False:
@@ -118,8 +116,6 @@ def message_send_v1(token, channel_id, message):
         if channel_id == channel['channel_id']:
             if 'messages' in channel:
                 channel["messages"].append(messages_dict)
-            # else:
-            #     channel["messages"] = [messages_dict]
 
     return {
         'message_id': data['unique_message_id'],
@@ -145,7 +141,6 @@ def message_remove_v1(token, message_id):
     '''
     data = data_store.get()
     assert "channels" in data
-    # assert "token" in data
 
     # Check if token is valid using helper
     if check_if_token_exists(token) == False:
@@ -260,7 +255,6 @@ def message_pin_v1(token, message_id):
     auth_user_id = int(decode_token(token))
 
     data = data_store.get()
-    print(data['dms'])
     channels = data['channels']
     dms = data['dms']
 

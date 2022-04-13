@@ -49,6 +49,97 @@ def delete_message_remove(token, message_id):
     return response
 
 '''
+InputError when message is less than 1
+'''
+def test_channelmessages_less_than_one(dummy_data, create_route):
+    reset_call()
+
+    users_list = dummy_data.register_users(num_of_users=1)
+    user0 = users_list[0]
+    ch1 = requests.post(create_route, json={
+        'token': user0["token"],
+        'name': 'ch1',
+        'is_public': True
+    })
+    assert ch1.status_code == 200
+    ch1_dict = ch1.json()
+
+    message = ''
+    response = send_message_request(user0['token'], ch1_dict['channel_id'], message)
+    assert response.status_code == InputError.code
+
+'''
+InputError when message is more than 1000
+'''
+def test_channelmessages_more_than_thousand(dummy_data, create_route):
+    reset_call()
+
+    users_list = dummy_data.register_users(num_of_users=1)
+    user0 = users_list[0]
+    ch1 = requests.post(create_route, json={
+        'token': user0["token"],
+        'name': 'ch1',
+        'is_public': True
+    })
+    assert ch1.status_code == 200
+    ch1_dict = ch1.json()
+
+    message = 'hello'*500
+    response = send_message_request(user0['token'], ch1_dict['channel_id'], message)
+    assert response.status_code == InputError.code
+
+def test_channel_messages_invalid_token(dummy_data, create_route):
+    reset_call()
+
+    users_list = dummy_data.register_users(num_of_users=1)
+    user0 = users_list[0]
+    ch1 = requests.post(create_route, json={
+        'token': user0["token"],
+        'name': 'ch1',
+        'is_public': True
+    })
+    assert ch1.status_code == 200
+    ch1_dict = ch1.json()
+
+    message = 'hello, how are you'
+    response = send_message_request("invalid_token", ch1_dict['channel_id'], message)
+    assert response.status_code == AccessError.code
+
+'''
+channel doesn't exist
+'''
+def test_channel_messages_channel_doesnot_exist(dummy_data):
+    reset_call()
+
+    users_list = dummy_data.register_users(num_of_users=1)
+    user0 = users_list[0]
+
+    message = 'hello, how are you'
+    response = send_message_request(user0['token'], 0, message)
+    assert response.status_code == InputError.code
+
+'''
+not authorised user
+'''
+def test_channel_messages_not_auth(dummy_data, create_route):
+    reset_call()
+
+    users_list = dummy_data.register_users(num_of_users=2)
+    user0 = users_list[0]
+    user1 = users_list[1]
+    ch1 = requests.post(create_route, json={
+        'token': user0["token"],
+        'name': 'ch1',
+        'is_public': True
+    })
+    assert ch1.status_code == 200
+    ch1_dict = ch1.json()
+
+    message = 'hello, how are you'
+    response = send_message_request(user1['token'], ch1_dict['channel_id'], message)
+    assert response.status_code == AccessError.code
+
+'''
 InputError will occur when message_id is not a valid channel message within a channel/DM
 '''
 # Testing case for when message_id is invalid

@@ -8,7 +8,7 @@ from src.helpers import find_dm_index
 from src.helpers import is_in_dm
 from src.helpers import check_u_id_exists
 from src.helpers import check_duplicate_u_ids
-
+from time import time
 
 def dm_list_v1(token):
     '''
@@ -159,9 +159,12 @@ def dm_create_v1(token, u_ids):
         members_list.append({'u_id': members['u_id']})
     
     dm_id = len(data['dms'])
+    time_stamp = int(time())
+
     data['dms'].append({
         "dm_id" : dm_id,
         "name" : name,
+        'time_stamp': time_stamp,
         'owner_member': owner_members_list,
         'all_members': members_list,
         'messages': []

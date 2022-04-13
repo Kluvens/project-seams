@@ -1,0 +1,8 @@
+simplejson==3.17.2
+passlib==1.7.4
+wikiquote==0.1.14
+psycopg2-binary==2.8.6
+peewee==3.13.3
+flask-mail==0.9.1
+IMAPClient==2.1.0
+

@@ -2,6 +2,7 @@ from src.data_store import data_store
 from src.error import InputError, AccessError
 from src.helpers import decode_token
 from src.helpers import check_if_token_exists
+from time import time
 
 def channels_list_v2(token):
 
@@ -124,11 +125,14 @@ def channels_create_v2(token, name, is_public):
     if len(name) < 1 or len(name) > 20:
         raise InputError(description="length of name is less than 1 or more than 20 characters")
 
+    time_stamp = int(time())
+
     data["channels"].append(
         {
             'channel_id': channel_id,
             'name': name,
             'is_public': is_public,
+            'time_stamp': time_stamp,
             'messages': [],
             'owner_members': owner_members_list,
             'all_members': all_members_list,

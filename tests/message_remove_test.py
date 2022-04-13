@@ -119,6 +119,12 @@ def test_channel_messages_remove_unauthorised_user_AccessError(dummy_data, creat
     response = delete_message_remove(user1['token'], send_message["message_id"])
     assert response.status_code == AccessError.code
 
+    response = requests.post(f'{url}/channel/join/v2', json={'token': user1['token'], 'channel_id': ch1_dict['channel_id']})
+    assert response.status_code == OKAY
+
+    response = delete_message_remove(user1['token'], send_message["message_id"])
+    assert response.status_code == AccessError.code
+
 # Testing case when message_remove is working
 def test_channel_messages_remove_working(dummy_data, create_route):
     reset_call()

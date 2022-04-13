@@ -238,3 +238,8 @@ def user_profile_sethandle_v1(token, handle_str):
     users[idx]["handle_str"] = handle_str
 
     return {}
+
+# =============================== NOTIFICATIONS GET ====================================
+def notifications_get_v1(token):
+    notifications = True # PLACEHOLDER
+    return {notifications}

@@ -110,6 +110,12 @@ def uploadphoto(token, img_url,x_start,y_start,x_end,y_end):
         'x_end': x_end,
         'y_end': y_end,
     })
+
+notifications_get = url + 'notifications/get/v1'
+def notifications_http(token):
+    return requests.get(notifications_get, json = {
+        'token': token,
+    })
 # =============== FIXTURES ==================================
 
 # Clear

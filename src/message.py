@@ -3,6 +3,7 @@ from src.dms import find_dm_index, is_in_dm
 from src.data_store import data_store
 from src.helpers import check_if_token_exists, decode_token, is_global_owner
 from src.error import AccessError, InputError
+from src.helper import is_in_channel_owner, is_in_dm_owner
 
 def message_senddm_v1(token, dm_id, message):
     data = data_store.get()
@@ -23,7 +24,6 @@ def message_senddm_v1(token, dm_id, message):
         raise InputError(description="length of message is less than 1 or over 1000 characters")
     
     right_dm = dms[right_dm_index]
-    print(right_dm)
 
     if not is_in_dm(auth_user_id, right_dm):
         raise AccessError(description="dm_id is valid and the authorised user is not a member of the dm")
@@ -38,6 +38,7 @@ def message_senddm_v1(token, dm_id, message):
             'u_id': auth_user_id,
             'message': message,
             'time_sent': int(time()),
+            'is_pinned': False,
         }
     )
 
@@ -76,8 +77,6 @@ def message_send_v1(token, channel_id, message):
         raise InputError(description="Error occurred, message is more than 1000 characters")
 
     data = data_store.get()
-    assert "channels" in data
-    # assert "token" in data
 
     # Check if token is valid using helper
     if check_if_token_exists(token) == False:
@@ -109,15 +108,14 @@ def message_send_v1(token, channel_id, message):
         'message_id': data['unique_message_id'],
         'u_id': auth_user_id,
         'message': message,
-        'time_sent': int(time())
+        'time_sent': int(time()),
+        'is_pinned': False,
         }
 
     for channel in data['channels']:
         if channel_id == channel['channel_id']:
             if 'messages' in channel:
                 channel["messages"].append(messages_dict)
-            else:
-                channel["messages"] = [messages_dict]
 
     return {
         'message_id': data['unique_message_id'],
@@ -143,7 +141,6 @@ def message_remove_v1(token, message_id):
     '''
     data = data_store.get()
     assert "channels" in data
-    # assert "token" in data
 
     # Check if token is valid using helper
     if check_if_token_exists(token) == False:
@@ -246,3 +243,116 @@ def message_edit_v1(token, message_id, message):
             description="Error occured, user does not have access to edit this message_id")
     
     return {}
+
+def message_pin_v1(token, message_id):
+    valid_message = False
+    message_already_pinned = False
+    user_has_permission = False
+
+    if check_if_token_exists(token) == False:
+        raise AccessError(description="Error occured, invalid token'")
+    
+    auth_user_id = int(decode_token(token))
+
+    data = data_store.get()
+    channels = data['channels']
+    dms = data['dms']
+
+    for channel in channels:
+        for message in channel['messages']:
+            can_change = True
+            if message['message_id'] == message_id:
+                valid_message = True
+                if is_global_owner(auth_user_id) or is_in_channel_owner(auth_user_id, channel):               
+                    user_has_permission = True
+                else:
+                    can_change = False
+                if message['is_pinned'] == True:
+                    message_already_pinned = True
+                    can_change = False
+                if can_change:
+                    message['is_pinned'] = True
+
+    for dm in dms:
+        for message in dm['messages']:
+            can_change = True
+            if message['message_id'] == message_id:
+                valid_message = True
+                if is_global_owner(auth_user_id) or is_in_dm_owner(auth_user_id, dm):               
+                    user_has_permission = True
+                else:
+                    can_change = False
+                if message['is_pinned'] == True:
+                    message_already_pinned = True
+                    can_change = False
+                if can_change:
+                    message['is_pinned'] = True
+
+    if not valid_message:
+        raise InputError(description="message_id is not a valid message within a channel or DM that the authorised user has joined")
+    
+    if not user_has_permission:
+        raise AccessError(description="message_id refers to a valid message in a joined channel/DM and the authorised user does not have owner permissions in the channel/DM")
+
+    if message_already_pinned:
+        raise InputError(description="the message is already pinned")
+
+    return {}
+
+def message_unpin_v1(token, message_id):
+    valid_message = False
+    message_already_unpinned = False
+    user_has_permission = False
+
+    if check_if_token_exists(token) == False:
+        raise AccessError(description="Error occured, invalid token'")
+    
+    auth_user_id = int(decode_token(token))
+
+    data = data_store.get()
+    channels = data['channels']
+    dms = data['dms']
+
+    for channel in channels:
+        for message in channel['messages']:
+            can_change = True
+            if message['message_id'] == message_id:
+                valid_message = True
+                if is_global_owner(auth_user_id) or is_in_channel_owner(auth_user_id, channel):               
+                    user_has_permission = True
+                else:
+                    can_change = False
+                if message['is_pinned'] == False:
+                    message_already_unpinned = True
+                    can_change = False
+                if can_change:
+                    message['is_pinned'] = False
+
+    for dm in dms:
+        for message in dm['messages']:
+            can_change = True
+            if message['message_id'] == message_id:
+                valid_message = True
+                if is_global_owner(auth_user_id) or is_in_dm_owner(auth_user_id, dm):               
+                    user_has_permission = True
+                else:
+                    can_change = False
+                if message['is_pinned'] == False:
+                    message_already_unpinned = True
+                    can_change = False
+                if can_change:
+                    message['is_pinned'] = False
+    
+    if not valid_message:
+        raise InputError(description="message_id is not a valid message within a channel or DM that the authorised user has joined")
+    
+    if not user_has_permission:
+        raise AccessError(description="message_id refers to a valid message in a joined channel/DM and the authorised user does not have owner permissions in the channel/DM")
+
+    if message_already_unpinned:
+        raise InputError(description="the message is not already pinned")
+
+    return {}
+
+
+    

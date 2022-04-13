@@ -79,7 +79,7 @@ def test_users_all_request(route, dummy_data):
     user1_u_id = users_list[1]["auth_user_id"]
 
     response = users_all_request(route, user0_token)
-    assert response.status_code == 200
+    assert response.status_code == OKAY
 
     users_details_dict = json.loads(response.text)["users"]
 

@@ -42,7 +42,8 @@ def admin_user_remove_v1(token, u_id):
     # log them out
     user_to_be_removed["sessions"] = []
 
-
+    # delete and resettle the information about the removed user
+    # delete associated info about channels
     for channel in data['channels']:
         if "messages" in channel:
             for message in channel['messages']:
@@ -57,6 +58,7 @@ def admin_user_remove_v1(token, u_id):
                 channel["owner_members"].remove({'u_id': u_id})
                 # o_member['u_id'] = -100
 
+    # delete associated info about dms
     for dm in data['dms']:
         if "messages" in dm:
             for message in dm['messages']:
@@ -65,9 +67,9 @@ def admin_user_remove_v1(token, u_id):
         for member in dm['all_members']:
             if member['u_id'] == u_id:
                 dm['all_members'].remove({'u_id': u_id})
-        # for o_member in dm['owner_members']:
-        #     if o_member['u_id'] == u_id:
-        #         dm['owner_members'].remove({'u_id': u_id})
+        for o_member in dm['owner_member']:
+            if o_member['u_id'] == u_id:
+                dm['owner_members'].remove({'u_id': u_id})
 
     data_store.set(data)
 
@@ -85,6 +87,7 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
     auth_user_id = int(decode_token(token))
     
     user_index = get_user_idx(data['users'], u_id)
+    # more error checking
     if user_index == None:
         raise InputError(description="u_id does not refer to a valid user")
 
@@ -100,6 +103,7 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
     if count_number_global_owner(data['users']) == 1 and permission_id == MEMBER and auth_user_id == u_id:
         raise InputError(description="u_id refers to a user who is the only global owner and they are being demoted to a user")
 
+    # change the permission
     data['users'][user_index]['permissions'] = permission_id
 
     data_store.set(data)

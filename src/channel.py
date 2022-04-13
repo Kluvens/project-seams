@@ -6,6 +6,7 @@ from src.helper import find_channel_index, is_in_channel
 from src.helper import  count_number_owner, is_in_channel_owner
 from src.helper import global_owner_check, get_user_idx
 from src.helpers import decode_token, check_if_token_exists
+from src.helper import channel_details_members_return
 
 
 def channel_invite_v2(token, channel_id, u_id):
@@ -143,7 +144,6 @@ def channel_details_v2(token, channel_id):
 
     right_channel_index = find_channel_index(channels, channel_id)
 
-
     # error
     if right_channel_index is None:
         raise InputError(description="channel_id does not refer to a valid channel")
@@ -153,45 +153,11 @@ def channel_details_v2(token, channel_id):
     if not is_in_channel(auth_user_id, right_channel):
         raise AccessError(description="channel_id is valid and the authorised user is not a member of the channel")
 
-    right_channel_owner_members = [
-        {
-            'u_id': users[member['u_id']]['u_id'],
-            'email': users[member['u_id']]['email'],
-            'name_first': users[member['u_id']]['name_first'],
-            'name_last': users[member['u_id']]['name_last'],
-            'handle_str': users[member['u_id']]['handle_str'],
-        }
-    for member in right_channel['owner_members']]
+    # get the list of all owner members in a channel
+    right_channel_owner_members = [channel_details_members_return(users, member) for member in right_channel['owner_members']]
 
-    right_channel_all_members = [
-        {
-            'u_id': users[member['u_id']]['u_id'],
-            'email': users[member['u_id']]['email'],
-            'name_first': users[member['u_id']]['name_first'],
-            'name_last': users[member['u_id']]['name_last'],
-            'handle_str': users[member['u_id']]['handle_str'],
-        }
-    for member in right_channel['all_members']]
-
-    right_channel_owner_members = [
-        {
-            'u_id': users[member['u_id']]['u_id'],
-            'email': users[member['u_id']]['email'],
-            'name_first': users[member['u_id']]['name_first'],
-            'name_last': users[member['u_id']]['name_last'],
-            'handle_str': users[member['u_id']]['handle_str'],
-        }
-    for member in right_channel['owner_members']]
-
-    right_channel_all_members = [
-        {
-            'u_id': users[member['u_id']]['u_id'],
-            'email': users[member['u_id']]['email'],
-            'name_first': users[member['u_id']]['name_first'],
-            'name_last': users[member['u_id']]['name_last'],
-            'handle_str': users[member['u_id']]['handle_str'],
-        }
-    for member in right_channel['all_members']]
+    # get the list of all members in a channel
+    right_channel_all_members = [channel_details_members_return(users, member) for member in right_channel['all_members']]
 
     return {
         'name': right_channel["name"],
@@ -258,8 +224,8 @@ def channel_messages_v2(token, channel_id, start):
             if 'messages' in data['channels'][channel_id]:
                 found_messages = channel['messages']
                 num_messages = len(found_messages)
-            else:
-                data['channels'][channel_id]['messages'] = []
+            # else:
+            #     data['channels'][channel_id]['messages'] = []
     
     if start > num_messages:
         raise InputError("Error occurred, start value is greater than the number of messages")
@@ -286,6 +252,7 @@ def channel_messages_v2(token, channel_id, start):
             'u_id': found_messages[index].get('u_id'),
             'message': found_messages[index].get('message'),
             'time_sent': found_messages[index].get('time_sent'),
+            'is_pinned': found_messages[index].get('is_pinned'),
         })
 
     if num < 50:

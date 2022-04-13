@@ -5,6 +5,7 @@ from tests.http_helpers import GenerateTestData
 from src.error import InputError, AccessError
 
 #====================== Helper functions / Fixtures ===============
+OKAY = 200
 
 def reset_call():
     requests.delete(url + 'clear/v1')
@@ -108,7 +109,7 @@ def test_working_setup(create_route,leave_route,dummy_data):
         'token': owner,
         'dm_id': dm_id,
     })
-    assert response.status_code == 200
+    assert response.status_code == OKAY
 
     response = requests.get(f"{url}/dm/details/v1", params={'token': owner, 'dm_id': dm_id})
     assert response.status_code == AccessError.code

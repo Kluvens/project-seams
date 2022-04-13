@@ -85,6 +85,7 @@ def dm_messages_v1(token, dm_id, start):
             'u_id': found_messages[index].get('u_id'),
             'message': found_messages[index].get('message'),
             'time_sent': found_messages[index].get('time_sent'),
+            'is_pinned': found_messages[index].get('is_pinned'),
         })
 
     if num < 50:

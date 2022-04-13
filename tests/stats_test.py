@@ -6,7 +6,7 @@ from src.error import InputError, AccessError
 from src.auth import auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2
 from src.dms import dm_create_v1
-from src.message import message_pin_v1, message_senddm_v1
+from src.message import message_senddm_v1
 
 OKAY = 200
 
@@ -88,9 +88,9 @@ def test_user_stats_working(setup):
     assert isinstance(stats_result,dict)
 
     assert isinstance(stats_result['user_stats']["channels_joined"][0], dict) 
-    assert stats_result['user_stats']["channels_joined"][0]['num_channels_joined'] == 1
-    assert stats_result['user_stats']["dms_joined"][0]['num_dms_joined'] == 1
-    assert stats_result['user_stats']["messages_sent"][0]['num_messages_sent'] == 0
+    assert len(stats_result['user_stats']["channels_joined"]) == 1
+    assert len(stats_result['user_stats']["dms_joined"]) == 1
+    assert len(stats_result['user_stats']["messages_sent"]) == 0
     assert isinstance(stats_result['user_stats']['involvement_rate'], float)
 
     response = requests.post(f'{url}/message/send/v1', json={'token': token, 'channel_id': channel_dict['channel_id'], 'message': "I love you"})
@@ -106,9 +106,9 @@ def test_user_stats_working(setup):
     assert isinstance(stats_result,dict)
 
     assert isinstance(stats_result['user_stats']["channels_joined"][0], dict) 
-    assert stats_result['user_stats']["channels_joined"][0]['num_channels_joined'] == 1
-    assert stats_result['user_stats']["dms_joined"][0]['num_dms_joined'] == 1
-    assert stats_result['user_stats']["messages_sent"][0]['num_messages_sent'] == 2
+    assert len(stats_result['user_stats']["channels_joined"]) == 1
+    assert len(stats_result['user_stats']["dms_joined"]) == 1
+    assert len(stats_result['user_stats']["messages_sent"]) == 2
     assert stats_result['user_stats']['involvement_rate'] == float(1)
 
     response = requests.get(f'{url}/user/stats/v1', params={'token': token_second})
@@ -117,9 +117,9 @@ def test_user_stats_working(setup):
     stats_result = response.json()
     assert isinstance(stats_result,dict)
 
-    assert stats_result['user_stats']["channels_joined"][0]['num_channels_joined'] == 1
-    assert stats_result['user_stats']["dms_joined"][0]['num_dms_joined'] == 1
-    assert stats_result['user_stats']["messages_sent"][0]['num_messages_sent'] == 0
+    assert len(stats_result['user_stats']["channels_joined"]) == 1
+    assert len(stats_result['user_stats']["dms_joined"]) == 1
+    assert len(stats_result['user_stats']["messages_sent"]) == 0
     assert stats_result['user_stats']['involvement_rate'] == float(0.5)
 
     response = requests.get(f'{url}/user/stats/v1', params={'token': token_third})
@@ -128,9 +128,9 @@ def test_user_stats_working(setup):
     stats_result = response.json()
     assert isinstance(stats_result,dict)
 
-    assert stats_result['user_stats']["channels_joined"][0]['num_channels_joined'] == 0
-    assert stats_result['user_stats']["dms_joined"][0]['num_dms_joined'] == 1
-    assert stats_result['user_stats']["messages_sent"][0]['num_messages_sent'] == 0
+    assert len(stats_result['user_stats']["channels_joined"]) == 0
+    assert len(stats_result['user_stats']["dms_joined"]) == 1
+    assert len(stats_result['user_stats']["messages_sent"]) == 0
     assert stats_result['user_stats']['involvement_rate'] == float(0.25)
 
     response = requests.get(f'{url}/user/stats/v1', params={'token': token_fourth})
@@ -139,9 +139,9 @@ def test_user_stats_working(setup):
     stats_result = response.json()
     assert isinstance(stats_result,dict)
 
-    assert stats_result['user_stats']["channels_joined"][0]['num_channels_joined'] == 0
-    assert stats_result['user_stats']["dms_joined"][0]['num_dms_joined'] == 0
-    assert stats_result['user_stats']["messages_sent"][0]['num_messages_sent'] == 0
+    assert len(stats_result['user_stats']["channels_joined"]) == 0
+    assert len(stats_result['user_stats']["dms_joined"]) == 0
+    assert len(stats_result['user_stats']["messages_sent"]) == 0
     assert stats_result['user_stats']['involvement_rate'] == float(0)
 
     channel_obj = requests.post(f'{url}/channels/create/v2', json={"token": token_second, "name": "Kias_channel", "is_public": True})
@@ -166,9 +166,9 @@ def test_user_stats_working(setup):
     assert isinstance(stats_result,dict)
 
     assert isinstance(stats_result['user_stats']["channels_joined"][0], dict) 
-    assert stats_result['user_stats']["channels_joined"][0]['num_channels_joined'] == 1
-    assert stats_result['user_stats']["dms_joined"][0]['num_dms_joined'] == 1
-    assert stats_result['user_stats']["messages_sent"][0]['num_messages_sent'] == 2 + 10 + 10
+    assert len(stats_result['user_stats']["channels_joined"]) == 1
+    assert len(stats_result['user_stats']["dms_joined"]) == 1
+    assert len(stats_result['user_stats']["messages_sent"]) == 2 + 10 + 10
     assert stats_result['user_stats']['involvement_rate'] == float((1+1+2+10+10)/(2+1+3+10+10))
 
 def test_users_stats_invalid_token(setup):
@@ -187,13 +187,8 @@ def test_usersstats_working(setup):
     user2_dict = setup[1]
     user3_dict = setup[2]
     user4_dict = setup[3]
-    channel_dict = setup[4]
-    dm_dict = setup[5]
 
     token = user1_dict['token']
-    token_second = user2_dict['token']
-    token_third = user3_dict['token']
-    token_fourth = user4_dict['token']
     
     response = requests.get(f'{url}/users/stats/v1', params={'token': token})
     assert response.status_code == OKAY
@@ -201,7 +196,7 @@ def test_usersstats_working(setup):
     stats_result = response.json()
     assert isinstance(stats_result,dict)
 
-    assert stats_result['workspace_stats']["channels_exist"][0]['num_channels_exist'] == 1
-    assert stats_result['workspace_stats']["dms_exist"][0]['num_dms_exist'] == 1
-    assert stats_result['workspace_stats']["messages_exist"][0]['num_messages_exist'] == 0
+    assert len(stats_result['workspace_stats']["channels_exist"]) == 1
+    assert len(stats_result['workspace_stats']["dms_exist"]) == 1
+    assert len(stats_result['workspace_stats']["messages_exist"]) == 0
     assert stats_result['workspace_stats']['utilization_rate'] == float(3/4)

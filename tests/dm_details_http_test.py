@@ -5,6 +5,8 @@ from tests.http_helpers import GenerateTestData
 from src.error import InputError, AccessError
 #====================== Helper functions / Fixtures ===============
 
+OKAY = 200
+
 def reset_call():
     requests.delete(url + 'clear/v1')
 
@@ -77,7 +79,7 @@ def test_dms_no_uid(detail_route, dummy_data, create_route):
         'dm_id': 0,
     })
 
-    assert detail1.status_code == 200
+    assert detail1.status_code == OKAY
     assert detail1.json() == {           
         'name': 'jakerenzella',
         'members': [{'email': 'owner@seams.com',
@@ -105,7 +107,7 @@ def test_dms_one_uid(detail_route, dummy_data, create_route):
         'dm_id': 0,
     })
 
-    assert detail1.status_code == 200
+    assert detail1.status_code == OKAY
     assert detail1.json() == {
         'name': 'jakerenzella, testfirst1testlast1',
         'members': [{'email': 'owner@seams.com',
@@ -138,7 +140,7 @@ def test_dms_two_uid(detail_route, dummy_data, create_route):
         'dm_id': 0,
     })
 
-    assert detail1.status_code == 200
+    assert detail1.status_code == OKAY
     assert detail1.json() == {
         'name': 'jakerenzella, testfirst1testlast1, testfirst2testlast2',
         'members': [{'email': 'owner@seams.com',
@@ -177,7 +179,7 @@ def test_two_dms(detail_route, dummy_data, create_route):
         'token': users_return_dict1['token'],
         'dm_id': 0,
     })
-    assert detail1.status_code == 200
+    assert detail1.status_code == OKAY
     assert detail1.json() == {
         'name': 'jakerenzella',
         'members': [{'email': 'owner@seams.com',

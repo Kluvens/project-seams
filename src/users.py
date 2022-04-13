@@ -16,7 +16,6 @@ from src.helpers import check_handlestr_unique
 from src.helpers import get_user_idx
 from src.helpers import check_u_id_exists
 from src.helpers import return_exist_status
-from time import time
 from src.helper import count_number_channels_exist, count_number_dms_exist, count_number_messages_sent, count_number_dms_joined, count_number_channels_joined, count_number_messages_exist
 from src.helper import count_users_joined, count_number_users
 
@@ -267,21 +266,15 @@ def user_stats_v1(token):
     # print(num_messages_exist)
     # print('messages exist')
 
-    time_stamp = int(time())
-
-    channels_stats = {'num_channels_joined': num_channels_joined, 'time_stamp': time_stamp}
-    dms_stats = {'num_dms_joined': num_dms_joined, 'time_stamp': time_stamp}
-    messages_stats = {'num_messages_sent': num_messages_sent, 'time_stamp': time_stamp}
-
-    if (num_channels_exist + num_dms_exist + num_messages_exist) > 0:
-        involvement_rate = (num_channels_joined + num_dms_joined + num_messages_sent) / (num_channels_exist + num_dms_exist + num_messages_exist)
+    if (len(num_channels_exist) + len(num_dms_exist) + len(num_messages_exist)) > 0:
+        involvement_rate = (len(num_channels_joined) + len(num_dms_joined) + len(num_messages_sent)) / (len(num_channels_exist) + len(num_dms_exist) + len(num_messages_exist))
     else:
         involvement_rate = 0
 
     user_stats = {
-        'channels_joined': [channels_stats],
-        'dms_joined': [dms_stats],
-        'messages_sent': [messages_stats],
+        'channels_joined': num_channels_joined,
+        'dms_joined': num_dms_joined,
+        'messages_sent': num_messages_sent,
         'involvement_rate': involvement_rate,
     }
 
@@ -295,21 +288,15 @@ def users_stats_v1(token):
     num_dms_exist = count_number_dms_exist()
     num_messages_exist = count_number_messages_exist()
 
-    time_stamp = int(time())
-
-    channels_stats = {'num_channels_exist': num_channels_exist, 'time_stamp': time_stamp}
-    dms_stats = {'num_dms_exist': num_dms_exist, 'time_stamp': time_stamp}
-    messages_stats = {'num_messages_exist': num_messages_exist, 'time_stamp': time_stamp}
-
     users_join_at_least_one = count_users_joined()
     num_users = count_number_users()
 
     utilization_rate = users_join_at_least_one/num_users
 
     workspace_stats = {
-        'channels_exist': [channels_stats],
-        'dms_exist': [dms_stats],
-        'messages_exist': [messages_stats],
+        'channels_exist': num_channels_exist,
+        'dms_exist': num_dms_exist,
+        'messages_exist': num_messages_exist,
         'utilization_rate': utilization_rate,
     }
 

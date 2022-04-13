@@ -6,7 +6,7 @@ from tests.http_helpers import GenerateTestData
 from src.error import InputError, AccessError
 
 # ================ helper functions =====================================
-
+OKAY = 200
 def reset_call():
     requests.delete(url + 'clear/v1')
 
@@ -74,7 +74,7 @@ def test_invalid_dm_id(create_route,remove_route,dummy_data):
         'token': owner,
         'dm_id': dm_id+100,
     })
-    assert response.status_code == 400
+    assert response.status_code == InputError.code
 
 # authorised user is not original dm creator/owner
 def test_not_owner_remove(create_route,remove_route,dummy_data):
@@ -144,4 +144,4 @@ def test_working_setup(create_route,remove_route,dummy_data):
         'token': owner,
         'dm_id': dm_id,
     })
-    assert response.status_code == 200
+    assert response.status_code == OKAY

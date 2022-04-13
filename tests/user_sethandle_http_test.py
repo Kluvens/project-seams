@@ -24,7 +24,7 @@ from src.error import AccessError
 from src.error import InputError
 
 #====================== Helper functions / Fixtures ==============
-
+OKAY = 200
 @pytest.fixture
 def route():
     # make sure other routes have profile in their name
@@ -129,7 +129,7 @@ def test_set_handle(route, dummy_data, user_idx, handle_str):
 
     sethandle_response = user_sethandle_request(route, user_token, handle_str)
     
-    assert sethandle_response.status_code ==  200
+    assert sethandle_response.status_code ==  OKAY
 
     # Note that since reset is call with each user_idx parameter
     # new handle_str is guarnteed to not be duplicated 

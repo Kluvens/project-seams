@@ -142,7 +142,7 @@ def test_channel_details_token_error(setup):
     assert isinstance(channel_id, int)
 
     response = requests.get(f'{url}/channel/details/v2', params={'token': 'invalidtoken', 'channel_id': channel_id})
-    assert response.status_code == 403
+    assert response.status_code == AccessError.code
     
 def test_channel_details_invalid_channel_id(setup):
     user_dict = setup[0]

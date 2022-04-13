@@ -39,14 +39,12 @@ def setup():
 
 def test_message_pin_invalid_token(setup):
     user1_dict = setup[0]
-    user2_dict = setup[1]
-    channel_dict = setup[2]
     dm_dict = setup[3]
 
     token = user1_dict['token']
     dm_id = dm_dict['dm_id']
 
-    for num in range(10):
+    for _ in range(10):
         response = requests.post(f'{url}/message/senddm/v1', json={'token': token, 'dm_id': dm_id, 'message': "I love you"})
         assert response.status_code == OKAY
         message_id = response.json()['message_id']
@@ -99,7 +97,7 @@ def test_message_pin_no_permission_dm(setup):
     token_second = user2_dict['token']
     dm_id = dm_dict['dm_id']
 
-    for num in range(10):
+    for _ in range(10):
         response = requests.post(f'{url}/message/senddm/v1', json={'token': token, 'dm_id': dm_id, 'message': "I love you"})
         assert response.status_code == OKAY
         message_id = response.json()['message_id']
@@ -110,13 +108,12 @@ def test_message_pin_no_permission_dm(setup):
 
 def test_message_pin_invalid_message(setup):
     user1_dict = setup[0]
-    user2_dict = setup[1]
     dm_dict = setup[3]
 
     token = user1_dict['token']
     dm_id = dm_dict['dm_id']
 
-    for num in range(10):
+    for _ in range(10):
         response = requests.post(f'{url}/message/senddm/v1', json={'token': token, 'dm_id': dm_id, 'message': "I love you"})
         assert response.status_code == OKAY
         message_id = response.json()['message_id']
@@ -126,14 +123,12 @@ def test_message_pin_invalid_message(setup):
 
 def test_message_pin_already_pinned(setup):
     user1_dict = setup[0]
-    user2_dict = setup[1]
-    channel_dict = setup[2]
     dm_dict = setup[3]
 
     token = user1_dict['token']
     dm_id = dm_dict['dm_id']
 
-    for num in range(10):
+    for _ in range(10):
         response = requests.post(f'{url}/message/senddm/v1', json={'token': token, 'dm_id': dm_id, 'message': "I love you"})
         assert response.status_code == OKAY
         message_id = response.json()['message_id']
@@ -146,14 +141,12 @@ def test_message_pin_already_pinned(setup):
 
 def test_message_pin_working(setup):
     user1_dict = setup[0]
-    user2_dict = setup[1]
-    channel_dict = setup[2]
     dm_dict = setup[3]
 
     token = user1_dict['token']
     dm_id = dm_dict['dm_id']
 
-    for num in range(10):
+    for _ in range(10):
         response = requests.post(f'{url}/message/senddm/v1', json={'token': token, 'dm_id': dm_id, 'message': "I love you"})
         assert response.status_code == OKAY
         message_id = response.json()['message_id']
@@ -163,14 +156,12 @@ def test_message_pin_working(setup):
 
 def test_message_unpin_invalid_token(setup):
     user1_dict = setup[0]
-    user2_dict = setup[1]
-    channel_dict = setup[2]
     dm_dict = setup[3]
 
     token = user1_dict['token']
     dm_id = dm_dict['dm_id']
 
-    for num in range(10):
+    for _ in range(10):
         response = requests.post(f'{url}/message/senddm/v1', json={'token': token, 'dm_id': dm_id, 'message': "I love you"})
         assert response.status_code == OKAY
         message_id = response.json()['message_id']
@@ -186,14 +177,12 @@ def test_message_unpin_invalid_token(setup):
 
 def test_message_unpin_already_unpinned(setup):
     user1_dict = setup[0]
-    user2_dict = setup[1]
-    channel_dict = setup[2]
     dm_dict = setup[3]
 
     token = user1_dict['token']
     dm_id = dm_dict['dm_id']
 
-    for num in range(10):
+    for _ in range(10):
         response = requests.post(f'{url}/message/senddm/v1', json={'token': token, 'dm_id': dm_id, 'message': "I love you"})
         assert response.status_code == OKAY
         message_id = response.json()['message_id']
@@ -248,14 +237,12 @@ def test_message_unpin_no_permission(setup):
 
 def test_message_unpin_invalid_message(setup):
     user1_dict = setup[0]
-    user2_dict = setup[1]
-    channel_dict = setup[2]
     dm_dict = setup[3]
 
     token = user1_dict['token']
     dm_id = dm_dict['dm_id']
 
-    for num in range(10):
+    for _ in range(10):
         response = requests.post(f'{url}/message/senddm/v1', json={'token': token, 'dm_id': dm_id, 'message': "I love you"})
         assert response.status_code == OKAY
         message_id = response.json()['message_id']
@@ -268,14 +255,12 @@ def test_message_unpin_invalid_message(setup):
 
 def test_message_unpin_working(setup):
     user1_dict = setup[0]
-    user2_dict = setup[1]
-    channel_dict = setup[2]
     dm_dict = setup[3]
 
     token = user1_dict['token']
     dm_id = dm_dict['dm_id']
 
-    for num in range(10):
+    for _ in range(10):
         response = requests.post(f'{url}/message/senddm/v1', json={'token': token, 'dm_id': dm_id, 'message': "I love you"})
         assert response.status_code == OKAY
         message_id = response.json()['message_id']

@@ -11,16 +11,19 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
+from src.admin import admin_user_remove_v1, admin_userpermission_change_v1
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
+from src.reset import auth_password_reset_request_v1, auth_password_reset_v1
 from src.channel import channel_invite_v2, channel_join_v2
 from src.channel import channel_details_v2, channel_messages_v2
 from src.channel import channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
-from src.other import clear_v1
 from src.channels import channels_create_v2, channels_list_v2, channels_listall_v2
-from src.admin import admin_user_remove_v1, admin_userpermission_change_v1
 from src.dm import dm_messages_v1
-from src.dms import dm_create_v1, dm_list_v1, dm_details_v1, dm_leave_v1, dm_remove_v1
+from src.dms import dm_create_v1, dm_list_v1, dm_details_v1
+from src.dms import dm_leave_v1, dm_remove_v1
 from src.message import message_senddm_v1
+from src.message import message_send_v1
+from src.message import message_remove_v1, message_edit_v1, message_senddm_v1
 from src.users import users_all_v1
 from src.users import user_profile_v1
 from src.users import user_setname_v1
@@ -86,6 +89,19 @@ def auth_logout_http():
     auth_logout_v1(token)
 
     return dumps({})
+
+
+@APP.route("/auth/passwordreset/request/v1", methods=['POST'])
+def password_reset_request():
+    email_dict = request.get_json()
+    return dumps(auth_password_reset_request_v1(**email_dict))
+
+
+@APP.route("/auth/passwordreset/reset/v1", methods=['POST'])
+def reset_password():
+    reset_data = request.get_json()
+    return dumps(auth_password_reset_v1(**reset_data))
+
 
 ############################ Channel ############################
 @APP.route("/channel/invite/v2", methods = ['POST'])

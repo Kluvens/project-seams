@@ -238,3 +238,7 @@ def user_profile_sethandle_v1(token, handle_str):
     users[idx]["handle_str"] = handle_str
 
     return {}
+
+    # ============= USER PROFILE UPLOAD PHOTO ==============
+    def user_profile_uploadphoto_v1(token, img_url,x_start,y_start,x_end,y_end):
+        return {}

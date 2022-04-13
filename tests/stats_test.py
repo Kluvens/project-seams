@@ -184,9 +184,6 @@ def test_users_stats_invalid_token(setup):
 
 def test_usersstats_working(setup):
     user1_dict = setup[0]
-    user2_dict = setup[1]
-    user3_dict = setup[2]
-    user4_dict = setup[3]
 
     token = user1_dict['token']
     

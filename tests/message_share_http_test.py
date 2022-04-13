@@ -164,7 +164,21 @@ def test_invalid_token_dmtochannel():
     response = message_share_v1_http('abcde',og_message_id,'invalid token, channel/dm',channel_id,'-1')
     assert response.status_code == AccessError.code 
 
+# Routine Behavior 
 
+def test_working_share_channeltodm():
+    token = setup()['tokens'][2]
+    og_message_id = channel_dm()
+    dm_id = setup()['dm_id']
+    response = message_share_v1_http(token,og_message_id,'Working channel share to DM','-1',dm_id)
+    assert response.status_code == OKAY
+
+def test_working_share_channeltodm():
+    token = setup()['tokens'][2]
+    og_message_id = dm_channel()
+    channel_id = setup()['channel_id']
+    response = message_share_v1_http(token,og_message_id,'Working DM share to channel',channel_id,'-1')
+    assert response.status_code == OKAY
 
 
 

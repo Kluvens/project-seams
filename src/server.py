@@ -33,6 +33,7 @@ from src.message import message_send_v1, message_remove_v1, message_edit_v1, mes
 from src.message import message_pin_v1
 from src.message import message_unpin_v1
 from src.users import user_stats_v1, users_stats_v1
+from src.other import clear_v1
 
 ###################### INITIAL SERVER SETUP ######################
 

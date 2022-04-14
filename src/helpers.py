@@ -246,6 +246,22 @@ def is_global_owner(u_id):
                 return False
     return False
 
+# ============================ NOTIFICATIONS HELP ===============================================
+import re
+
+def find_handle_in_message(message):
+    words = message.split() 
+    at_words = [word.split('@') for word in words if '@' in word]
+    users = data_store.get()['users']
+    existing_handles = [user['handle_str'] for user in users]
+    handles = []
+    for at_word in at_words:
+        contains_handle = any(existing_handle in at_word for existing_handle in existing_handles)
+        if contains_handle:
+            handle = re.split('\W+',at_word)[0]
+            handles.append(handle)
+    return handles
+
 # def write_savefile():
 #     pass
 #     """

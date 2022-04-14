@@ -240,6 +240,27 @@ def user_profile_sethandle_v1(token, handle_str):
     return {}
 
 # =============================== NOTIFICATIONS GET ====================================
+
+'''
+Test message: 'Hi@A@Z, what are @B@C and @D doing? 
+words = ['Hi@A@Z','what','are', '@B@C', 'and', '@D]', 'doing?']
+at_words = ['Hi','A','Z','B','C','D']
+existing_handles = []
+'''
+
+
 def notifications_get_v1(token):
-    notifications = True # PLACEHOLDER
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid Token")
+
+    users = data_store.get()['users']
+
+    all_user_notifications = [user['notifications'] for user in users if user['token'] == token][0]
+    num_of_notifications = len(all_user_notifications)
+
+    if num_of_notifications < 20:
+        notifications = all_user_notifications.reverse()
+    else:
+        notifications = all_user_notifications.reverse()[0:19]
+
     return {notifications}

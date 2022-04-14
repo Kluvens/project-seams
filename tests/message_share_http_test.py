@@ -57,14 +57,14 @@ def test_invalid_channel():
     token = setup()['tokens'][2]
     og_message_id = dm_channel()
     response = message_share_v1_http(token,og_message_id,'invalid channel test','12345','-1')
-    assert response.status_code == AccessError.code
+    assert response.status_code == InputError.code
 
 # input: Invalid dm 
 def test_invalid_dm():
     token = setup()['tokens'][2]
     og_message_id = channel_dm()
     response = message_share_v1_http(token,og_message_id,'invalid dm test','-1','12345')
-    assert response.status_code == AccessError.code
+    assert response.status_code == InputError.code
 
 # input: Both channel and dm id is not -1
 def test_neither_neg1_valid_ids():
@@ -73,26 +73,26 @@ def test_neither_neg1_valid_ids():
     dm_id = setup()['dm_id']
     og_message_id = channel_dm()
     response = message_share_v1_http(token,og_message_id,'neither -1,both valid',channel_id,dm_id)
-    assert response.status_code == AccessError.code 
+    assert response.status_code == InputError.code 
 
 def test_neither_neg1_invalid_ids():
     token = setup()['tokens'][2]
     og_message_id = channel_dm()
     response = message_share_v1_http(token,og_message_id,'neither -1,neither valid','123','456')
-    assert response.status_code == AccessError.code 
+    assert response.status_code == InputError.code 
 
 # input: Invalid message id
 def test_invalid_message_id_channeltodm():
     token = setup()['tokens'][2]
     dm_id = setup()['dm_id']
     response = message_share_v1_http(token,'12345','invalid message id','-1',dm_id)
-    assert response.status_code == AccessError.code
+    assert response.status_code == InputError.code
 
 def test_invalid_message_id_dmtochannel():
     token = setup()['tokens'][2]
     channel_id = setup()['channel_id']    
     response = message_share_v1_http(token,'12345','invalid message id',channel_id,'-1')
-    assert response.status_code == AccessError.code
+    assert response.status_code == InputError.code
 
 # input: Message length > 1000
 
@@ -123,7 +123,7 @@ def test_message_over_1000_channeltodm(message):
     dm_id = setup()['dm_id']
 
     response = message_share_v1_http(token,og_message_id,message,'-1',dm_id)
-    assert response.status_code == AccessError.code
+    assert response.status_code == InputError.code
 
 def test_message_over_1000_dmtochannel(message):
     
@@ -132,7 +132,7 @@ def test_message_over_1000_dmtochannel(message):
     channel_id = setup()['channel_id']
 
     response = message_share_v1_http(token,og_message_id,message,channel_id,'-1')
-    assert response.status_code == AccessError.code
+    assert response.status_code == InputError.code
 
 # access: Auth user not part of channel/dm they are sharing TO
 def test_user_not_member_channeltodm():

@@ -6,6 +6,22 @@ from src.error import AccessError, InputError
 from src.helper import is_in_channel_owner, is_in_dm_owner
 
 def message_senddm_v1(token, dm_id, message):
+    '''
+    send a message in dm with unique message_id
+
+    Arguments:
+        token - the auth user who wants to send a message in the dm
+        dm_id - the dm the auth user wants to send message
+        message - the detailed content of the message
+
+    Exceptions:
+        InputError - dm_id does not refer to a valid DM
+        InputError - length of message is less than 1 or over 1000 characters
+        AccessError - dm_id is valid and the authorised user is not a member of the DM
+
+    Return:
+        { message_id } - the unique identifier of the message created
+    '''
     data = data_store.get()
     dms = data['dms']
 
@@ -25,6 +41,7 @@ def message_senddm_v1(token, dm_id, message):
     
     right_dm = dms[right_dm_index]
 
+    # check if is in dm
     if not is_in_dm(auth_user_id, right_dm):
         raise AccessError(description="dm_id is valid and the authorised user is not a member of the dm")
     if not 'messages' in right_dm:
@@ -32,6 +49,7 @@ def message_senddm_v1(token, dm_id, message):
 
     data['unique_message_id'] += 1
     
+    # all checks passed, append to the messages
     right_dm['messages'].append(
         {
             'message_id': data['unique_message_id'],
@@ -245,6 +263,22 @@ def message_edit_v1(token, message_id, message):
     return {}
 
 def message_pin_v1(token, message_id):
+    '''
+    The function is used to pin a message in channel or dm
+
+    Arguments:
+        token - the auth user who wants to pin the message
+        message_id - the message may be pinned
+
+    Exceptions:
+        InputError - message_id is not a valid message within a channel or DM that the authorised user has joined
+        InputError - the message is already pinned
+        AccessError - invalid token
+        AccessError - message_id refers to a valid message in a joined channel/DM and the authorised user does not have owner permissions in the channel/DM
+
+    Return:
+        {}
+    '''
     valid_message = False
     message_already_pinned = False
     user_has_permission = False
@@ -258,6 +292,7 @@ def message_pin_v1(token, message_id):
     channels = data['channels']
     dms = data['dms']
 
+    # pin the message if it is in the channel
     for channel in channels:
         for message in channel['messages']:
             can_change = True
@@ -273,6 +308,7 @@ def message_pin_v1(token, message_id):
                 if can_change:
                     message['is_pinned'] = True
 
+    # pin the message if it is in the dm
     for dm in dms:
         for message in dm['messages']:
             can_change = True
@@ -288,11 +324,11 @@ def message_pin_v1(token, message_id):
                 if can_change:
                     message['is_pinned'] = True
 
-    if not valid_message:
-        raise InputError(description="message_id is not a valid message within a channel or DM that the authorised user has joined")
-    
     if not user_has_permission:
         raise AccessError(description="message_id refers to a valid message in a joined channel/DM and the authorised user does not have owner permissions in the channel/DM")
+    
+    if not valid_message:
+        raise InputError(description="message_id is not a valid message within a channel or DM that the authorised user has joined")
 
     if message_already_pinned:
         raise InputError(description="the message is already pinned")
@@ -300,6 +336,22 @@ def message_pin_v1(token, message_id):
     return {}
 
 def message_unpin_v1(token, message_id):
+    '''
+    the function is used to unpin a message
+
+    Arguments:
+        token - the auth user who wants to unpin the message
+        message_id - the message to be unpinned
+
+    Exceptions:
+        InputError - message_id is not a valid message within a channel or DM that the authorised user has joined
+        InputError - the message is not already pinned
+        AccessError - invalid token
+        AccessError - message_id refers to a valid message in a joined channel/DM and the authorised user does not have owner permissions in the channel/DM
+
+    Return:
+        {}
+    '''
     valid_message = False
     message_already_unpinned = False
     user_has_permission = False
@@ -313,6 +365,7 @@ def message_unpin_v1(token, message_id):
     channels = data['channels']
     dms = data['dms']
 
+    # unpin the message if in channel
     for channel in channels:
         for message in channel['messages']:
             can_change = True
@@ -328,6 +381,7 @@ def message_unpin_v1(token, message_id):
                 if can_change:
                     message['is_pinned'] = False
 
+    # unpin the message if in dm
     for dm in dms:
         for message in dm['messages']:
             can_change = True

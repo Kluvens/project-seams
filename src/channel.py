@@ -4,48 +4,55 @@ from src.helpers import decode_token,check_if_token_exists
 
 def channel_invite_v2(token, channel_id, u_id):
 
-    ''' 
-    channel_invite.py
-
-    This function allows an authorized user to invite another user into a given channel.
+   
+    '''
+    This function allows an authorized user to invite another 
+    user into a given channel.
 
     Arguments:
-    auth_user_id (integer) - This is the user id of the user authorized to invite other users. 
+    - token (string) - This is the authentication token of the 
+    authorized user. 
     This means they are a member themselves, and/or are an owner.
-    channel_id (integer) - This is the channel id of the channel that the authorized user 
-    would like to invite the other user to.
-    u_id (integer) - This is the user id of the user to be invited to the given channel.
+    - channel_id (integer) - This is the channel id of the channel 
+    that the authorized user would like to invite the other user to.
+     - u_id (integer) - This is the user id of the user to be
+    invited to the given channel.
 
     Exceptions:
-    InputError - An input error is raised when the channel id or either user is invalid or 
-    if the user already exists in the channel
-    AccessError - An access error is raised when the authorizing user is not a global owner 
-    or an existing member of the channel
+    InputError - An input error is raised when the channel id or 
+    either user is invalid or if the user already exists in the channel
+    AccessError - An access error is raised when the authorizing user 
+    is not a global owner or an existing member of the channel
+
+    Common error:
+    AccessError - When an invalid token is passed into the function
 
     Return Value:
     This function does not return anything
     '''
-
 
     # Access user and channel lists 
     store = data_store.get()
     channels = store['channels']
     users = store['users']
 
-    # Check u_id is valid, channel is valid, auth_user is a channel member and u_id is not 
-    # already a member of channel
+    channel_id = int(channel_id)
+    u_id = int(u_id)
+
+    # Check if token exists
+    token_exists = check_if_token_exists(token)
+
+    # Convert token to u_id
+    if token_exists:
+        u_id2 = decode_token(token)
+    else:
+        raise AccessError (description="ERROR: Token does not exist")
+      
+    # Check u_id is valid, channel is valid, auth_user is a channel member and u_id is not already a member of channel
     channel_to_join = None
     u_id_valid = False
     auth_user_authorized = False
     u_id_member = False
-
-    # Check if token exists
-    token_exists = check_if_token_exists(token)
-    # Convert token to auth_user_id TO DO
-    if token_exists:
-        auth_user_id = decode_token(token)
-    else:
-        raise AccessError ("ERROR: Token does not exist")
 
     # Check for valid u_id
     u_id_list = [user['u_id']for user in users]
@@ -60,30 +67,47 @@ def channel_invite_v2(token, channel_id, u_id):
             # If channel is valid, check if auth_user and u_id are in it
             channel_members = channel['all_members']
             for member in channel_members:
-                if member['u_id'] == auth_user_id:
+                if member['u_id'] == u_id2:
                     auth_user_authorized = True 
                 if member['u_id'] == u_id:
                     u_id_member = True
 
     # Input errors 
     if not u_id_valid:
-        raise InputError ("ERROR: The user you are trying to add does not exist.")
+        raise InputError (
+            description="ERROR: The user you are trying to add does not exist.")
 
     if channel_to_join == None:
-        raise InputError ("ERROR: This channel does not exist.")
+        raise InputError (
+            description="ERROR: This channel does not exist.")
 
     if u_id_member == True:
-        raise InputError ("ERROR: The user you are trying to add already exists in the channel")
+        raise InputError (
+            description="ERROR: The user you are trying to add already exists in the channel")
 
     # Access errors
     if auth_user_authorized == False:
-        raise AccessError ("ERROR: You are not authorized to invite users to this channel.")
+        raise AccessError (
+            description="ERROR: You are not authorized to invite users to this channel.")
 
     # If all conditions are met, append user to members list for given channel
     if u_id_valid and channel_to_join != None and not u_id_member and auth_user_authorized and token_exists:
         member_list = channel_to_join['all_members']
         new_member = {'u_id': u_id}
         member_list.append(new_member)
+    
+    # FOR NOTIFICATIONS
+    user_adding = [user['handle_str'] for user in users if user['token'] == token][0]
+    channel_name = [channel['channel_name'] for channel in channels if channel['channel_id'] == channel_id][0]
+    notification_message = "{} added you to {}".format(user_adding,channel_name)
+    notification = {
+    'channel_id': channel_id,
+    'dm_id': -1,
+    'notification_message': notification_message,
+    }
+
+    user_listof_notifications = [user['notifications'] for user in users if user['u_id'] == u_id][0]
+    user_listof_notifications.append(notification)
 
     return {}
 

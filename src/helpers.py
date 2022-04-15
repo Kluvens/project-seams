@@ -262,6 +262,54 @@ def find_handle_in_message(message):
             handles.append(handle)
     return handles
 
+
+def find_channeldm_from_message(message_id):
+    id = None
+
+    # Channel 
+    channels = data_store.get()['channels']
+    for channel in channels:
+        messages = channel['messages']
+        message_ids = [message['message_id'] for message in messages]
+        if message_ids.count(message_id) > 0:
+            id = channel['channel_id']
+            is_channel = True
+            is_dm = False
+    
+    # DM
+    dms = data_store.get()['dms']
+    for dm in dms:
+        messages = dm['messages']
+        message_ids = [message['message_id'] for message in messages]
+        if message_ids.count(message_id) > 0:
+            id = dm['dm_id']
+            is_channel = False
+            is_dm = True
+        
+    return {
+        'is_channel': is_channel,
+        'is_dm': is_dm,
+        'id': id,
+    }
+
+def find_message_sender(message_id,channel_id,dm_id):
+    
+    # Channels 
+    if dm_id == -1:
+        channels = data_store.get()['channels']
+        channel = [channel for channel in channels if channel['channel_id '] == channel_id][0]
+        message_list = channel['messages']
+        sender_id = [message['u_id'] for message in message_list if message['message_id'] == message_id][0]
+
+    # DMS
+    if channel_id == -1:
+        dms = data_store.get()['dms']
+        dm = [dm for dm in dms if dm['dm_id'] == dm_id][0]
+        message_list = dm['messages']
+        sender_id = [message['u_id'] for message in message_list if message['message_id'] == message_id][0]      
+
+    return sender_id 
+
 # def write_savefile():
 #     pass
 #     """

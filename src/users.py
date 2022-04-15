@@ -242,6 +242,23 @@ def user_profile_sethandle_v1(token, handle_str):
     return {}
 
 def user_stats_v1(token):
+    '''
+    the functions return the information about channels, dms and messages involved and an involvement rate
+
+    Arguments:
+        token - auth user who wants to get the info
+
+    Exceptions:
+        AccessError - invalid token
+
+    Return:
+        Dictionary of shape {
+         channels_joined: [{num_channels_joined, time_stamp}],
+         dms_joined: [{num_dms_joined, time_stamp}], 
+         messages_sent: [{num_messages_sent, time_stamp}], 
+         involvement_rate 
+        }
+    '''
     if check_if_token_exists(token) == False:
         raise AccessError(description="Error occured, invalid token'")
     
@@ -281,6 +298,23 @@ def user_stats_v1(token):
     return {'user_stats': user_stats}
 
 def users_stats_v1(token):
+    '''
+    the functions return information about existing channels, dms and messages and a utilization rate
+
+    Arguments:
+        token - auth user who wants to get the info
+
+    Exceptions:
+        AccessError - invalid token
+
+    Return:
+        Dictionary of shape {
+         channels_exist: [{num_channels_exist, time_stamp}], 
+         dms_exist: [{num_dms_exist, time_stamp}], 
+         messages_exist: [{num_messages_exist, time_stamp}], 
+         utilization_rate 
+        }
+    '''
     if check_if_token_exists(token) == False:
         raise AccessError(description="Error occured, invalid token'")
 

@@ -117,10 +117,6 @@ def dm_details_v1(token, dm_id):
         'members': right_dm_all_members,
     }
 
-
-
-
-
 def dm_create_v1(token, u_ids):
     '''
     Given token and a list of u_ids, we should generate a direct message for the auth user and u_ids to be invited
@@ -244,9 +240,6 @@ def dm_leave_v1(token, dm_id):
             dms[dm_index]['all_members'].remove({'u_id': u_id})
 
     return{}
-
-
-
 
 def dm_remove_v1(token,dm_id):
     '''

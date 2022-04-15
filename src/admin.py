@@ -4,6 +4,22 @@ from src.helpers import decode_token, check_if_token_exists
 from src.helper import global_owner_check, get_user_idx, count_number_global_owner
 
 def admin_user_remove_v1(token, u_id):
+    '''
+    the function is used to remove an existing user and his relevant info
+
+    Arguments:
+        token - the auth user
+        u_id - the user to be removed
+
+    Exceptions:
+        InputError - u_id does not refer to a valid user
+        InputError - u_id refers to a user who is the only global owner
+        AccessError - the authorised user is not a global owner
+        AccessError - invalid token
+
+    Return:
+        {}
+    '''
     data = data_store.get()
 
     # if token doesnt exist return AccessError
@@ -76,6 +92,25 @@ def admin_user_remove_v1(token, u_id):
     return {}
 
 def admin_userpermission_change_v1(token, u_id, permission_id):
+    '''
+    the function is used to change the global permission of a user
+
+    Arguments:
+        token - the auth user
+        u_id - the user that needs to change the permission
+        permission_id - the permission to be changed to
+
+    Exceptions:
+        InputError - u_id does not refer to a valid user
+        InputError - u_id refers to a user who is the only global owner and they are being demoted to a user
+        InputError - permission_id is invalid
+        InputError - the user already has the permissions level of permission_id
+        AccessError - invalid token
+        AccessError - the authorised user is not a global owner
+
+    Return:
+        {}
+    '''
     MEMBER = 2
     data = data_store.get()
     u_id = int(u_id)

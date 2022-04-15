@@ -324,11 +324,11 @@ def message_pin_v1(token, message_id):
                 if can_change:
                     message['is_pinned'] = True
 
-    if not user_has_permission:
-        raise AccessError(description="message_id refers to a valid message in a joined channel/DM and the authorised user does not have owner permissions in the channel/DM")
-    
     if not valid_message:
         raise InputError(description="message_id is not a valid message within a channel or DM that the authorised user has joined")
+
+    if not user_has_permission:
+        raise AccessError(description="message_id refers to a valid message in a joined channel/DM and the authorised user does not have owner permissions in the channel/DM")
 
     if message_already_pinned:
         raise InputError(description="the message is already pinned")

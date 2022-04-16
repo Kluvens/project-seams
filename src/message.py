@@ -281,7 +281,7 @@ def message_share_v1(token,og_message_id,message,channel_id,dm_id):
             raise InputError(description = 'ERROR: User does not have access to the message they are sharing')
 
     # Check at least one out of dm_id and channel_id are -1
-    if not dm_id == '-1' and not channel_id == '-1':
+    if not dm_id == -1 and not channel_id == -1:
         raise InputError(description= 'ERROR: Neither channel id nor dm id are -1 ')
 
     # Check message length is less than 1000 characters
@@ -298,7 +298,7 @@ def message_share_v1(token,og_message_id,message,channel_id,dm_id):
     new_message = "{}\n >>> {}".format(message_to_share,message)
 
     # Check token user is part of channel or dm they are sharing to
-    if dm_id == '-1':
+    if dm_id == -1:
         channel_members = [channel['all_members'] for channel in channels if channel['channel_id'] == channel_id][0]
         channel_members_ids = [member['u_ids'] for member in channel_members]
         if not u_id in channel_members_ids:
@@ -306,7 +306,7 @@ def message_share_v1(token,og_message_id,message,channel_id,dm_id):
         # Send new message
         shared_message_id = message_send_v1(token,channel_id,new_message)
 
-    if channel_id == '-1':
+    if channel_id == -1:
         dm_members = [dm['all_members'] for dm in dms if dm['dm_id'] == dm_id]
         dm_members_ids = [member['u_ids'] for member in dm_members]
         if not u_id in dm_members_ids:

@@ -246,31 +246,51 @@ def is_global_owner(u_id):
                 return False
     return False
 
-# def write_savefile():
-#     pass
-#     """
-#     Saves data into pickle file, to ensure when server is restarted, data is not erased
-#     """
-#     # with open('src/savefile.p', 'wb') as FILE:
-#     #     pickle.dump(data_store, FILE)
+# ========================================= FOR MESSAGE SHARE ===========================================
+def find_message_from_message_id(message_id):
+    message = None
+
+    # Channel 
+    channels = data_store.get()['channels']
+    for channel in channels:
+        messages = channel['messages']
+        message = [message['message'] for message in messages if message['message_id'] == message_id][0]
+        
+    # DM
+    dms = data_store.get()['dms']
+    for dm in dms:
+        messages = dm['messages']
+        message = [message['message'] for message in messages if message['message_id'] == message_id][0]
+        
+    return {
+        'message': message
+    }
+
+def find_channeldm_from_message(message_id):
+    id = None
+
+    # Channel 
+    channels = data_store.get()['channels']
+    for channel in channels:
+        messages = channel['messages']
+        message_ids = [message['message_id'] for message in messages]
+        if message_ids.count(message_id) > 0:
+            id = channel['channel_id']
+            is_channel = True
+            is_dm = False
     
-
-# def load_savefile():
-#     pass
-#     """
-#     Open and loads data into pickle file, to ensure when server is restarted, data is not erased
-#     """
-#     # with open('src/savefile.p', 'rb') as FILE:
-#     #     return pickle.load(FILE)
-
-# def check_if_dm_token_exists(token):
-    
-#     dms = data_store.get()['dms']
-#     for dm in dms:
-#         if dm['sessions'] == {}:
-#             return False
-#         if token in dm['sessions']:
-#             return True
-#     return False
-
-# add error handelling in case of invalid token
+    # DM
+    dms = data_store.get()['dms']
+    for dm in dms:
+        messages = dm['messages']
+        message_ids = [message['message_id'] for message in messages]
+        if message_ids.count(message_id) > 0:
+            id = dm['dm_id']
+            is_channel = False
+            is_dm = True
+        
+    return {
+        'is_channel': is_channel,
+        'is_dm': is_dm,
+        'id': id,
+    }

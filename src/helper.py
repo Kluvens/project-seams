@@ -179,7 +179,7 @@ def count_number_messages_exist():
     if temp_result != None:
         for message in temp_result:
             result.append({
-                "num_messages_sent": sum,
+                "num_messages_exist": sum,
                 "time_stamp": message['time_sent']
             })
             sum += 1

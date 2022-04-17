@@ -241,4 +241,16 @@ def user_profile_sethandle_v1(token, handle_str):
 
     # ============= USER PROFILE UPLOAD PHOTO ==============
     def user_profile_uploadphoto_v1(token, img_url,x_start,y_start,x_end,y_end):
+
+        # Check if token is valid 
+        if not check_if_token_exists(token):
+            raise AccessError(description="ERROR: Token is invalid")
+
+        # Check if url is valid
+        if not 'http://' in img_url:
+            raise 
+
+
         return {}
+
+    

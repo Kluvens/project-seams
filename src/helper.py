@@ -33,7 +33,7 @@ def is_in_channel_owner(u_id, right_channel):
     return False 
 
 def is_in_dm_owner(u_id, right_dm):
-    for member in right_dm['owner_member']:
+    for member in right_dm['owner_members']:
         if u_id == member['u_id']:
             return True
 
@@ -221,3 +221,19 @@ def channel_details_members_return(users, member):
         'name_last': users[member['u_id']]['name_last'],
         'handle_str': users[member['u_id']]['handle_str'],
     }
+
+def admin_remove_user_info(u_id, data_store):
+    for room in data_store:
+        # delete relevant messages
+        if "messages" in room:
+            for message in room['messages']:
+                if message['u_id'] == u_id:
+                    message['message'] = 'Removed user'
+        # delete from all members
+        for member in room['all_members']:
+            if member['u_id'] == u_id:
+                room["all_members"].remove({'u_id': u_id})
+        # delete from owner members
+        for o_member in room['owner_members']:
+            if o_member['u_id'] == u_id:
+                room["owner_members"].remove({'u_id': u_id})

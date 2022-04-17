@@ -246,11 +246,9 @@ def test_admin_user_remove_working(setup):
     response = requests.get(f"{url}/channel/details/v2", params={'token': user1_dict['token'], 'channel_id': channel1_dict['channel_id']})
     details_list = response.json()
 
-    print(details_list)
     assert len(details_list['all_members']) == 1
 
     response = requests.get(f"{url}/dm/details/v1", params={'token': user1_dict['token'], 'dm_id': dm_dict['dm_id']})
     details_list = response.json()
 
-    print(details_list)
     assert len(details_list['members']) == 1

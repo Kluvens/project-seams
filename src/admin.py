@@ -2,6 +2,7 @@ from src.data_store import data_store
 from src.error import InputError, AccessError
 from src.helpers import decode_token, check_if_token_exists
 from src.helper import global_owner_check, get_user_idx, count_number_global_owner
+from src.helper import admin_remove_user_info
 
 def admin_user_remove_v1(token, u_id):
     '''
@@ -60,32 +61,21 @@ def admin_user_remove_v1(token, u_id):
 
     # delete and resettle the information about the removed user
     # delete associated info about channels
-    for channel in data['channels']:
-        if "messages" in channel:
-            for message in channel['messages']:
-                if message['u_id'] == u_id:
-                    message['message'] = 'Removed user'
-        for member in channel['all_members']:
-            if member['u_id'] == u_id:
-                channel["all_members"].remove({'u_id': u_id})
-                # member['u_id'] = -100
-        for o_member in channel['owner_members']:
-            if o_member['u_id'] == u_id:
-                channel["owner_members"].remove({'u_id': u_id})
-                # o_member['u_id'] = -100
+    admin_remove_user_info(u_id, data['channels'])
 
     # delete associated info about dms
-    for dm in data['dms']:
-        if "messages" in dm:
-            for message in dm['messages']:
-                if message['u_id'] == u_id:
-                    message['message'] = 'Removed user'
-        for member in dm['all_members']:
-            if member['u_id'] == u_id:
-                dm['all_members'].remove({'u_id': u_id})
-        for o_member in dm['owner_member']:
-            if o_member['u_id'] == u_id:
-                dm['owner_members'].remove({'u_id': u_id})
+    admin_remove_user_info(u_id, data['dms'])
+    # for dm in data['dms']:
+    #     if "messages" in dm:
+    #         for message in dm['messages']:
+    #             if message['u_id'] == u_id:
+    #                 message['message'] = 'Removed user'
+    #     for member in dm['all_members']:
+    #         if member['u_id'] == u_id:
+    #             dm['all_members'].remove({'u_id': u_id})
+    #     for o_member in dm['owner_member']:
+    #         if o_member['u_id'] == u_id:
+    #             dm['owner_members'].remove({'u_id': u_id})
 
     data_store.set(data)
 

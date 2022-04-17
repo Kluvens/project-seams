@@ -173,7 +173,7 @@ def dm_create_v1(token, u_ids):
         "dm_id" : dm_id,
         "name" : name,
         'time_stamp': time_stamp,
-        'owner_member': owner_members_list,
+        'owner_members': owner_members_list,
         'all_members': members_list,
         'messages': []
     })

@@ -196,21 +196,61 @@ def test_profile_after_remove(setup):
 
     assert user_profile == expected_output
 
-# def test_remove_user_from_dm(setup):
-#     user1_dict = setup[0]
-#     user2_dict = setup[1]
+def test_once_removed_user_cant_do_anything(setup):
+    user1_dict = setup[0]
+    user2_dict = setup[1]
 
-#     response = requests.post(url + "/message/senddm/v1", 
-#         json={
-#             "token" : token,
-#             "dm_id" : dm_id,
-#             "message" : message,
-#         })
+    response = requests.post(f"{url}/channels/create/v2", json={'token': user2_dict['token'], 'name': "channel_names", 'is_public': False})
+    assert response.status_code == OKAY
 
-#     return response    
+    response = requests.delete(
+        f'{url}/admin/user/remove/v1', 
+        json={'token': user1_dict["token"], 'u_id': user2_dict["auth_user_id"]}
+    )
+    assert response.status_code == OKAY
 
-#     response = requests.delete(
-#         f'{url}/admin/user/remove/v1', 
-#         json={'token': user1_dict["token"], 'u_id': user2_dict["auth_user_id"]}
-#     )
-#     assert response.status_code == OKAY
+    response = requests.post(f"{url}/auth/logout/v1", json={'token': user2_dict['auth_user_id']})
+    assert response.status_code == AccessError.code
+
+    response = requests.post(f"{url}/channels/create/v2", json={'token': user2_dict['token'], 'name': "channel_name", 'is_public': True})
+    assert response.status_code == AccessError.code
+
+def test_admin_user_remove_working(setup):
+    user1_dict = setup[0]
+    user2_dict = setup[1]
+    channel1_dict = setup[2]
+    response = requests.post(f"{url}/channel/join/v2", json={'token': user2_dict['token'], 'channel_id': channel1_dict['channel_id']})
+    response = requests.post(f"{url}/dm/create/v1", json={'token': user1_dict['token'], 'u_ids': [user2_dict['auth_user_id']]})
+    dm_dict = response.json()
+
+    response = requests.get(f"{url}/channel/details/v2", params={'token': user1_dict['token'], 'channel_id': channel1_dict['channel_id']})
+    details_list = response.json()
+
+    print(details_list)
+    assert len(details_list['all_members']) == 2
+
+    for _ in range(10):
+        response = requests.post(f'{url}/message/send/v1', json={'token': user2_dict['token'], 'channel_id': channel1_dict['channel_id'], 'message': "ten more messages"})
+        assert response.status_code == OKAY
+
+    for _ in range(10):
+        response = requests.post(f'{url}/message/senddm/v1', json={'token': user2_dict['token'], 'dm_id': dm_dict['dm_id'], 'message': "I love you"})
+        assert response.status_code == OKAY
+
+    response = requests.delete(
+        f'{url}/admin/user/remove/v1', 
+        json={'token': user1_dict["token"], 'u_id': user2_dict["auth_user_id"]}
+    )
+    assert response.status_code == OKAY
+
+    response = requests.get(f"{url}/channel/details/v2", params={'token': user1_dict['token'], 'channel_id': channel1_dict['channel_id']})
+    details_list = response.json()
+
+    print(details_list)
+    assert len(details_list['all_members']) == 1
+
+    response = requests.get(f"{url}/dm/details/v1", params={'token': user1_dict['token'], 'dm_id': dm_dict['dm_id']})
+    details_list = response.json()
+
+    print(details_list)
+    assert len(details_list['members']) == 1

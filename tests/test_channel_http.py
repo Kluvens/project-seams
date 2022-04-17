@@ -717,3 +717,53 @@ def test_channel_leave_not_member(setup):
 
     response = requests.post(f"{url}/channel/leave/v1", json={'token': token, 'channel_id': channel_id})
     assert response.status_code == AccessError.code
+
+def test_global_owner_non_member_cant_addowner_private(setup):
+    user1_dict = setup[0]
+    user2_dict = setup[1]
+    channel2_dict = setup[3]
+
+    response = requests.post(f"{url}/channel/addowner/v1", json={"token": user1_dict['token'], "channel_id": channel2_dict['channel_id'], "u_id": user1_dict['auth_user_id']})
+    assert response.status_code == AccessError.code
+
+def test_global_owner_non_member_cant_addowner_public(setup):
+    user1_dict = setup[0]
+    user2_dict = setup[1]
+
+    channel2_obj = requests.post(f'{url}/channels/create/v2', json={"token": user2_dict['token'], "name": "my_channel", "is_public": True})
+    channel2_dict = channel2_obj.json()
+
+    response = requests.post(f"{url}/channel/addowner/v1", json={"token": user1_dict['token'], "channel_id": channel2_dict['channel_id'], "u_id": user1_dict['auth_user_id']})
+    assert response.status_code == AccessError.code
+
+def test_global_owner_cannot_remove_only_owner(setup):
+    user1_dict = setup[0]
+    user2_dict = setup[1]
+
+    channel2_obj = requests.post(f'{url}/channels/create/v2', json={"token": user2_dict['token'], "name": "my_channel", "is_public": True})
+    channel2_dict = channel2_obj.json()
+
+    response = requests.post(f"{url}/channel/join/v2", json={'token': user1_dict['token'], "channel_id": channel2_dict['channel_id']})
+    assert response.status_code == OKAY
+
+    response = requests.post(f"{url}/channel/removeowner/v1", json={"token": user1_dict['token'], "channel_id": channel2_dict['channel_id'], "u_id": user2_dict['auth_user_id']})
+    assert response.status_code == InputError.code
+
+def test_global_owner_nonmember_cannot_remove_owner(setup):
+    user1_dict = setup[0]
+    user2_dict = setup[1]
+    user3_obj = requests.post(f'{url}/auth/register/v2', json={"email": "howareyou@outlook.com", "password": "hey12345678", "name_first": "Bruces", "name_last": "Banners"})
+    user3_dict = user3_obj.json()
+
+    channel2_obj = requests.post(f'{url}/channels/create/v2', json={"token": user2_dict['token'], "name": "my_channel", "is_public": True})
+    channel2_dict = channel2_obj.json()
+
+    response = requests.post(f"{url}/channel/join/v2", json={'token': user3_dict['token'], "channel_id": channel2_dict['channel_id']})
+    assert response.status_code == OKAY
+
+    response = requests.post(f"{url}/channel/addowner/v1", json={"token": user2_dict['token'], "channel_id": channel2_dict['channel_id'], "u_id": user3_dict['auth_user_id']})
+    assert response.status_code == OKAY
+
+    response = requests.post(f"{url}/channel/removeowner/v1", json={"token": user1_dict['token'], "channel_id": channel2_dict['channel_id'], "u_id": user3_dict['auth_user_id']})
+    assert response.status_code == AccessError.code
+

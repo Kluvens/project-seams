@@ -106,7 +106,7 @@ def test_start_standup(create_route, dummy_data, start):
 
 def test_send_standup(create_route, dummy_data, start, send):
     reset_call()
-    data = data_store.get()
+
     user = dummy_data.register_users(num_of_users=1)
     users_return_dict = user[0]
     

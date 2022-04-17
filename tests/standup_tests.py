@@ -21,7 +21,7 @@ def test_standup_active():
     clear_v1()
     user1 = auth_register_v2("1@gmail.com","1231234","james","cai")
     chl = channels_create_v2(user1['token'], "ch1", True)
-    std1 = standup_start_v1(user1['token'], chl['channel_id'], 5)
+    standup_start_v1(user1['token'], chl['channel_id'], 5)
     standup_active = standup_active_v1(user1['token'], chl['channel_id'])
     assert standup_active['is_active'] == True
 

@@ -720,7 +720,6 @@ def test_channel_leave_not_member(setup):
 
 def test_global_owner_non_member_cant_addowner_private(setup):
     user1_dict = setup[0]
-    user2_dict = setup[1]
     channel2_dict = setup[3]
 
     response = requests.post(f"{url}/channel/addowner/v1", json={"token": user1_dict['token'], "channel_id": channel2_dict['channel_id'], "u_id": user1_dict['auth_user_id']})

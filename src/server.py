@@ -30,6 +30,8 @@ from src.users import user_setname_v1
 from src.users import user_profile_setemail_v1
 from src.users import user_profile_sethandle_v1
 from src.other import clear_v1
+from src.standup import standup_start_v1, standup_active_v1, standup_send_v1
+import time
 
 ###################### INITIAL SERVER SETUP ######################
 
@@ -290,7 +292,33 @@ def message_edit():
     return dumps({})
 
 # load_savefile()
+########################## Standup ###############################
 
+# standup/start/v1
+@APP.route("/standup/start/v1", methods=['POST'])
+def stand_start():
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    length = data['length']
+    return dumps(standup_start_v1(token, channel_id, length))
+
+# standup/active/v1
+@APP.route("/standup/active/v1", methods=['GET'])
+def stand_active():
+    token = request.args.get("token", type=str)
+    channel_id = request.args.get("channel_id", type=int)
+    return dumps(standup_active_v1(token, channel_id))
+
+# standup/send/v1
+@APP.route("/standup/send/v1", methods=['POST'])
+def stand_send():
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    message = data['message']
+    return dumps(standup_send_v1(token, channel_id, message))
+    
 ####################### CLEARING/RESTTING ########################
 
 

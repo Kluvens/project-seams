@@ -46,7 +46,6 @@ def standup_start_v1(token, channel_id, length):
 
 def standup_active_v1(token, channel_id):
 
-    auth_user_id = int(decode_token(token))
     channel_id = int(channel_id)
     channel = find_channel(channel_id)
     if channel is None:
@@ -55,19 +54,31 @@ def standup_active_v1(token, channel_id):
         raise AccessError(description="Error occured, invalid token'")
 
     if 'standup' in channel:
-        print(channel['standup'])
         if int(time.time()) > int(channel['standup']['time_finish']):
+            if channel['standup']['is_active'] == True:
+                channel['standup']['is_active'] = False
+                if channel['standup']['message'] == '':
+                    return {
+                        'is_active': False,
+                        'time_finish': None,
+                    }
+                message_send_v1(token, channel_id, channel['standup']['message'])
+                return {
+                    'is_active': False,
+                    'time_finish': None,
+                }
+            channel['standup']['is_active'] = False
             return {
                 'is_active': False,
-                'time_finish ': None,
+                'time_finish': None,
             }
         return {
             'is_active': True,
-            'time_finish ': int(channel['standup']['time_finish']),
+            'time_finish': int(channel['standup']['time_finish']),
         }
     return {
         'is_active': False,
-        'time_finish ': None,
+        'time_finish': None,
     }
 
 def standup_send_v1(token, channel_id, message):
@@ -83,5 +94,4 @@ def standup_send_v1(token, channel_id, message):
     standup_message += user['name_first']+": "+message+"\n"
 
     channel["standup"]['message'] = standup_message
-
     return {}

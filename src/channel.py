@@ -400,6 +400,12 @@ def channel_addowner_v1(token, channel_id, u_id):
         raise InputError(description="channel_id does not refer to a valid channel")
     right_channel = channels[right_channel_index]
 
+    if not is_in_channel(auth_user_id, right_channel):
+        raise AccessError(description="auth user not in channel")
+    
+    if not global_owner_check(auth_user_id) and not is_in_channel_owner(auth_user_id, right_channel):
+        raise AccessError(description="channel_id is valid and the authorised user does not have owner permissions in the channel")  
+
     right_user_index = get_user_idx(users, auth_user_id)
     # error
     if right_user_index is None:
@@ -410,9 +416,6 @@ def channel_addowner_v1(token, channel_id, u_id):
 
     if is_in_channel_owner(u_id, right_channel):
         raise InputError(description="u_id refers to a user who is already an owner of the channel")
-
-    if not global_owner_check(auth_user_id) and not is_in_channel_owner(auth_user_id, right_channel):
-        raise AccessError(description="channel_id is valid and the authorised user does not have owner permissions in the channel")  
 
     right_channel["owner_members"].append(
         {
@@ -467,6 +470,9 @@ def channel_removeowner_v1(token, channel_id, u_id):
     if right_channel_index is None:
         raise InputError(description="channel_id does not refer to a valid channel")
     right_channel = channels[right_channel_index]
+
+    if not is_in_channel(auth_user_id, right_channel):
+        raise AccessError(description="auth user not in channel")
 
     right_user_index = get_user_idx(users, u_id)
     # error

@@ -106,26 +106,29 @@ def count_number_dms_joined(auth_user_id):
 
 def count_number_messages_sent(auth_user_id):
     data = data_store.get()
+    temp_result = []
     result = []
     sum = 0
 
     for channel in data['channels']:
         for message in channel['messages']:
             if message['u_id'] == auth_user_id:
-                result.append({
-                    "num_messages_sent": sum,
-                    "time_stamp": message['time_sent'],
-                })
-                sum += 1
+                temp_result.append(message)
 
     for dm in data['dms']:
         for message in dm['messages']:
             if message['u_id'] == auth_user_id:
-                result.append({
-                    "num_messages_sent": sum,
-                    "time_stamp": message['time_sent'],
-                })
-                sum += 1
+                temp_result.append(message)
+
+    temp_result.sort(key=lambda x: x.get('time_sent'))
+
+    if temp_result != None:
+        for message in temp_result:
+            result.append({
+                "num_messages_sent": sum,
+                "time_stamp": message['time_sent']
+            })
+            sum += 1
 
     return result
 
@@ -159,24 +162,27 @@ def count_number_dms_exist():
 
 def count_number_messages_exist():
     data = data_store.get()
+    temp_result = []
     result = []
     sum = 0
 
     for channel in data['channels']:
         for message in channel['messages']:
-            result.append({
-                'num_messages_exist': sum,
-                'time_sent': message['time_sent']
-            })
-        sum += 1
+            temp_result.append(message)
 
     for dm in data['dms']:
         for message in dm['messages']:
+            temp_result.append(message)
+
+    temp_result.sort(key=lambda x: x.get('time_sent'))
+
+    if temp_result != None:
+        for message in temp_result:
             result.append({
-                'num_messages_exist': sum,
-                'time_sent': message['time_sent']
+                "num_messages_exist": sum,
+                "time_stamp": message['time_sent']
             })
-        sum += 1
+            sum += 1
 
     return result
 

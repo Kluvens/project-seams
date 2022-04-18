@@ -1,3 +1,4 @@
+import pickle
 # This module will imported by other functions 
 # and an instnace of the class defined below
 # will be used to store data 
@@ -30,6 +31,14 @@ print('Loading Datastore...')
 
 global data_store
 data_store = Datastore()
+
+"""
+Open and loads data into pickle file, to ensure when server is restarted, data is not erased
+"""
+try:
+    data_store = pickle.load(open("src/savefile.p", "rb"))
+except Exception:
+    pass
 
 '''
 data = {

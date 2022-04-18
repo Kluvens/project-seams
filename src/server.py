@@ -6,6 +6,7 @@ This file contains all the server functionality for seams.
 ########################## Import Statements #####################
 import sys
 import signal
+import atexit
 from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
@@ -35,6 +36,7 @@ from src.message import message_unpin_v1
 from src.users import user_stats_v1, users_stats_v1
 from src.other import clear_v1
 from src.standup import standup_start_v1, standup_active_v1, standup_send_v1
+from src.helpers import write_savefile
 import time
 
 ###################### INITIAL SERVER SETUP ######################
@@ -42,6 +44,8 @@ import time
 def quit_gracefully(*args):
     '''For coverage'''
     exit(0)
+
+atexit.register(write_savefile)
 
 def defaultHandler(err):
     response = err.get_response()

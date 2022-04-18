@@ -211,6 +211,19 @@ def is_in_dm(u_id, right_dm):
 
     return False
 
+def find_channel(channel_id):
+    data = data_store.get()
+    for channel in data['channels']:
+        if int(channel_id) == channel['channel_id']:
+            return channel
+    return None
+
+def find_user(u_id):
+    data = data_store.get()
+    for user in data['users']:
+        if int(u_id) == user['u_id']:
+            return user
+    return None
 
 def check_duplicate_u_ids(u_ids):
     i = 0

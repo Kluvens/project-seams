@@ -55,7 +55,9 @@ def test_list_user_join_channel_public(list_route, create_route, dummy_data):
     })
 
     assert list1.status_code == OKAY
-    assert list1.json() == {'channels': [{'channel_id': ch1.json()['channel_id'], 'name': 'ch1'}]}
+    assert list1.json() == {'channels': 
+        [{'channel_id': ch1.json()['channel_id'], 'name': 'ch1'}]
+    }
 
 def test_list_user_join_channel_private(list_route, create_route, dummy_data):
     reset_call()
@@ -74,7 +76,9 @@ def test_list_user_join_channel_private(list_route, create_route, dummy_data):
     })
 
     assert list1.status_code == OKAY
-    assert list1.json() == {'channels': [{'channel_id': ch1.json()['channel_id'], 'name': 'ch1'}]}
+    assert list1.json() == {'channels': 
+        [{'channel_id': ch1.json()['channel_id'], 'name': 'ch1'}]
+    }
 
 def test_list_user_join_no_channel(list_route, dummy_data):
     reset_call()
@@ -113,7 +117,9 @@ def test_list_user_some_channels(list_route, create_route, dummy_data):
     })
 
     assert list1.status_code == OKAY
-    assert list1.json() == {'channels': [{'channel_id': ch1.json()['channel_id'], 'name': 'ch1'}]}
+    assert list1.json() == {'channels': 
+        [{'channel_id': ch1.json()['channel_id'], 'name': 'ch1'}]
+    }
 
 def test_list_user_multiple_channels(list_route, create_route, dummy_data):
     reset_call()
@@ -145,5 +151,7 @@ def test_list_user_multiple_channels(list_route, create_route, dummy_data):
     })
 
     assert list1.status_code == OKAY
-    assert list1.json() == {'channels': [{'channel_id': ch1.json()['channel_id'], 'name': 'ch1'}, 
-                                        {'channel_id': ch2.json()['channel_id'], 'name': 'ch2'}]}
+    assert list1.json() == {'channels': 
+        [{'channel_id': ch1.json()['channel_id'], 'name': 'ch1'}, 
+        {'channel_id': ch2.json()['channel_id'], 'name': 'ch2'}]
+    }

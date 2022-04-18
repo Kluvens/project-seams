@@ -21,12 +21,7 @@ def detail_route():
 @pytest.fixture
 def create_route():
     return url + '/dm/create/v1'
-
-@pytest.fixture()
-def dummy_data():
-    data_instance = GenerateTestData(url)
-    return data_instance
-
+    
 #======================= Testing  =================================
 
 def test_invalid_token_type(list_route):

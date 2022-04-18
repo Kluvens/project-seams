@@ -17,12 +17,6 @@ def list_route():
 def create_route():
     return url + "channels/create/v2"
 
-@pytest.fixture()
-def dummy_data():
-    data_instance = GenerateTestData(url)
-    return data_instance
-
-
 #======================= Testing  =================================
 
 def test_invalid_token_type(list_route):

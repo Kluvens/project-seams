@@ -1,14 +1,5 @@
 '''
-This is testing module for the user/profile/v1 route.
-
-This module makes use of modularised fixtures which
-can be found in src.conftest.py
-
-Additionally, a helper class has been used
-to generate dummy user test data to pass in
-the server.
-
-Author: Kais Alzubaidi, z5246721
+This is testing module for the search/v1 route.
 
 '''
 
@@ -18,11 +9,10 @@ import requests
 from src.config import url
 from src.error import InputError
 from src.error import AccessError
-import string
 from tests.http_helpers import GenerateTestData
 from tests.http_helpers import reset_call
 from tests.http_helpers import is_success
-import random
+
 #====================== Helper functions / Fixtures ===============
 
 
@@ -51,14 +41,16 @@ def setup(dummy_data):
     return {
         "channel_id" : ch0,
         "user0" : user0_token,
-        "user1" : user1_token
+        "user1" : user1_token,
+        "uid0" : users_list[0]["auth_user_id"],
+        "uid1" : users_list[1]["auth_user_id"]
     }
 
 @pytest.fixture
 def dummy_messages():
     return [
-        "Hello, how are you!",
-        "Hi, I am good!\n How are you?",
+        "Hhello, how are you?! hhhaha missed you bro",
+        "Hhhhi, I am good!\n How are you?",
         "yeahhh not too bad!, what are YoU DoiNg today>?"
     ]
 
@@ -77,7 +69,6 @@ def is_this_message_pinned(message_id, messages_list):
     for message in messages_list:
         if message_id == message["message_id"]:
             if message["is_pinned"]:
-                print("Hellsaidgohjsogjao;gj;sdao")
                 return True
     return False
 
@@ -88,8 +79,11 @@ def is_this_user_reacted(message_id, messages_list):
                 return True
     return False
 
-
-# #===================== Testing Exceptions ========================
+# def get_react_dict(message_id, messages_list):
+#     for message in messages_list:
+#         if message["message_id"] == message_id:
+#             return message["reacts"]
+#===================== Testing Exceptions ========================
 
 @pytest.mark.parametrize("query", [
     "", 
@@ -136,9 +130,8 @@ def test_return_type(route, setup):
 
 
 
-
 @pytest.mark.parametrize("msg", ["H", "!", "YOU", "you"])
-def test_messages_with_reacts_and_pin(
+def test_basic(
     route, dummy_messages, setup, msg, dummy_data):
     ch0 = setup["channel_id"]
     user0_token = setup["user0"]
@@ -146,7 +139,7 @@ def test_messages_with_reacts_and_pin(
 
 
     msg1_dict = dummy_data.send_message(user0_token, ch0, dummy_messages[0])
-    ## add react here
+    # dummy_data.react
     msg2_dict = dummy_data.send_message(user1_token, ch0, dummy_messages[1])
     dummy_data.pin_msg(user0_token, msg2_dict["message_id"])
     msg3_dict = dummy_data.send_message(user0_token, ch0, dummy_messages[2])
@@ -156,17 +149,91 @@ def test_messages_with_reacts_and_pin(
 
     assert isinstance(messages_list, list)
 
-    return_msg_ids = get_messages(messages_list)
+    return_msg_ids = get_message_ids(messages_list)
+    return_msg_ids.sort()
     expected = [msg1_dict["message_id"], msg2_dict["message_id"], msg3_dict["message_id"]]
-
-    assert return_msg_ids.sort() == expected.sort()
+    expected.sort()
+    assert return_msg_ids == expected
     
     return_messages = get_messages(messages_list)
     for message in return_messages:
         assert message in dummy_messages
-    
 
     assert is_this_message_pinned(msg2_dict["message_id"], messages_list)
 
-# def test_messages_no_pin_no_react(test_setup):
-#     pass
+
+@pytest.mark.parametrize("msg", ["h", "!", "Y", "yoU"])
+def test_dms_no_reacts(
+    route, dummy_messages, setup, msg, dummy_data):
+    user0_token = setup["user0"]
+    user1_token = setup["user1"]
+
+    dm_id = dummy_data.create_dm(user0_token, [setup["uid1"]])["dm_id"]
+
+    msg1_dict = dummy_data.send_dm(user0_token, dm_id, dummy_messages[0])
+
+    msg2_dict = dummy_data.send_dm(user1_token, dm_id, dummy_messages[1])
+    dummy_data.pin_msg(user0_token, msg2_dict["message_id"])
+    msg3_dict = dummy_data.send_dm(user0_token, dm_id, dummy_messages[2])
+
+    response = search_request(route, user0_token, msg)
+    messages_list = response.json()["messages"]
+
+    assert isinstance(messages_list, list)
+
+    return_msg_ids = get_message_ids(messages_list)
+    return_msg_ids.sort()
+    expected = [msg1_dict["message_id"], msg2_dict["message_id"], msg3_dict["message_id"]]
+    expected.sort()
+    
+    assert return_msg_ids == expected
+    
+    return_messages = get_messages(messages_list)
+    for message in return_messages:
+        assert message in dummy_messages
+
+    assert(is_this_message_pinned(msg2_dict["message_id"], messages_list))
+
+
+
+
+
+# @pytest.mark.parametrize("msg", ["hHH", "!", "u"])
+# def test_dms_and_msgs(
+#     route, dummy_messages, setup, msg, dummy_data):
+#     ch0 = setup["channel_id"]
+#     user0_token = setup["user0"]
+#     user1_token = setup["user1"]
+
+#     dm_id = dummy_data.create_dm(user0_token, [setup["uid1"]])["dm_id"]
+
+#     msg1_dict = dummy_data.send_dm(user0_token, dm_id, dummy_messages[0])
+
+#     msg2_dict = dummy_data.send_message(user1_token, ch0, dummy_messages[1])
+#     dummy_data.pin_msg(user0_token, msg2_dict["message_id"])
+
+#     msg3_dict = dummy_data.send_dm(user0_token, dm_id, dummy_messages[2])
+#     dummy_data.react_to_message(user0_token, msg3["message_id"], 1)
+#     response = search_request(route, user0_token, msg)
+#     messages_list = response.json()["messages"]
+
+#     assert isinstance(messages_list, list)
+
+#     return_msg_ids = get_message_ids(messages_list)
+#     return_msg_ids.sort()
+#     expected = [msg1_dict["message_id"], msg2_dict["message_id"], msg3_dict["message_id"]]
+#     expected.sort()
+    
+#     assert return_msg_ids == expected
+    
+#     return_messages = get_messages(messages_list)
+#     for message in return_messages:
+#         assert message in dummy_messages
+
+#     react_dict = get_react_dict(msg3_dict["message_id"], messages_list)
+#     assert react_dict["react_id"] == 1
+#     assert setup["uid0"] in react_dict["u_ids"]
+#     assert setup["uid1"] in react_dict["u_ids"]
+#     assert setup["is_this_user_reacted"]
+
+#     assert(is_this_message_pinned(msg2_dict["message_id"], messages_list))

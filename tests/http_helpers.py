@@ -3,21 +3,10 @@ import requests
 from src.helpers import hash
 from src.config import url
 
-# code = ''
 
-# class CacheCode:
-#     def __init__(self):
-#         self.__store = code
-    
-#     def get(self):
-#         return self.__store
-
-#     def set(self, store):
-#         self.__store = store
-
-
-# global cache_reset_code
-# cache_reset_code = CacheCode()
+def user_profile_request(token, u_id):
+    return requests.get(
+        url + "user/profile/v1", params={"token" : token, "u_id" : u_id})
 
 def get_reset_code():
     with open('reset_code.txt', 'r') as fp:
@@ -29,13 +18,21 @@ def get_reset_code():
 def reset_call():
     requests.delete(url + 'clear/v1')
 
-def extract_reset_code_from_inbox():
-    pass
 
 def is_success(status_code):
     if status_code == 200:
         return True
     return False
+
+def reg_new(route, first_name, last_name):
+    response = requests.post( 
+            route,
+            json={"email": "unswisgreat@unsw.edu.au", 
+                "password": "unsw123456", 
+                "name_first": first_name,
+                "name_last": last_name}
+        )
+    return response.json()
 
 
 class GenerateTestData:
@@ -311,3 +308,13 @@ class GenerateTestData:
                     'u_id' : u_id
                 }
             )
+
+def reg_new_email(route, first_name, last_name):
+    response = requests.post( 
+            route,
+            json={"email": "new_email@gamil.com", 
+                "password": "unsw123456", 
+                "name_first": first_name,
+                "name_last": last_name}
+        )
+    return response.json()

@@ -20,7 +20,7 @@ from tests.http_helpers import GenerateTestData
 from tests.http_helpers import reset_call
 from src.error import InputError
 from src.error import AccessError
-
+from tests.http_helpers import user_profile_request
 #====================== Helper functions / Fixtures ===============
 
 OKAY = 200

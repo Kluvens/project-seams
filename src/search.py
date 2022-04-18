@@ -169,9 +169,9 @@ def search_v1(token: str, query_str: str) -> dict:
     if not target_dms:
         return_dm_list = target_dms
     else:
-        return_dm_list = filter_messages(target_messages, u_id)
+        return_dm_list = filter_messages(target_dms, u_id)
 
     return {"messages" : (return_msg_list + return_dm_list)}
 
-
+    
 ################## END OF FUNCTION IMPLEMENTATION ################

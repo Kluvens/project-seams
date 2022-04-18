@@ -233,7 +233,7 @@ InputError will occur when message_id is not a valid channel message within a ch
 '''
 # Testing case for when message_id is invalid
 @pytest.mark.parametrize("invalid_message_id", [-9999, -55, 145, 9999])
-def test_react_invalid_message_id_InputError(dummy_data, create_route, invalid_message_id):
+def test_unreact_invalid_message_id_InputError(dummy_data, create_route, invalid_message_id):
     reset_call()
 
     users_list = dummy_data.register_users(num_of_users=1)

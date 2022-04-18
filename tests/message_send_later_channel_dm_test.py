@@ -302,7 +302,6 @@ def test_sendlaterdm_unauthorised_user_AccessError(dummy_data):
 
     users_list = dummy_data.register_users(num_of_users=3)
     user0 = users_list[0]
-    user1 = users_list[1]
     user2 = users_list[2]
     dm_dict = dummy_data.create_dm(user0['token'], [users_list[1]['auth_user_id']])
 

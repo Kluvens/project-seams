@@ -8,6 +8,12 @@ def find_channel_index(channels, channel_id):
             return idx
     return None
 
+def find_dm_index(dms, dm_id):    
+    for idx, dm in enumerate(dms):
+        if dm['dm_id'] == dm_id:
+            return idx
+    return None
+
 def is_in_channel(u_id, right_channel):
     for member in right_channel["all_members"]:
         if u_id == member["u_id"]:

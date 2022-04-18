@@ -243,6 +243,9 @@ def test_admin_user_remove_working(setup):
     )
     assert response.status_code == OKAY
 
+    response = requests.post(f'{url}/message/send/v1', json={'token': user2_dict['token'], 'channel_id': channel1_dict['channel_id'], 'message': "ten more messages"})
+    assert response.status_code == AccessError.code
+
     response = requests.get(f"{url}/channel/details/v2", params={'token': user1_dict['token'], 'channel_id': channel1_dict['channel_id']})
     details_list = response.json()
 

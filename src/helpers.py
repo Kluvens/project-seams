@@ -13,18 +13,18 @@ import requests
 import hashlib
 from src.data_store import data_store
 from src.error import AccessError
-
+from typing import List, Dict, Any, Optional
 
 ############ Used By Every Feature except auth_register ##########
 
-def check_u_id_exists(users, u_id):
+def check_u_id_exists(users: List, u_id: int) -> bool:
     for user in users:
         if u_id == user["u_id"]:
             return True
     return False
 
 
-def check_if_token_exists(token):
+def check_if_token_exists(token: str) -> bool:
     '''
     This is a helper function that takes in
     a token string and returns a boolean value
@@ -42,9 +42,7 @@ def check_if_token_exists(token):
             return True
     return False
 
-
-
-def decode_token(token):
+def decode_token(token: str) -> int:
     '''
     This is a helper function that takes in a token string.
     If the string has a jwt acceptable format, it will decode
@@ -64,7 +62,7 @@ def decode_token(token):
 
 ###################### Used By Auth and User features ############
 
-def generate_session_token(u_id):
+def generate_session_token(u_id: int) -> str:
     '''
     This function uses generates a session token string
     using the u_id of the user and the secret string.
@@ -89,7 +87,7 @@ def generate_session_token(u_id):
     return encripted_token
 
 
-def hash(password):
+def hash(password: str) -> str:
     '''
     This function uses the hashlib module to hash a given
     password string. It returns the hashed string.
@@ -97,7 +95,7 @@ def hash(password):
     return hashlib.sha256(str(password).encode()).hexdigest()
 
 
-def generate_handle(users_list, name_first, name_last):
+def generate_handle(users_list: List, name_first: str, name_last:str) -> str:
     '''
     This function generates a unique alphanumeric handle for a new user.
     More details can be found in the details spec.
@@ -126,7 +124,7 @@ def generate_handle(users_list, name_first, name_last):
     return handle
 
 
-def is_valid_name(name):
+def is_valid_name(name: str) -> bool:
     '''
     This function checks if the name parameter is in between 1 and 50 characters
     (inclusive)
@@ -138,7 +136,7 @@ def is_valid_name(name):
     return False
 
 
-def is_valid_email(email):
+def is_valid_email(email: str) -> bool:
     '''
     This funciton utilised the regex module to check
     if the validty of an email string by checking if it matches a given regex.
@@ -158,7 +156,7 @@ def is_valid_email(email):
     return False
 
 
-def is_email_already_registered(users_list, email):
+def is_email_already_registered(users_list: List, email: str) -> bool:
     '''
     Given a users list of dictionaries and an email string, this function
     checks if the email given belongs to an existing user.
@@ -172,11 +170,11 @@ def is_email_already_registered(users_list, email):
     return False
 
 
-def return_exist_status(users, u_id):
+def return_exist_status(users: List, u_id: int) -> Optional[bool]:
     '''
     Checks the exist_status of a user and returns it
     '''
-    users = data_store.get()["users"]
+    # users = data_store.get()["users"]
     for user in users:
         if user["u_id"] == u_id:
             return user["exist_status"]
@@ -184,27 +182,27 @@ def return_exist_status(users, u_id):
 
 ###################### Used By Multiple Feature Functions #########
 
-def check_handlestr_unique(users, handle_str):
+def check_handlestr_unique(users: List, handle_str: str) -> bool:
     for user in users:
         if handle_str == user["handle_str"]:
             return False
     return True
 
 
-def get_user_idx(users, u_id):
+def get_user_idx(users: List, u_id: int):
     for idx, user in enumerate(users):
         if u_id == user["u_id"]:
             return idx
     # does not exist
     return None
 
-def find_dm_index(dms, dm_id):    
+def find_dm_index(dms: List, dm_id: int) -> Optional[int]:    
     for idx, dm in enumerate(dms):
         if dm['dm_id'] == dm_id:
             return idx
     return None
 
-def is_in_dm(u_id, right_dm):
+def is_in_dm(u_id: int, right_dm: Dict) -> bool:
     for member in right_dm["all_members"]:
         if u_id == member["u_id"]:
             return True
@@ -212,7 +210,7 @@ def is_in_dm(u_id, right_dm):
     return False
 
 
-def check_duplicate_u_ids(u_ids):
+def check_duplicate_u_ids(u_ids: List) -> bool:
     i = 0
     while (i < len(u_ids)):
         j = i + 1
@@ -223,10 +221,7 @@ def check_duplicate_u_ids(u_ids):
         i += 1
     return False
 
-
-
-
-def generate_dm_handle(owner_uid, u_ids, users):
+def generate_dm_handle(owner_uid: int, u_ids: List, users: List) -> List[str]:
     handles = []
     idx = get_user_idx(users, owner_uid) 
     handles.append(users[idx]["handle_str"])
@@ -236,7 +231,7 @@ def generate_dm_handle(owner_uid, u_ids, users):
     return handles
 
 
-def is_global_owner(u_id):
+def is_global_owner(u_id: int) -> bool:
     users = data_store.get()['users']
     for user in users:
         if user['u_id'] == u_id:

@@ -21,11 +21,11 @@ from src.auth import is_valid_password
 from src.auth import get_corresponding_user_id
 from src.helpers import hash
 from src.auth import auth_login_v2, auth_register_v2
-
+from typing import List, Dict, Any, Optional
 
 ##################### Caching reset_code ##########################
 
-def cache_code(reset_code):
+def cache_code(reset_code) -> bool:
     with open('reset_code.txt', 'w') as fp:
         fp.write(reset_code)
 
@@ -33,12 +33,10 @@ def cache_code(reset_code):
 
 ####################### HELPER FUNCTIONS #########################
 
-def logout_all_session(users, user_idx):
+def logout_all_session(users: List, user_idx: int):
     for idx, user in enumerate(users):
         if idx == user_idx:
             user['sessions'] = []
-
-
 
 def generate_reset_code(u_id):
     reset_token = uuid.uuid4().hex
@@ -55,7 +53,7 @@ def generate_reset_code(u_id):
     return reset_token
 
 
-def send_reset_code(email, reset_code):
+def send_reset_code(email: str, reset_code: str):
     port = 465
     sender = "seams.noreply@gmail.com"
     receiver = email  
@@ -87,7 +85,7 @@ def send_reset_code(email, reset_code):
             server.sendmail(sender, receiver, text)
 
 
-def check_can_reset_pw(reset_code, new_password):
+def check_can_reset_pw(reset_code: str, new_password: str) -> Dict:
 
     if not is_valid_password(new_password):
         return {

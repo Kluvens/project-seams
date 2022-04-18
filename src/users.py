@@ -18,9 +18,10 @@ from src.helpers import check_u_id_exists
 from src.helpers import return_exist_status
 from src.helper import count_number_channels_exist, count_number_dms_exist, count_number_messages_sent, count_number_dms_joined, count_number_channels_joined, count_number_messages_exist
 from src.helper import count_users_joined, count_number_users
+from typing import List, Dict, Any, Optional
 
 ##################### User Function Implementations ##############
-def users_all_v1(token):
+def users_all_v1(token: str) -> Dict[str, List]:
     '''
     This function displays all the user details
     that are registered in the database
@@ -54,7 +55,7 @@ def users_all_v1(token):
     return {"users" : users_details}
 
 
-def user_profile_v1(token, u_id):
+def user_profile_v1(token: str, u_id: int) -> Dict[str, Dict]:
     '''
     This function displays all the user details
     that belong to the u_id passed to the function
@@ -102,7 +103,7 @@ def user_profile_v1(token, u_id):
     return {"user" : user_profile}
 
 
-def user_setname_v1(token, name_first, name_last):
+def user_setname_v1(token: str, name_first: str, name_last: str) -> Dict:
     '''
     This function updates the first and last names of
     the user with u_id that corresponds to the token passed.
@@ -146,7 +147,7 @@ def user_setname_v1(token, name_first, name_last):
     return {}
 
 
-def user_profile_setemail_v1(token, email):
+def user_profile_setemail_v1(token: str, email: str) -> Dict:
     '''
     This function updates the email of the user with
     the u_id that corresponds the token that has been
@@ -197,7 +198,7 @@ def user_profile_setemail_v1(token, email):
 
 
 
-def user_profile_sethandle_v1(token, handle_str):
+def user_profile_sethandle_v1(token: str, handle_str: str) -> Dict:
     '''
     This function updates the handle string of the user
     with the u_id that corresponds to the token passed. 
@@ -241,7 +242,7 @@ def user_profile_sethandle_v1(token, handle_str):
 
     return {}
 
-def user_stats_v1(token):
+def user_stats_v1(token: str) -> Dict[str, Dict]:
     '''
     the functions return the information about channels, dms and messages involved and an involvement rate
 
@@ -253,10 +254,10 @@ def user_stats_v1(token):
 
     Return:
         Dictionary of shape {
-         channels_joined: [{num_channels_joined, time_stamp}],
-         dms_joined: [{num_dms_joined, time_stamp}], 
-         messages_sent: [{num_messages_sent, time_stamp}], 
-         involvement_rate 
+         channels_joined: [{num_channels_joined, time_stamp}],
+         dms_joined: [{num_dms_joined, time_stamp}], 
+         messages_sent: [{num_messages_sent, time_stamp}], 
+         involvement_rate 
         }
     '''
     if check_if_token_exists(token) == False:
@@ -297,7 +298,7 @@ def user_stats_v1(token):
 
     return {'user_stats': user_stats}
 
-def users_stats_v1(token):
+def users_stats_v1(token: str) -> Dict[str, Dict]:
     '''
     the functions return information about existing channels, dms and messages and a utilization rate
 
@@ -309,10 +310,10 @@ def users_stats_v1(token):
 
     Return:
         Dictionary of shape {
-         channels_exist: [{num_channels_exist, time_stamp}], 
-         dms_exist: [{num_dms_exist, time_stamp}], 
-         messages_exist: [{num_messages_exist, time_stamp}], 
-         utilization_rate 
+         channels_exist: [{num_channels_exist, time_stamp}], 
+         dms_exist: [{num_dms_exist, time_stamp}], 
+         messages_exist: [{num_messages_exist, time_stamp}], 
+         utilization_rate 
         }
     '''
     if check_if_token_exists(token) == False:

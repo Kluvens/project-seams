@@ -8,9 +8,10 @@ from src.helpers import find_dm_index
 from src.helpers import is_in_dm
 from src.helpers import check_u_id_exists
 from src.helpers import check_duplicate_u_ids
+from typing import List, Dict, Any, Optional
 from time import time
 
-def dm_list_v1(token):
+def dm_list_v1(token: str) -> Dict:
     '''
     Returns a list of of dictionaries in {dms}, 
     where the list is made up of dictionairies 
@@ -34,7 +35,7 @@ def dm_list_v1(token):
     # initialise datastore and dicts
     data = data_store.get()
     dms_list = data['dms']
-    dms_dict = {'dms' : []}
+    dms_dict: Dict = {'dms' : []}
     
     # if token doesnt exist return AccessError
     if not check_if_token_exists(token):
@@ -54,7 +55,7 @@ def dm_list_v1(token):
     return dms_dict
 
 
-def dm_details_v1(token, dm_id):
+def dm_details_v1(token: str, dm_id: int) -> Dict:
     '''
     Given { token, dm_id } ,
     the DM is found if it exists and { name, members } is returned.
@@ -117,7 +118,7 @@ def dm_details_v1(token, dm_id):
         'members': right_dm_all_members,
     }
 
-def dm_create_v1(token, u_ids):
+def dm_create_v1(token: str, u_ids: List[int]) -> Dict[str, int]:
     '''
     Given token and a list of u_ids, we should generate a direct message for the auth user and u_ids to be invited
 
@@ -185,7 +186,7 @@ def dm_create_v1(token, u_ids):
     }
 
 
-def dm_leave_v1(token, dm_id):
+def dm_leave_v1(token: str, dm_id: int) -> Dict:
     '''
     This function allows the user to leave a DM.
 
@@ -241,7 +242,7 @@ def dm_leave_v1(token, dm_id):
 
     return{}
 
-def dm_remove_v1(token,dm_id):
+def dm_remove_v1(token: str, dm_id: int) -> Dict:
     '''
     This function allows for the owner of the DM to remove the DM, 
     such that all members of the DM are no longer in the DM.
@@ -304,8 +305,9 @@ def dm_remove_v1(token,dm_id):
             description="ERROR: User is not the owner of this Dm")
 
     user_in_dm = False
-    users_dms_list = dm_list_v1(token).get('dms')
-    final_dms_list = [member['dm_id'] for member in users_dms_list]
+    users_dms_return: Dict = dm_list_v1(token)
+    users_dms_list: List = users_dms_return['dms']
+    final_dms_list: List = [member['dm_id'] for member in users_dms_list]
 
     if dm_id in final_dms_list:
         user_in_dm = True

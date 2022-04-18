@@ -1,8 +1,9 @@
 from src.data_store import data_store
 from src.error import AccessError, InputError
 from src.helpers import check_if_token_exists, decode_token
+from typing import List, Dict, Any
 
-def dm_messages_v1(token, dm_id, start):
+def dm_messages_v1(token: str, dm_id: int, start: int) -> Dict:
     '''
     dm_messages_v1
 

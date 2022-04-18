@@ -3,8 +3,9 @@ from src.error import InputError, AccessError
 from src.helpers import decode_token, check_if_token_exists
 from src.helper import global_owner_check, get_user_idx, count_number_global_owner
 from src.helper import admin_remove_user_info
+from typing import List, Dict, Any
 
-def admin_user_remove_v1(token, u_id):
+def admin_user_remove_v1(token: str, u_id: int) -> Dict:
     '''
     the function is used to remove an existing user and his relevant info
 
@@ -65,23 +66,12 @@ def admin_user_remove_v1(token, u_id):
 
     # delete associated info about dms
     admin_remove_user_info(u_id, data['dms'])
-    # for dm in data['dms']:
-    #     if "messages" in dm:
-    #         for message in dm['messages']:
-    #             if message['u_id'] == u_id:
-    #                 message['message'] = 'Removed user'
-    #     for member in dm['all_members']:
-    #         if member['u_id'] == u_id:
-    #             dm['all_members'].remove({'u_id': u_id})
-    #     for o_member in dm['owner_member']:
-    #         if o_member['u_id'] == u_id:
-    #             dm['owner_members'].remove({'u_id': u_id})
 
     data_store.set(data)
 
     return {}
 
-def admin_userpermission_change_v1(token, u_id, permission_id):
+def admin_userpermission_change_v1(token: str, u_id: int, permission_id: int) -> Dict:
     '''
     the function is used to change the global permission of a user
 

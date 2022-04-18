@@ -3,8 +3,9 @@ from src.error import InputError, AccessError
 from src.helpers import decode_token
 from src.helpers import check_if_token_exists
 from time import time
+from typing import List, Dict, Any
 
-def channels_list_v2(token):
+def channels_list_v2(token: str) -> Dict[str, List]:
 
     '''
     Returns a list of of dictionaries in {channels}, 
@@ -28,7 +29,7 @@ def channels_list_v2(token):
     # initialise datastore and dicts
     data = data_store.get()
     channels_list = data['channels']
-    channels_dict = {'channels' : []}
+    channels_dict: Dict = {'channels' : []}
     
     # if token doesnt exist return AccessError
     if not check_if_token_exists(token):
@@ -47,7 +48,7 @@ def channels_list_v2(token):
 
     return channels_dict
 
-def channels_listall_v2(token):
+def channels_listall_v2(token:str) -> Dict[str, List]:
     '''
     Returns a list of of dictionaries in {channels}, 
     where the list is made up of dictionairies 
@@ -70,7 +71,7 @@ def channels_listall_v2(token):
     # initialise datastore and dict
     data = data_store.get()
     channels_list = data['channels']
-    channels_dict = {'channels' : []}
+    channels_dict: Dict = {'channels' : []}
     
     # if token doesnt exist return AccessError
     if not check_if_token_exists(token):
@@ -87,7 +88,7 @@ def channels_listall_v2(token):
     return channels_dict
 
 
-def channels_create_v2(token, name, is_public):
+def channels_create_v2(token: str, name: str, is_public: bool) -> Dict[str, int]:
     '''
     This function allows an authorized user to create a channel
 

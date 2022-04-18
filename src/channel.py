@@ -7,9 +7,9 @@ from src.helper import  count_number_owner, is_in_channel_owner
 from src.helper import global_owner_check, get_user_idx
 from src.helpers import decode_token, check_if_token_exists
 from src.helper import channel_details_members_return
+from typing import List, Dict, Any
 
-
-def channel_invite_v2(token, channel_id, u_id):
+def channel_invite_v2(token: str, channel_id: int, u_id: int) -> Dict:
     '''
     This function allows an authorized user to invite another 
     user into a given channel.
@@ -54,7 +54,7 @@ def channel_invite_v2(token, channel_id, u_id):
         raise AccessError (description="ERROR: Token does not exist")
       
     # Check u_id is valid, channel is valid, auth_user is a channel member and u_id is not already a member of channel
-    channel_to_join = None
+    channel_to_join: Dict = {}
     u_id_valid = False
     auth_user_authorized = False
     u_id_member = False
@@ -82,7 +82,7 @@ def channel_invite_v2(token, channel_id, u_id):
         raise InputError (
             description="ERROR: The user you are trying to add does not exist.")
 
-    if channel_to_join == None:
+    if channel_to_join == {}:
         raise InputError (
             description="ERROR: This channel does not exist.")
 
@@ -96,14 +96,14 @@ def channel_invite_v2(token, channel_id, u_id):
             description="ERROR: You are not authorized to invite users to this channel.")
 
     # If all conditions are met, append user to members list for given channel
-    if u_id_valid and channel_to_join != None and not u_id_member and auth_user_authorized and token_exists:
+    if u_id_valid and channel_to_join != {} and not u_id_member and auth_user_authorized and token_exists:
         member_list = channel_to_join['all_members']
         new_member = {'u_id': u_id}
         member_list.append(new_member)
 
     return {}
 
-def channel_details_v2(token, channel_id):
+def channel_details_v2(token: str, channel_id: int) -> Dict:
     '''
     This function is given by token which refers to a 
     user and channel id, returning name, 
@@ -127,7 +127,6 @@ def channel_details_v2(token, channel_id):
     whether the channel is public, the list of all
     owner members and a list of all members 
     of the channel.
-
     '''
 
     data = data_store.get()
@@ -167,7 +166,7 @@ def channel_details_v2(token, channel_id):
     }
 
 
-def channel_messages_v2(token, channel_id, start):
+def channel_messages_v2(token: str, channel_id: int, start: int) -> Dict:
     '''
     channel_messages_v2
 
@@ -264,7 +263,7 @@ def channel_messages_v2(token, channel_id, start):
         'end': end,
     }
 
-def channel_join_v2(token, channel_id):
+def channel_join_v2(token: str, channel_id: int) -> Dict:
     '''
 
     This function allows given user to join a given channel.
@@ -292,7 +291,6 @@ def channel_join_v2(token, channel_id):
     This function does not return anything
     '''
 
-
     # Access channel and user lists
     store = data_store.get()
     channels = store['channels']
@@ -301,7 +299,7 @@ def channel_join_v2(token, channel_id):
     #Check if channel exists, is public, is global owner, is already a member 
     channel_access = False 
     user_in_channel = False
-    channel_to_join = None
+    channel_to_join: Dict = {}
     user_exists = False
 
     # Check token exists 
@@ -319,7 +317,7 @@ def channel_join_v2(token, channel_id):
         user_exists = True
 
     # Check channel exists
-    channel_list = [channel for channel in channels if channel['channel_id'] == channel_id]
+    channel_list: List = [channel for channel in channels if channel['channel_id'] == channel_id]
         
     # If channel exists, save correct channel
     if channel_list != []:
@@ -348,7 +346,7 @@ def channel_join_v2(token, channel_id):
         raise AccessError ("ERROR: You do not have access to this private channel")
         
     # Append member if all conditions met
-    if channel_to_join != None and (channel_access or global_owner_check(u_id)) and not user_in_channel and token_exists and user_exists:
+    if channel_to_join != {} and (channel_access or global_owner_check(u_id)) and not user_in_channel and token_exists and user_exists:
         member_list = channel_to_join['all_members']
         new_member = {'u_id':u_id}
         member_list.append(new_member)
@@ -357,7 +355,7 @@ def channel_join_v2(token, channel_id):
     return {}
 
 
-def channel_addowner_v1(token, channel_id, u_id):
+def channel_addowner_v1(token: str, channel_id: int, u_id: int) -> Dict:
     '''
     This function is given by authorised user, channel id and user id, 
     make the user to become one of the owner members in the given channel
@@ -428,7 +426,7 @@ def channel_addowner_v1(token, channel_id, u_id):
     return {}
 
 
-def channel_removeowner_v1(token, channel_id, u_id):
+def channel_removeowner_v1(token: str, channel_id: int, u_id: int) -> Dict:
     '''
     This function is given by authorised user, channel id and user id, 
     make the user to become one of the owner members in the given channel
@@ -498,7 +496,7 @@ def channel_removeowner_v1(token, channel_id, u_id):
 
     return {}
 
-def channel_leave_v1(token, channel_id):
+def channel_leave_v1(token: str, channel_id: int) -> Dict:
     '''
     channel_leave_v1.py
 

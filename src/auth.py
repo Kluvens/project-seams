@@ -20,9 +20,10 @@ from src.helpers import hash
 from src.helpers import is_valid_name
 from src.helpers import generate_handle
 from src.helpers import generate_session_token
+from typing import List, Dict, Any, Optional
 ###################### Function Implelmentation ##################
 
-def auth_login_v2(email, password):
+def auth_login_v2(email: str, password: str) -> Dict:
     '''
     This function takes in an email and password strings
     and returns the a u_id dictionary containing the u_id value
@@ -60,11 +61,12 @@ def auth_login_v2(email, password):
 
 
     u_id = get_corresponding_user_id(users_list, email)
-    token = str(generate_session_token(u_id))
-    users_list[u_id]['sessions'].append(token)
+    if u_id != None:
+        token = str(generate_session_token(u_id))
+        users_list[u_id]['sessions'].append(token)
     return {'token' : token, 'auth_user_id': u_id}
 
-def auth_register_v2(email, password, name_first, name_last):
+def auth_register_v2(email: str, password: str, name_first: str, name_last: str) -> Dict:
     '''
     Arguments:
         This function takes an user related info (4 parameters)
@@ -144,7 +146,7 @@ def auth_register_v2(email, password, name_first, name_last):
     # The u_id for a new user will be defined
     # as the number of currently registered users
     u_id = len(users_list)
-    curr_user = {}
+    curr_user: Dict = {}
     users_list.append(curr_user)
 
     # Generate a session token
@@ -177,7 +179,7 @@ def auth_register_v2(email, password, name_first, name_last):
   
     return { "token" : token, "auth_user_id" : u_id }
 
-def auth_logout_v1(token):
+def auth_logout_v1(token: str) -> Dict:
     '''
     This function takes in a token string. If the
     token is invalid, it raises an access error.
@@ -197,7 +199,7 @@ def auth_logout_v1(token):
 
 # ============================= HELPER FUNCTIONS ========================
 
-def is_valid_password(password):
+def is_valid_password(password: str) -> bool:
     '''
     This function checks if the password string contains less than
     6 characters by checking its length.
@@ -211,7 +213,7 @@ def is_valid_password(password):
 
 
 
-def is_password_correct(users_list, email, password):
+def is_password_correct(users_list: List, email: str, password: str) -> bool:
     '''
     This function checks if password is correct for a given email
     in a users list.
@@ -226,7 +228,7 @@ def is_password_correct(users_list, email, password):
     return False
 
 
-def get_corresponding_user_id(users_list, email):
+def get_corresponding_user_id(users_list: List, email: str):
     '''
     Given a valid email for a registered user, and a users list
     This function returns the corresponding u_id

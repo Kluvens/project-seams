@@ -4,8 +4,9 @@ from src.data_store import data_store
 from src.helpers import check_if_token_exists, decode_token, is_global_owner
 from src.error import AccessError, InputError
 from src.helper import is_in_channel_owner, is_in_dm_owner
+from typing import List, Dict, Any, Optional
 
-def message_senddm_v1(token, dm_id, message):
+def message_senddm_v1(token: str, dm_id: int, message: str) -> Dict[str, int]:
     '''
     send a message in dm with unique message_id
 
@@ -64,7 +65,7 @@ def message_senddm_v1(token, dm_id, message):
         'message_id': data['unique_message_id']
     }
 
-def message_send_v1(token, channel_id, message):
+def message_send_v1(token: str, channel_id: int, message: str) -> Dict[str, int]:
     '''
     message_send_v1
 
@@ -139,7 +140,7 @@ def message_send_v1(token, channel_id, message):
         'message_id': data['unique_message_id'],
     }
 
-def message_remove_v1(token, message_id):
+def message_remove_v1(token: str, message_id: int) -> Dict:
     '''
     message_remove_v1
 
@@ -194,7 +195,7 @@ def message_remove_v1(token, message_id):
     
     return {}
 
-def message_edit_v1(token, message_id, message):
+def message_edit_v1(token: str, message_id: int, message: str) -> Dict:
     '''
     message_edit_v1
 
@@ -262,7 +263,7 @@ def message_edit_v1(token, message_id, message):
     
     return {}
 
-def message_pin_v1(token, message_id):
+def message_pin_v1(token: str, message_id: int) -> Dict:
     '''
     The function is used to pin a message in channel or dm
 
@@ -335,7 +336,7 @@ def message_pin_v1(token, message_id):
 
     return {}
 
-def message_unpin_v1(token, message_id):
+def message_unpin_v1(token: str, message_id: int) -> Dict:
     '''
     the function is used to unpin a message
 

@@ -1,14 +1,14 @@
 from src.auth import auth_register_v2, auth_login_v2
 from src.data_store import data_store
+from typing import List, Dict, Any, Optional
 
-
-def find_channel_index(channels, channel_id):    
+def find_channel_index(channels: List, channel_id: int) -> Optional[int]:    
     for idx, channel in enumerate(channels):
         if channel['channel_id'] == channel_id:
             return idx
     return None
 
-def is_in_channel(u_id, right_channel):
+def is_in_channel(u_id: int, right_channel: Dict) -> bool:
     for member in right_channel["all_members"]:
         if u_id == member["u_id"]:
             return True
@@ -16,7 +16,7 @@ def is_in_channel(u_id, right_channel):
     return False
 
 
-def count_number_owner(right_channel):
+def count_number_owner(right_channel: Dict) -> int:
     total = 0
     for member in right_channel['owner_members']:
         if member is not None:
@@ -25,14 +25,14 @@ def count_number_owner(right_channel):
     return total
 
 
-def is_in_channel_owner(u_id, right_channel):
+def is_in_channel_owner(u_id: int, right_channel: Dict) -> bool:
     for member in right_channel["owner_members"]:
         if u_id == member["u_id"]:
             return True
 
     return False 
 
-def is_in_dm_owner(u_id, right_dm):
+def is_in_dm_owner(u_id: int, right_dm: Dict) -> bool:
     for member in right_dm['owner_members']:
         if u_id == member['u_id']:
             return True
@@ -40,7 +40,7 @@ def is_in_dm_owner(u_id, right_dm):
     return False
 
 
-def global_owner_check(auth_user_id):
+def global_owner_check(auth_user_id: int) -> bool:
     OWNER = 1
 
     data = data_store.get()
@@ -54,7 +54,7 @@ def global_owner_check(auth_user_id):
     return False
 
 
-def count_number_global_owner(users):
+def count_number_global_owner(users: List) -> int:
     sum = 0
     OWNER = 1
 
@@ -65,14 +65,14 @@ def count_number_global_owner(users):
     return sum
 
 
-def get_user_idx(users, u_id):
+def get_user_idx(users: List, u_id: int):
     for idx, user in enumerate(users):
         if u_id == user["u_id"]:
             return idx
     # does not exist
     return None
 
-def count_number_channels_joined(auth_user_id):
+def count_number_channels_joined(auth_user_id: int) -> List[Dict]:
     data = data_store.get()
     result = []
     sum = 0
@@ -88,7 +88,7 @@ def count_number_channels_joined(auth_user_id):
 
     return result
 
-def count_number_dms_joined(auth_user_id):
+def count_number_dms_joined(auth_user_id: int) -> List[Dict]:
     data = data_store.get()
     result = []
     sum = 0
@@ -104,7 +104,7 @@ def count_number_dms_joined(auth_user_id):
 
     return result
 
-def count_number_messages_sent(auth_user_id):
+def count_number_messages_sent(auth_user_id: int) -> List[Dict]:
     data = data_store.get()
     temp_result = []
     result = []
@@ -132,7 +132,7 @@ def count_number_messages_sent(auth_user_id):
 
     return result
 
-def count_number_channels_exist():
+def count_number_channels_exist() -> List[Dict]:
     data = data_store.get()
     result = []
     sum = 0
@@ -146,7 +146,7 @@ def count_number_channels_exist():
 
     return result
 
-def count_number_dms_exist():
+def count_number_dms_exist() -> List[Dict]:
     data = data_store.get()
     result = []
     sum = 0
@@ -160,7 +160,7 @@ def count_number_dms_exist():
 
     return result
 
-def count_number_messages_exist():
+def count_number_messages_exist() -> List[Dict]:
     data = data_store.get()
     temp_result = []
     result = []
@@ -186,7 +186,7 @@ def count_number_messages_exist():
 
     return result
 
-def count_users_joined():
+def count_users_joined() -> int:
     data = data_store.get()
     sum = 0
 
@@ -207,22 +207,23 @@ def count_users_joined():
 
     return sum
 
-def count_number_users():
+def count_number_users() -> int:
     data = data_store.get()
     sum = len(data['users'])
 
     return sum
 
-def channel_details_members_return(users, member):
+def channel_details_members_return(users: List, member: Dict) -> Dict:
+    right_channel_member = users[member['u_id']]
     return {
-        'u_id': users[member['u_id']]['u_id'],
-        'email': users[member['u_id']]['email'],
-        'name_first': users[member['u_id']]['name_first'],
-        'name_last': users[member['u_id']]['name_last'],
-        'handle_str': users[member['u_id']]['handle_str'],
+        'u_id': right_channel_member['u_id'],
+        'email': right_channel_member['email'],
+        'name_first': right_channel_member['name_first'],
+        'name_last': right_channel_member['name_last'],
+        'handle_str': right_channel_member['handle_str'],
     }
 
-def admin_remove_user_info(u_id, data_store):
+def admin_remove_user_info(u_id: int, data_store: Dict):
     for room in data_store:
         # delete relevant messages
         if "messages" in room:

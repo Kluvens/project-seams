@@ -36,6 +36,7 @@ from src.users import user_stats_v1, users_stats_v1
 from src.other import clear_v1
 from src.standup import standup_start_v1, standup_active_v1, standup_send_v1
 import time
+from src.users import user_profile_uploadphoto_v1
 
 ###################### INITIAL SERVER SETUP ######################
 
@@ -348,6 +349,17 @@ def user_stats_http():
 def users_stats_http():
     token = request.args.get('token')
     return dumps(users_stats_v1(token))
+
+@APP.route("/user/profile/uploadphoto/v1", methods=['POST'])
+def user_uploadphoto_http():
+    data = request.get_json()
+    token = data['token']
+    img_url = data['img_url']
+    x_start = data['x_start']
+    y_start = data['y_start']
+    x_end = data['x_end']
+    y_end = data['y_end']
+    return dumps(user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end))
 
 ####################### CLEARING/RESTTING ########################
 

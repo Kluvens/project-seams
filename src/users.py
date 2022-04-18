@@ -18,7 +18,9 @@ from src.helpers import check_u_id_exists
 from src.helpers import return_exist_status
 from src.helper import count_number_channels_exist, count_number_dms_exist, count_number_messages_sent, count_number_dms_joined, count_number_channels_joined, count_number_messages_exist
 from src.helper import count_users_joined, count_number_users
+import urllib
 from typing import List, Dict, Any, Optional
+from PIL import Image
 
 ##################### User Function Implementations ##############
 def users_all_v1(token: str) -> Dict[str, List]:
@@ -336,3 +338,60 @@ def users_stats_v1(token: str) -> Dict[str, Dict]:
     }
 
     return {'workspace_stats': workspace_stats}
+
+
+    # ============= USER PROFILE UPLOAD PHOTO ==============
+def user_profile_uploadphoto_v1(token, img_url,x_start,y_start,x_end,y_end):
+
+    # Check if token is invalid
+    if not check_if_token_exists(token):
+        raise AccessError(description="ERROR: Token is invalid")
+    auth_user_id = decode_token(token)
+
+    # Check if url is valid
+    if not 'http://' in img_url:
+        raise InputError(description= 'ERROR: Image url is invalid')
+
+
+    # Download and save image to src/profile_images
+    users = data_store.get()['users']
+    user_handle = [user['handle_str'] for user in users if user['u_id'] == auth_user_id][0]
+    file_name = 'src/profile_images/original/{}.jpg'.format(user_handle)
+    try:
+        urllib.request.urlretrieve(img_url, file_name)
+    except:
+        raise InputError(description="img_url returns an HTTP status other than 200, or any other errors occur when attempting to retrieve the image")
+
+    # Check image is a jpg file
+    if 'jpg' not in img_url:
+        raise InputError(description= 'ERROR: Uploaded image is not a jpg file')
+
+    # Check if x range or y range is impossible 
+    if (x_end <= x_start) or (y_end <= y_start):
+        raise InputError(description="x_end is less than or equal to x_start or y_end is less than or equal to y_start")
+    if (x_start < 0 or y_start < 0):
+        raise InputError(description="out of range")
+    # if x_start >= x_end:
+    #     raise InputError(description= 'ERROR: Horizontal selection invalid')
+    # if y_start >= y_end:
+    #     raise InputError(description= 'ERROR: Vertical selection invalid')
+
+    # Check x and y values are within image 
+    image = Image.open(file_name)
+    width, height = image.size
+    if x_end > width or y_end > height or x_start < 0 or y_start < 0:
+        raise InputError(description= 'ERROR: Selection is outside original image size')
+    
+    # Save cropped image 
+    cropped_image = image.crop((x_start,y_end,x_end, y_end))
+    cropped_file_name = 'src/profile_images/cropped/{}.jpg'.format(user_handle)
+    cropped_image.save(cropped_file_name)
+
+    # Store url in user dictionary
+    users = data_store.get()['users']
+    u_id = decode_token(token)
+    u_idx = get_user_idx(users, u_id)
+    users[u_idx]['profile_img_url'] = cropped_file_name
+
+
+    return {}

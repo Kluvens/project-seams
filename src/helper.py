@@ -42,16 +42,18 @@ def is_in_dm_owner(u_id: int, right_dm: Dict) -> bool:
 
 def global_owner_check(auth_user_id: int) -> bool:
     OWNER = 1
+    successful = 0
 
     data = data_store.get()
     for user in data['users']:
         if user['u_id'] == auth_user_id:
             if user['permissions'] == OWNER:
-                return True
-            else:
-                return False
+                successful = 1
     
-    return False
+    if successful == 1:
+        return True
+    else:
+        return False
 
 
 def count_number_global_owner(users: List) -> int:

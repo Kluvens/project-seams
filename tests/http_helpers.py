@@ -172,7 +172,7 @@ class GenerateTestData:
         channels = [ch0, ch1, ch2]
         idx = 0
         responses = []
-        for num in range(num_of_channels):
+        for _ in range(num_of_channels):
             parameters = channels[idx]
             route = self.url + '/channels/create/v2'
             response = requests.post(
@@ -304,7 +304,7 @@ class GenerateTestData:
             raise ValueError("number of users needs to be greater than 0.")
         route = self.url + 'channel/invite/v2'
         for u_id in u_ids:
-            response = requests.post(route, 
+            requests.post(route, 
                 json={
                     'token' : token,
                     'channel_id' : channel_id,

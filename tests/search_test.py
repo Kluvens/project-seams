@@ -11,6 +11,8 @@ the server.
 Author: Kais Alzubaidi, z5246721
 
 '''
+
+
 import pytest
 import requests
 from src.config import url
@@ -52,6 +54,13 @@ def setup(dummy_data):
         "user1" : user1_token
     }
 
+@pytest.fixture
+def dummy_messages():
+    return [
+        "Hello, how are you!",
+        "Hi, I am good!\n How are you?",
+        "yeahhh not too bad!, what are YoU DoiNg today>?"
+    ]
 
 def get_message_ids(messages_list):
     message_ids = []
@@ -126,13 +135,7 @@ def test_return_type(route, setup):
     assert target_msgs == {"messages" : []}
 
 
-@pytest.fixture
-def dummy_messages():
-    return [
-        "Hello, how are you!",
-        "Hi, I am good!\n How are you?",
-        "yeahhh not too bad!, what are YoU DoiNg today>?"
-    ]
+
 
 @pytest.mark.parametrize("msg", ["H", "!", "YOU", "you"])
 def test_messages_with_reacts_and_pin(

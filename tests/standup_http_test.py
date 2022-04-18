@@ -94,15 +94,16 @@ def test_two_active_standups(create_route, dummy_data, start):
 def test_user_not_in_channel(create_route, dummy_data, start):
     reset_call()
 
-    user = dummy_data.register_users(num_of_users=1)
+    user = dummy_data.register_users(num_of_users=2)
     users_return_dict = user[0]
+    users_return_dict1 = user[1]
     ch1 = requests.post(create_route, json={
         'token': users_return_dict['token'],
         'name': 'ch1',
         'is_public': True
     })
     start = requests.post(start, json={
-        'token': 'saiodifjoasdjfio',
+        'token': users_return_dict1['token'],
         'channel_id': ch1.json()['channel_id'],
         'length': 5,
     }) 
@@ -154,8 +155,10 @@ def test_send_invalid_standup(create_route, dummy_data, send):
 def test_user_not_in_channel_send(create_route, dummy_data, send, start):
     reset_call()
 
-    user = dummy_data.register_users(num_of_users=1)
+    user = dummy_data.register_users(num_of_users=2)
     users_return_dict = user[0]
+    users_return_dict1 = user[1]
+
     ch1 = requests.post(create_route, json={
         'token': users_return_dict['token'],
         'name': 'ch1',
@@ -167,13 +170,36 @@ def test_user_not_in_channel_send(create_route, dummy_data, send, start):
         'length': 0.1,
     }) 
     send = requests.post(send, json={
-        'token': 'saiodifjoasdjfio',
+        'token': users_return_dict1['token'],
         'channel_id': ch1.json()['channel_id'],
         'message': 'hello',
     }) 
     assert send.status_code == AccessError.code
 
 def test_user_not_in_channel_active(create_route, dummy_data, active, start):
+    reset_call()
+
+    user = dummy_data.register_users(num_of_users=2)
+    users_return_dict = user[0]
+    users_return_dict1 = user[1]
+    
+    ch1 = requests.post(create_route, json={
+        'token': users_return_dict['token'],
+        'name': 'ch1',
+        'is_public': True
+    })
+    requests.post(start, json={
+        'token': users_return_dict['token'],
+        'channel_id': ch1.json()['channel_id'],
+        'length': 5,
+    }) 
+    active = requests.get(active, params = {
+        'token': users_return_dict1['token'],
+        'channel_id': ch1.json()['channel_id'],
+    })
+    assert active.status_code == AccessError.code
+
+def test_send_over_1000(create_route, dummy_data, start, send):
     reset_call()
 
     user = dummy_data.register_users(num_of_users=1)
@@ -187,14 +213,14 @@ def test_user_not_in_channel_active(create_route, dummy_data, active, start):
     requests.post(start, json={
         'token': users_return_dict['token'],
         'channel_id': ch1.json()['channel_id'],
-        'length': 5,
+        'length': 0.1,
     }) 
-    active = requests.get(active, params = {
-        'token': 'ASDFASDF',
+    send = requests.post(send, json={
+        'token': users_return_dict['token'],
         'channel_id': ch1.json()['channel_id'],
+        'message': 'dscSlQFNJmKLcYibIYlHa76KDpeqBAm6aEcoSGDvDGi53OHFY1Kgx045HR4oc4lGmHuZCuNrBekdfTVsESjREsC2CmdZsDfsxm2en1RPfmALBGL4OqjYD7IjYCyHYzNIDqNqQXibL7lwRjHoY47EoOVQZOvjb31G0cYIeohL4eUN4ZGtrLyI5cXQbpzuy7dH4xRwK8MBmZ2PziQ9mupVbQVqshjz6GAMHqdyb22x4Rcx3sKcLpGl1Btg7Wc5XW8ALalsW3bBo62a4Df7wX9u1ZaPOvj3los8SXtNbHAjn0XDqZ0vaTAkRv0GdHEGZi3SQdzDG59ksKuOB0Q7TE1MflRdVaRmegEA6hsnmNVkWQ2JylMmfnzUedXbXPwfv7aLGtK3CHfUMq6qkcRMMU4INOzT3K136gqtcTlQDSblzCUbZjlwySqFWWTqvq6hUgJZbvjzrho8pnGOCAEM2MLXxiQ0bIr2wZFg1cw8sdoUoIqsuBdoACVq45eO3MkKgO25vyIAtWBBBE25CFC2DbknWpOUgvse8g8GzwacR6FZdOej70qsej1FadhUxhG99UXPBsbWQDjIdXzconajDKcNrtBIy7Tu59NW2OrWRneYY6E6nwGEjlLzAHQAo2grETDAaUoC2wPGHBDYoKaPCLNvc2LuZnFi5WXVY9fBiACMffU9GtbUunDpHAZGFWP5FDUjOYWaI43yhIz6hhnzrMsAWga03SkMx2xGBd0xJhODQmTEfQE6MqZ33xdpyy4Tu3YLAgaY5R0OR7J8tbrcCekKqFT7d0tsqKncmSlbAorjZvoWgwc9OJYNmYNiGYR7B8vRE8qCbSryTo4X0LPyhfCnKtpSFqnooUWHAdAidGIBY4l0wtsthmpzNgFKKenzbsH7NORDwDo0qDByvHmdfDQiurSAOjN7rEyUKfeXW147oROyp2esugqjfNAp1EoZgIhxXxi1DbMbMsU4F9QaLZxNtHIa3WFICUXb4LEXuVc65O',
     })
-    assert active.status_code == AccessError.code
-
+    assert send.status_code == InputError.code
 #=========================== Testing ===============================
 
 def test_active_standup(create_route, dummy_data, active, start):
@@ -313,30 +339,6 @@ def test_start_standup(create_route, dummy_data, start):
     }) 
     assert start.status_code == OKAY
     assert start.json()['time_finish'] - (datetime.now()+timedelta(seconds=5)).timestamp() < 1
-
-def test_send_standup(create_route, dummy_data, start, send):
-    reset_call()
-
-    user = dummy_data.register_users(num_of_users=1)
-    users_return_dict = user[0]
-    
-    ch1 = requests.post(create_route, json={
-        'token': users_return_dict['token'],
-        'name': 'ch1',
-        'is_public': True
-    })
-    start = requests.post(start, json={
-        'token': users_return_dict['token'],
-        'channel_id': ch1.json()['channel_id'],
-        'length': 0.1,
-    }) 
-    send = requests.post(send, json={
-        'token': users_return_dict['token'],
-        'channel_id': ch1.json()['channel_id'],
-        'message': 'hello',
-    })
-    assert start.status_code == OKAY
-    assert send.json() == {}
 
 def test_send_standup(create_route, dummy_data, start, send):
     reset_call()

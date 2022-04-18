@@ -19,12 +19,9 @@ def standup_start_v1(token, channel_id, length):
         raise InputError("length is a negative integer")
     if 'standup' in channel and channel['standup']['is_active'] == True:
         raise InputError("an active standup is currently running in the channel")
-    authorised_user = False
-    for member in channel['all_members']:
-        if member['u_id'] == auth_user_id:
-            authorised_user = True
-    if not authorised_user:
-        raise AccessError(description="channel_id is valid and the authorised user is not a member of the channel")   
+    all_members_uids = [user['u_id'] for user in channel['all_members']]
+    if not auth_user_id in all_members_uids:
+        raise AccessError ("channel_id is valid and the authorised user is not a member of the channel") 
 
     time_finish = datetime.now() + timedelta(seconds=length)
     unix_time_finish = int(time_finish.timestamp())
@@ -49,12 +46,9 @@ def standup_active_v1(token, channel_id):
 
     if channel is None:
         raise InputError("channel_id does not refer to a valid channel")
-    authorised_user = False
-    for member in channel['all_members']:
-        if member['u_id'] == auth_user_id:
-            authorised_user = True
-    if not authorised_user:
-        raise AccessError(description="channel_id is valid and the authorised user is not a member of the channel")   
+    all_members_uids = [user['u_id'] for user in channel['all_members']]
+    if not auth_user_id in all_members_uids:
+        raise AccessError ("channel_id is valid and the authorised user is not a member of the channel") 
 
     if 'standup' in channel:
         if int(time.time()) > int(channel['standup']['time_finish']):
@@ -92,16 +86,13 @@ def standup_send_v1(token, channel_id, message):
 
     if channel is None:
         raise InputError("channel_id does not refer to a valid channel")
-    elif len(message) > 1000:
+    if len(message) > 1000:
         raise InputError(description="length of message is over 1000 characters")
     if 'standup' not in channel or channel['standup']['is_active'] == False:
         raise InputError("an active standup is not currently running in the channel")
-    authorised_user = False
-    for member in channel['all_members']:
-        if member['u_id'] == auth_user_id:
-            authorised_user = True
-    if not authorised_user:
-        raise AccessError(description="channel_id is valid and the authorised user is not a member of the channel")  
+    all_members_uids = [user['u_id'] for user in channel['all_members']]
+    if not auth_user_id in all_members_uids:
+        raise AccessError ("channel_id is valid and the authorised user is not a member of the channel") 
 
     standup_message = channel["standup"]['message']
     user = find_user(auth_user_id)

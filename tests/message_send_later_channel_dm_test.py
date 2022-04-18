@@ -282,7 +282,7 @@ or if token is invalid
 '''
 @pytest.mark.parametrize("invalid_token", ["Hello", "-1", -1, "35235gfdsgfdsh"])
 # Testing case for when the token is invalid
-def test_sendlaterdm_invalid_token_AccessError(dummy_data, create_route, invalid_token):
+def test_sendlaterdm_invalid_token_AccessError(dummy_data, invalid_token):
     reset_call()
 
     users_list = dummy_data.register_users(num_of_users=1)

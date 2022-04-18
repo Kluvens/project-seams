@@ -212,3 +212,37 @@ def test_channel_messages_remove_working(dummy_data, create_route):
     messages_output = messages_output.json()
     
     assert messages_output['messages'][0]['message'] == message_three
+
+def test_dm_messages_remove_working(dummy_data):
+
+    reset_call()
+
+    users_list = dummy_data.register_users(num_of_users=2)
+    user0 = users_list[0]
+    user1 = users_list[1]
+    dm_dict = dummy_data.create_dm(user0['token'], [users_list[1]['auth_user_id']])
+
+    message_one = "hello world"
+    message_two = "bye world"
+    message_three = "hello darkness"
+
+    # Send message from owner of dm
+    response1 = send_dm_message_request(user0['token'], dm_dict['dm_id'], message_one)
+    # Send message from member of dm
+    response2 = send_dm_message_request(user0['token'], dm_dict['dm_id'], message_two)
+
+    send_dm_message_request(user0['token'], dm_dict['dm_id'], message_three)
+
+    send_message_one = response1.json()
+    send_message_two = response2.json()
+
+    # Remove messages 1 and 2 from dm
+
+    delete_message_remove(user0['token'], send_message_one["message_id"])
+    delete_message_remove(user1['token'], send_message_two["message_id"])
+    
+    messages_output = get_dm_messages(user0['token'], dm_dict['dm_id'], 0)
+    messages_output = messages_output.json()
+    
+    assert messages_output['messages'][0]['message'] == message_three
+    

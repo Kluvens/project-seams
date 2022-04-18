@@ -363,3 +363,28 @@ def test_send_standup(create_route, dummy_data, start, send):
     })
     assert start.status_code == OKAY
     assert send.json() == {}
+
+def test_not_active_after_sleep(create_route, dummy_data, active, start):
+    reset_call()
+    
+    user = dummy_data.register_users(num_of_users=1)
+    users_return_dict = user[0]
+    
+    ch1 = requests.post(create_route, json={
+        'token': users_return_dict['token'],
+        'name': 'ch1',
+        'is_public': True
+    })
+    requests.post(start, json={
+        'token': users_return_dict['token'],
+        'channel_id': ch1.json()['channel_id'],
+        'length': 0.1,
+    }) 
+    time.sleep(1)
+    active = requests.get(active, params = {
+        'token': users_return_dict['token'],
+        'channel_id': ch1.json()['channel_id'],
+    })
+
+    assert active.status_code == OKAY
+    assert active.json() == {'is_active': False, 'time_finish': None}

@@ -69,106 +69,169 @@ def test_x_start_outofrange(setup):
     })
     assert response.status_code == InputError.code 
 
-# def test_x_end_outofrange():
-#     token = setup()['tokens'][1]
-#     img_url = test_img
-#     x_start = 10
-#     x_end = test_img_width + 1
-#     y_start = 10
-#     y_end = 210
-#     response = upload_photo_http(token, img_url, x_start, y_start, x_end, y_end)
-#     assert response.status_code == InputError.code 
+def test_x_end_outofrange(setup):
+    token = setup[0]['token']
+    img_url = test_img
+    x_start = 10
+    x_end = test_img_width + 1
+    y_start = 10
+    y_end = 210
+    response = requests.post(f'{url}/user/profile/uploadphoto/v1', json = {
+        'token': token,
+        'img_url': img_url,
+        'x_start': x_start,
+        'y_start':y_start,
+        'x_end': x_end,
+        'y_end': y_end,
+    })
+    assert response.status_code == InputError.code 
 
-# def test_y_start_outofrange():
-#     token = setup()['tokens'][1]
-#     img_url = test_img
-#     x_start = 10
-#     x_end = 220
-#     y_start = -1
-#     y_end = 210
-#     response = upload_photo_http(token, img_url, x_start, y_start, x_end, y_end)
-#     assert response.status_code == InputError.code 
+def test_y_start_outofrange(setup):
+    token = setup[0]['token']
+    img_url = test_img
+    x_start = 10
+    x_end = 220
+    y_start = -1
+    y_end = 210
+    response = requests.post(f'{url}/user/profile/uploadphoto/v1', json = {
+        'token': token,
+        'img_url': img_url,
+        'x_start': x_start,
+        'y_start':y_start,
+        'x_end': x_end,
+        'y_end': y_end,
+    })
+    assert response.status_code == InputError.code 
 
-# def test_y_end_outofrange():
-#     token = setup()['tokens'][1]
-#     img_url = test_img
-#     x_start = 10
-#     x_end = 220
-#     y_start = 10
-#     y_end = test_img_height + 1
-#     response = upload_photo_http(token, img_url, x_start, y_start, x_end, y_end)
-#     assert response.status_code == InputError.code 
+def test_y_end_outofrange(setup):
+    token = setup[0]['token']
+    img_url = test_img
+    x_start = 10
+    x_end = 220
+    y_start = 10
+    y_end = test_img_height + 1
+    response = requests.post(f'{url}/user/profile/uploadphoto/v1', json = {
+        'token': token,
+        'img_url': img_url,
+        'x_start': x_start,
+        'y_start':y_start,
+        'x_end': x_end,
+        'y_end': y_end,
+    })
+    assert response.status_code == InputError.code 
 
-# # Input Error: x_end <= x_start, y_end <= y_start
-# def test_x2_is_x1():
-#     token = setup()['tokens'][1]
-#     img_url = test_img
-#     x_start = 10
-#     x_end = 10
-#     y_start = 10
-#     y_end = 210
-#     response = upload_photo_http(token, img_url, x_start, y_start, x_end, y_end)
-#     assert response.status_code == InputError.code 
+# Input Error: x_end <= x_start, y_end <= y_start
+def test_x2_is_x1(setup):
+    token = setup[0]['token']
+    img_url = test_img
+    x_start = 10
+    x_end = 10
+    y_start = 10
+    y_end = 210
+    response = requests.post(f'{url}/user/profile/uploadphoto/v1', json = {
+        'token': token,
+        'img_url': img_url,
+        'x_start': x_start,
+        'y_start':y_start,
+        'x_end': x_end,
+        'y_end': y_end,
+    })
+    assert response.status_code == InputError.code 
 
-# def test_x2_smallerthan_x1():
-#     token = setup()['tokens'][1]
-#     img_url = test_img
-#     x_start = 10
-#     x_end = 9
-#     y_start = 10
-#     y_end = 210
-#     response = upload_photo_http(token, img_url, x_start, y_start, x_end, y_end)
-#     assert response.status_code == InputError.code 
+def test_x2_smallerthan_x1(setup):
+    token = setup[0]['token']
+    img_url = test_img
+    x_start = 10
+    x_end = 9
+    y_start = 10
+    y_end = 210
+    response = requests.post(f'{url}/user/profile/uploadphoto/v1', json = {
+        'token': token,
+        'img_url': img_url,
+        'x_start': x_start,
+        'y_start':y_start,
+        'x_end': x_end,
+        'y_end': y_end,
+    })
+    assert response.status_code == InputError.code 
 
-# def test_y2_is_y1():
-#     token = setup()['tokens'][1]
-#     img_url = test_img
-#     x_start = 10
-#     x_end = 220
-#     y_start = 10
-#     y_end = 10
-#     response = upload_photo_http(token, img_url, x_start, y_start, x_end, y_end)
-#     assert response.status_code == InputError.code 
+def test_y2_is_y1(setup):
+    token = setup[0]['token']
+    img_url = test_img
+    x_start = 10
+    x_end = 220
+    y_start = 10
+    y_end = 10
+    response = requests.post(f'{url}/user/profile/uploadphoto/v1', json = {
+        'token': token,
+        'img_url': img_url,
+        'x_start': x_start,
+        'y_start':y_start,
+        'x_end': x_end,
+        'y_end': y_end,
+    })
+    assert response.status_code == InputError.code 
 
-# def test_y2_smallerthan_y1():
-#     token = setup()['tokens'][1]
-#     img_url = test_img
-#     x_start = 10
-#     x_end = 220
-#     y_start = 10
-#     y_end = 9
-#     response = upload_photo_http(token, img_url, x_start, y_start, x_end, y_end)
-#     assert response.status_code == InputError.code 
+def test_y2_smallerthan_y1(setup):
+    token = setup[0]['token']
+    img_url = test_img
+    x_start = 10
+    x_end = 220
+    y_start = 10
+    y_end = 9
+    response = requests.post(f'{url}/user/profile/uploadphoto/v1', json = {
+        'token': token,
+        'img_url': img_url,
+        'x_start': x_start,
+        'y_start':y_start,
+        'x_end': x_end,
+        'y_end': y_end,
+    })
+    assert response.status_code == InputError.code 
 
-# # Input Error: photo is not jpg
-# def test_not_jpg():
-#     token = setup()['tokens'][1]
-#     img_url = 'http://i.stack.imgur.com/ILTQq.png'
-#     x_start = 10
-#     x_end = 220
-#     y_start = 10
-#     y_end = 210
-#     response = upload_photo_http(token, img_url, x_start, y_start, x_end, y_end)
-#     assert response.status_code == InputError.code 
+# Input Error: photo is not jpg
+def test_not_jpg(setup):
+    token = setup[0]['token']
+    img_url = 'http://i.stack.imgur.com/ILTQq.png'
+    x_start = 10
+    x_end = 220
+    y_start = 10
+    y_end = 210
+    response = requests.post(f'{url}/user/profile/uploadphoto/v1', json = {
+        'token': token,
+        'img_url': img_url,
+        'x_start': x_start,
+        'y_start':y_start,
+        'x_end': x_end,
+        'y_end': y_end,
+    })
+    assert response.status_code == InputError.code 
 
-# # Access Error: Token is invalid
-# def test_invalid_token():
-#     img_url = test_img
-#     x_start = 10
-#     x_end = 220
-#     y_start = 10
-#     y_end = 210
-#     response = upload_photo_http('12345', img_url, x_start, y_start, x_end, y_end)
-#     assert response.status_code == AccessError.code 
+# Access Error: Token is invalid
+def test_invalid_token(setup):
+    img_url = test_img
+    x_start = 10
+    x_end = 220
+    y_start = 10
+    y_end = 210
+    response = requests.post(f'{url}/user/profile/uploadphoto/v1', json = {
+        'token': 'invalid_token',
+        'img_url': img_url,
+        'x_start': x_start,
+        'y_start':y_start,
+        'x_end': x_end,
+        'y_end': y_end,
+    })
+    assert response.status_code == AccessError.code 
 
 # Routine Behavior 
 def test_working_uploadphoto(setup):
     token = setup[0]['token']
     img_url = test_img
     x_start = 10
-    x_end = 220
+    x_end = 120
     y_start = 10
-    y_end = 210
+    y_end = 110
     response = requests.post(f'{url}/user/profile/uploadphoto/v1', json = {
         'token': token,
         'img_url': img_url,

@@ -369,12 +369,6 @@ def user_profile_uploadphoto_v1(token, img_url,x_start,y_start,x_end,y_end):
     # Check if x range or y range is impossible 
     if (x_end <= x_start) or (y_end <= y_start):
         raise InputError(description="x_end is less than or equal to x_start or y_end is less than or equal to y_start")
-    if (x_start < 0 or y_start < 0):
-        raise InputError(description="out of range")
-    # if x_start >= x_end:
-    #     raise InputError(description= 'ERROR: Horizontal selection invalid')
-    # if y_start >= y_end:
-    #     raise InputError(description= 'ERROR: Vertical selection invalid')
 
     # Check x and y values are within image 
     image = Image.open(file_name)
@@ -383,7 +377,7 @@ def user_profile_uploadphoto_v1(token, img_url,x_start,y_start,x_end,y_end):
         raise InputError(description= 'ERROR: Selection is outside original image size')
     
     # Save cropped image 
-    cropped_image = image.crop((x_start,y_end,x_end, y_end))
+    cropped_image = image.crop((x_start,y_start,x_end, y_end))
     cropped_file_name = 'src/profile_images/cropped/{}.jpg'.format(user_handle)
     cropped_image.save(cropped_file_name)
 
@@ -392,6 +386,5 @@ def user_profile_uploadphoto_v1(token, img_url,x_start,y_start,x_end,y_end):
     u_id = decode_token(token)
     u_idx = get_user_idx(users, u_id)
     users[u_idx]['profile_img_url'] = cropped_file_name
-
 
     return {}

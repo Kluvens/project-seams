@@ -64,8 +64,6 @@ def auth_login_v2(email, password):
     users_list[u_id]['sessions'].append(token)
     return {'token' : token, 'auth_user_id': u_id}
 
-
-
 def auth_register_v2(email, password, name_first, name_last):
     '''
     Arguments:
@@ -106,7 +104,6 @@ def auth_register_v2(email, password, name_first, name_last):
         returns a dictionry containing a key called 'auth_user_id'
         and its value is the user_id of the user that has just been registered
     '''
-
 
     data = data_store.get()
     users_list = data["users"]
@@ -180,7 +177,6 @@ def auth_register_v2(email, password, name_first, name_last):
   
     return { "token" : token, "auth_user_id" : u_id }
 
-
 def auth_logout_v1(token):
     '''
     This function takes in a token string. If the
@@ -200,9 +196,6 @@ def auth_logout_v1(token):
     return {}
 
 # ============================= HELPER FUNCTIONS ========================
-
-
-
 
 def is_valid_password(password):
     '''
@@ -246,6 +239,5 @@ def get_corresponding_user_id(users_list, email):
 
 
 # ====================END OF HELPER FUNCTIONS SECTION ===================
-
 
 if __name__ == "__main__":...

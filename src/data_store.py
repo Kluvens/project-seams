@@ -31,90 +31,75 @@ print('Loading Datastore...')
 global data_store
 data_store = Datastore()
 
-
 '''
 data = {
-    'users': [
-        {
-            'u_id': 0,
-            'email': "email.com1",
-            'name_first': "name_first",
-            'name_last': "name_last",
-            'password': "password",
-            'permission': 
-        },
-        {
-            'u_id': 1,
-            'email': "email.com2",
-            'name_first': "name_first",
-            'name_last': "name_last",
-            'password': "password",
-            'permission'
-        },
-    ],
-    'channels': [
-        {
-            'channel_id': 0,
-            'name' : 'channel0',
-            'is_public': True,
-            'messages': [
-                {
-                    'message_id': 0,
-                    'u_id': 0,
-                    'message': 'Hello world',
-                    'time_sent': 1582426789,
-                },
-            ],
-            'owner_members': [
-                {
-                    'u_id': 0,
-                    'email': 'example@gmail.com',
-                    'name_first': 'Hayden',
-                    'name_last': 'Jacobs',
-                    'handle_str': 'haydenjacobs',
-                }
-            ],
-            'all_members': [
-                {
-                    'u_id': 0,
-                    'email': 'example@gmail.com',
-                    'name_first': 'Hayden',
-                    'name_last': 'Jacobs',
-                    'handle_str': 'haydenjacobs',
-                }
-            ],
-        },
-        {
-            'channel_id': 1,
-            'name' : 'channel1',
-            'is_public': True,
-            'owner_members': [
-                {
-                    'u_id': 0,
-                    'email': 'example@gmail.com',
-                    'name_first': 'Hayden',
-                    'name_last': 'Jacobs',
-                    'handle_str': 'haydenjacobs',
-                }
-            ],
-            'all_members': [
-                {
-                    'u_id': 0,
-                    'email': 'example@gmail.com',
-                    'name_first': 'Hayden',
-                    'name_last': 'Jacobs',
-                    'handle_str': 'haydenjacobs',
-                }
-            ],
-            'messages': [
-                {
-                    'message_id': 0,
-                    'u_id': 0,
-                    'message': 'Bye world',
-                    'time_sent': 1582426790,
-                },
-            ],
-        },
-    ],
+    'users': [],
+    'channels': [];
+    'dms': [],
+    'removed_users' : [],
+    'unique_message_id': int,
 }
+
+'users': [
+    {
+        'u_id': int,
+        'email': str,
+        'name_first': str,
+        'name_last': str,
+        'handle_str': str,
+        'password': str,
+        'permisson': int,
+    }
+]
+
+'channels': [
+    {
+        'channel_id': int,
+        'name': str,
+        'is_public': boolean,
+        'time_stamp': int unix,
+        'owner_members': [
+            {
+                'u_id': int,
+            }
+        ]
+        'all_members': [
+            {
+                'u_id': int,
+            }
+        ]
+        'messages': [
+            'message_id': int,
+            'u_id': int,
+            'message': str,
+            'time_sent': int unix,
+            'is_pinned': boolean,
+        ]
+    }
+]
+
+'dms': [
+    {
+        'dm_id': int,
+        'name': str,
+        'time_stamp': int unix,
+        'owner_members': [
+            {
+                'u_id': int,
+            }
+        ]
+        'all_members': [
+            {
+                'u_id': int,
+            }
+        ]
+        'messages': [
+            'message_id': int,
+            'u_id': int,
+            'message': str,
+            'time_sent': int unix,
+            'is_pinned': boolean,
+        ]
+    }
+]
 '''

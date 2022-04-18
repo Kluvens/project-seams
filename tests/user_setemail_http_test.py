@@ -24,7 +24,7 @@ from src.error import AccessError
 from src.error import InputError
 
 #====================== Helper functions / Fixtures ===============
-
+OKAY = 200
 
 @pytest.fixture
 def route():
@@ -132,7 +132,7 @@ def test_set_new_email(route, dummy_data, user_idx):
     new_email = "new_email999@seams.com"
     setemail_response = user_setemail_request(route, user_token, new_email)
     
-    assert setemail_response.status_code ==  200
+    assert setemail_response.status_code ==  OKAY
 
     # Note that since reset is call with each user_idx parameter
     # new email is guarnteed to not be duplicated 

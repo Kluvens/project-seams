@@ -28,10 +28,11 @@ def test_create_token_error(create_route, dummy_data, detail_route):
     reset_call()
 
     users = dummy_data.register_users(num_of_users=2)
+    owner = users[0]['token']
     u_ids = [users[1]['auth_user_id']]
 
     requests.post(create_route, json={
-        'token': 'invalidtoken',
+        'token': owner,
         'u_ids': u_ids,
     })
     detail1 = requests.get(detail_route, params={

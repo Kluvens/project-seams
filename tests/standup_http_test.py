@@ -250,6 +250,21 @@ def test_send_invalid_token(dummy_data):
         'hello',
     )
     assert send.status_code == AccessError.code
+
+def test_start_invalid_token(dummy_data):
+    reset_call()
+
+    user = dummy_data.register_users(num_of_users=1)
+    users_return_dict = user[0]
+    
+    ch1 = create_request(users_return_dict['token'])
+    
+    start = start_request(
+        'invalid_token', 
+        ch1.json()['channel_id'], 
+        5,
+    ) 
+    assert start.status_code == AccessError.code
 #=========================== Testing ===============================
 
 def test_active_standup(dummy_data):

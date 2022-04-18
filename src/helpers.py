@@ -36,8 +36,6 @@ def check_if_token_exists(token):
 
     users = data_store.get()['users']
     for user in users:
-        if user['sessions'] == {}:
-            return False
         if token in user['sessions']:
             return True
     return False

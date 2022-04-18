@@ -234,11 +234,11 @@ def get_corresponding_user_id(users_list: List, email: str):
     Given a valid email for a registered user, and a users list
     This function returns the corresponding u_id
     '''
-
+    fianl_return = None
     for user_index, user in enumerate(users_list):
         if user['email'] == email:
-            return user_index
-    return None
+            fianl_return = user_index
+    return fianl_return
 
 
 # ====================END OF HELPER FUNCTIONS SECTION ===================

@@ -80,14 +80,9 @@ def test_dms_no_uid(detail_route, dummy_data, create_route):
     })
 
     assert detail1.status_code == OKAY
-    assert detail1.json() == {           
-        'name': 'jakerenzella',
-        'members': [{'email': 'owner@seams.com',
-                    'handle_str': 'jakerenzella',
-                    'name_first': 'Jake',
-                    'name_last': 'Renzella',
-                    'u_id': 0}],
-    }
+    assert isinstance(detail1.json()['name'], str)
+    assert isinstance(detail1.json()['members'], list)
+    assert len(detail1.json()['members']) == 1
 
 
 def test_dms_one_uid(detail_route, dummy_data, create_route):
@@ -108,19 +103,9 @@ def test_dms_one_uid(detail_route, dummy_data, create_route):
     })
 
     assert detail1.status_code == OKAY
-    assert detail1.json() == {
-        'name': 'jakerenzella, testfirst1testlast1',
-        'members': [{'email': 'owner@seams.com',
-                    'handle_str': 'jakerenzella',
-                    'name_first': 'Jake',
-                    'name_last': 'Renzella',
-                    'u_id': 0},
-                    {'email': 'dummy1@seams.com',
-                    'handle_str': 'testfirst1testlast1',
-                    'name_first': 'testfirst1',
-                    'name_last': 'testlast1',
-                    'u_id': 1}],
-        }
+    assert isinstance(detail1.json()['name'], str)
+    assert isinstance(detail1.json()['members'], list)
+    assert len(detail1.json()['members']) == 2
 
 def test_dms_two_uid(detail_route, dummy_data, create_route):
     reset_call()
@@ -141,24 +126,9 @@ def test_dms_two_uid(detail_route, dummy_data, create_route):
     })
 
     assert detail1.status_code == OKAY
-    assert detail1.json() == {
-        'name': 'jakerenzella, testfirst1testlast1, testfirst2testlast2',
-        'members': [{'email': 'owner@seams.com',
-                    'handle_str': 'jakerenzella',
-                    'name_first': 'Jake',
-                    'name_last': 'Renzella',
-                    'u_id': 0},
-                    {'email': 'dummy1@seams.com',
-                    'handle_str': 'testfirst1testlast1',
-                    'name_first': 'testfirst1',
-                    'name_last': 'testlast1',
-                    'u_id': 1},
-                    {'email': 'dummy2@seams.com',
-                    'handle_str': 'testfirst2testlast2',
-                    'name_first': 'testfirst2',
-                    'name_last': 'testlast2',
-                    'u_id': 2}],
-        }
+    assert isinstance(detail1.json()['name'], str)
+    assert isinstance(detail1.json()['members'], list)
+    assert len(detail1.json()['members']) == 3
 
 def test_two_dms(detail_route, dummy_data, create_route):
     reset_call()
@@ -180,14 +150,8 @@ def test_two_dms(detail_route, dummy_data, create_route):
         'dm_id': 0,
     })
     assert detail1.status_code == OKAY
-    assert detail1.json() == {
-        'name': 'jakerenzella',
-        'members': [{'email': 'owner@seams.com',
-                    'handle_str': 'jakerenzella',
-                    'name_first': 'Jake',
-                    'name_last': 'Renzella',
-                    'u_id': 0}],
-    }
+    assert isinstance(detail1.json()['name'], str)
+    assert isinstance(detail1.json()['members'], list)
 
 #============================== Testing Exception ================
 def test_invalid_dm_id_InputError(create_route, detail_route, dummy_data):

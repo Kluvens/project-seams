@@ -122,4 +122,5 @@ def test_users_request_profile(dummy_data, user_idx):
         user_uid
     )
 
-    assert user_details_dict == expected_user_det
+    assert user_details_dict['email'] == expected_user_det['email']
+    assert user_details_dict['handle_str'] == expected_user_det['handle_str']

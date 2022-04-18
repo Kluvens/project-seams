@@ -194,7 +194,11 @@ def test_profile_after_remove(setup):
         "handle_str" : "brucebanner"
     }
 
-    assert user_profile == expected_output
+    assert user_profile['u_id'] == expected_output['u_id']
+    assert user_profile['email'] == expected_output['email']
+    assert user_profile['name_first'] == expected_output['name_first']
+    assert user_profile['name_last'] == expected_output['name_last']
+    assert user_profile['handle_str'] == expected_output['handle_str']
 
 def test_once_removed_user_cant_do_anything(setup):
     user1_dict = setup[0]

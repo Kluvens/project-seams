@@ -110,6 +110,7 @@ def dm_details_v1(token: str, dm_id: int) -> Dict:
             'name_first': users[member['u_id']]['name_first'],
             'name_last': users[member['u_id']]['name_last'],
             'handle_str': users[member['u_id']]['handle_str'],
+            'profile_img_url': users[member['u_id']]['profile_img_url'],
         }
     for member in right_dm['all_members']]
 

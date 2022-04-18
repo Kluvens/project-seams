@@ -223,6 +223,7 @@ def channel_details_members_return(users: List, member: Dict) -> Dict:
         'name_first': right_channel_member['name_first'],
         'name_last': right_channel_member['name_last'],
         'handle_str': right_channel_member['handle_str'],
+        'profile_img_url': right_channel_member['profile_img_url'],
     }
 
 def admin_remove_user_info(u_id: int, data_store: Dict):

@@ -51,27 +51,34 @@ def standup_active_v1(token, channel_id):
         raise AccessError ("channel_id is valid and the authorised user is not a member of the channel") 
 
     if 'standup' in channel:
+        # if current time is less then finish time
         if int(time.time()) > int(channel['standup']['time_finish']):
+            # when standup_active is called the first time after standup finishes
             if channel['standup']['is_active'] == True:
                 channel['standup']['is_active'] = False
+                # if message is empty
                 if channel['standup']['message'] == '':
                     return {
                         'is_active': False,
                         'time_finish': None,
                     }
+                # if message is not empty
                 message_send_v1(token, channel_id, channel['standup']['message'])
                 return {
                     'is_active': False,
                     'time_finish': None,
                 }
+            # when standup_active has called more than once after standup ahs finished
             return {
                 'is_active': False,
                 'time_finish': None,
             }
+        # if current time > finish time
         return {
             'is_active': True,
             'time_finish': int(channel['standup']['time_finish']),
         }
+    # if standup not in channel
     return {
         'is_active': False,
         'time_finish': None,

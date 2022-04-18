@@ -55,15 +55,16 @@ def test_listall_public_and_private(listall_route, create_route, dummy_data):
         'name': 'ch2',
         'is_public': True
     })
-    
 
     list1 = requests.get(listall_route, params={
         'token': users_return_dict1['token']
     })
 
     assert list1.status_code == OKAY
-    assert list1.json() == {'channels': [{'channel_id': ch1.json()['channel_id'], 'name': 'ch1'}, 
-                                        {'channel_id': ch2.json()['channel_id'], 'name': 'ch2'}]}
+    assert list1.json() == {
+        'channels': [{'channel_id': ch1.json()['channel_id'], 'name': 'ch1'}, 
+                    {'channel_id': ch2.json()['channel_id'], 'name': 'ch2'}]
+    }
 
 def test_listall_no_channels(listall_route, dummy_data):
     reset_call()
@@ -108,7 +109,9 @@ def test_multiple_users_and_channels(listall_route, create_route, dummy_data):
     })
 
     assert list1.status_code == OKAY
-    assert list1.json() == {'channels': [{'channel_id': ch1.json()["channel_id"], 'name': 'ch1'},
-                                    {'channel_id': ch2.json()["channel_id"], 'name': 'ch2'},
-                                    {'channel_id': ch3.json()["channel_id"], 'name': 'ch3'}]}
+    assert list1.json() == {
+        'channels': [{'channel_id': ch1.json()["channel_id"], 'name': 'ch1'},
+                    {'channel_id': ch2.json()["channel_id"], 'name': 'ch2'},
+                    {'channel_id': ch3.json()["channel_id"], 'name': 'ch3'}]
+    }
 

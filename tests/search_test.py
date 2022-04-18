@@ -42,8 +42,10 @@ def setup(dummy_data):
         "channel_id" : ch0,
         "user0" : user0_token,
         "user1" : user1_token,
+        "user2" : users_list[2]["token"],
         "uid0" : users_list[0]["auth_user_id"],
-        "uid1" : users_list[1]["auth_user_id"]
+        "uid1" : users_list[1]["auth_user_id"],
+        "uid2" : users_list[2]["auth_user_id"]
     }
 
 @pytest.fixture
@@ -196,16 +198,15 @@ def test_dms_no_reacts(
 
 
 
-
-
 @pytest.mark.parametrize("msg", ["hHH", "!", "u"])
 def test_dms_and_msgs(
     route, dummy_messages, setup, msg, dummy_data):
     ch0 = setup["channel_id"]
     user0_token = setup["user0"]
     user1_token = setup["user1"]
+    user2_token = setup["user2"]
 
-    dm_id = dummy_data.create_dm(user0_token, [setup["uid1"]])["dm_id"]
+    dm_id = dummy_data.create_dm(user0_token, [setup["uid1"], setup["uid2"]])["dm_id"]
 
     msg1_dict = dummy_data.send_dm(user0_token, dm_id, dummy_messages[0])
     
@@ -216,7 +217,9 @@ def test_dms_and_msgs(
 
     dummy_data.react_to_message(user0_token, msg3_dict["message_id"], 1)
     dummy_data.react_to_message(user1_token, msg3_dict["message_id"], 1)
- 
+    
+    # Multiple search requests
+    search_request(route, user2_token, msg)
     response = search_request(route, user0_token, msg)
     messages_list = response.json()["messages"]
     print(messages_list)
@@ -242,3 +245,12 @@ def test_dms_and_msgs(
     assert react_dict["is_this_user_reacted"]
 
     assert(is_this_message_pinned(msg2_dict["message_id"], messages_list))
+
+
+def test_dms_and_msgs_empty(route, setup):
+    ch0 = setup["channel_id"]
+    user0_token = setup["user0"]
+
+    response = search_request(route, user0_token, "Hello")
+    assert response.json() == {"messages" : []}
+

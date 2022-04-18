@@ -248,7 +248,6 @@ def test_dms_and_msgs(
 
 
 def test_dms_and_msgs_empty(route, setup):
-    ch0 = setup["channel_id"]
     user0_token = setup["user0"]
 
     response = search_request(route, user0_token, "Hello")

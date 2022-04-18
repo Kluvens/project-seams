@@ -3,22 +3,6 @@ import requests
 from src.helpers import hash
 from src.config import url
 
-# code = ''
-
-# class CacheCode:
-#     def __init__(self):
-#         self.__store = code
-    
-#     def get(self):
-#         return self.__store
-
-#     def set(self, store):
-#         self.__store = store
-
-
-# global cache_reset_code
-# cache_reset_code = CacheCode()
-
 def get_reset_code():
     with open('reset_code.txt', 'r') as fp:
         code = fp.read()
@@ -122,6 +106,13 @@ class GenerateTestData:
             "is_public" : False
         }
 
+    def dummy_channel2(self, token):
+        return {
+            "token" : str(token),
+            "name" : "DummyChannel2",
+            "is_public" : True
+        }
+
 
     def dummy_users_data(self, num_of_users):
         dummy_users = {
@@ -157,6 +148,25 @@ class GenerateTestData:
             registered_users.append(user_dict)
         
         return registered_users
+
+    def create_multiple_channels(self, num_of_channels, token):
+        ch0 = self.dummy_channel0(token)
+        ch1 = self.dummy_channel1(token)
+        ch2 = self.dummy_channel2(token)
+        channels = [ch0, ch1, ch2]
+        idx = 0
+        responses = []
+        for _ in range(num_of_channels):
+            parameters = channels[idx]
+            route = self.url + '/channels/create/v2'
+            response = requests.post(
+                route,
+                json=parameters
+            )
+            idx += 1
+            responses.append(response.json())
+        print(responses)
+        return responses
 
 
     def login(self, num_of_users):
@@ -198,4 +208,90 @@ class GenerateTestData:
         )
         return response
 
+    def send_message(self, token, channel_id, message):
+        route = self.url + '/message/send/v1'
+        response = requests.post(route, 
+            json={
+                'token' : token,
+                'channel_id' : channel_id,
+                'message' : message
+            }
+        )
+        return response.json()
+
+    def create_dm(self, token, u_ids):
+        route = self.url + 'dm/create/v1'
+        response = requests.post(route, 
+            json={
+                'token' : token,
+                'u_ids' : u_ids
+            }
+        )
+        return response.json()
+   
     
+    def send_dm(self, token, dm_id, message):
+        route = self.url + 'message/senddm/v1'
+        response = requests.post(route, 
+            json={
+                'token' : token,
+                'dm_id' : dm_id,
+                'message' : message
+            }
+        )
+        return response.json()
+
+    def react_to_message(self, token, message_id, react_id):
+        route = self.url + 'message/react/v1'
+        response = requests.post(route, 
+            json={
+                'token' : token,
+                'message_id' : message_id,
+                'react_id' : react_id
+            }
+        )
+        return response.json()
+
+    def unreact_to_message(self, token, message_id, react_id):
+        route = self.url + 'message/unreact/v1'
+        response = requests.post(route, 
+            json={
+                'token' : token,
+                'message_id' : message_id,
+                'react_id' : react_id
+            }
+        )
+        return response.json()
+
+    def pin_msg(self, token, message_id):
+        route = self.url + 'message/pin/v1'
+        response = requests.post(route, 
+            json={
+                'token' : token,
+                'message_id' : message_id,
+            }
+        )
+        return response.json()
+    
+    def unpin_msg(self, token, message_id):
+        route = self.url + 'message/unpin/v1'
+        response = requests.post(route, 
+            json={
+                'token' : token,
+                'message_id' : message_id,
+            }
+        )
+        return response.json()
+
+    def invite_users(self, token, channel_id, u_ids, num_of_users):
+        if num_of_users == 0:
+            raise ValueError("number of users needs to be greater than 0.")
+        route = self.url + 'channel/invite/v2'
+        for u_id in u_ids:
+            requests.post(route, 
+                json={
+                    'token' : token,
+                    'channel_id' : channel_id,
+                    'u_id' : u_id
+                }
+            )

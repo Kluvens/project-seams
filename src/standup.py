@@ -68,7 +68,7 @@ def standup_active_v1(token, channel_id):
                     'is_active': False,
                     'time_finish': None,
                 }
-            # when standup_active has called more than once after standup ahs finished
+            # when standup_active has been called more than once after standup has finished
             return {
                 'is_active': False,
                 'time_finish': None,

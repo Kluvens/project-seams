@@ -6,6 +6,7 @@ This file contains all the server functionality for seams.
 ########################## Import Statements #####################
 import sys
 import signal
+import atexit
 from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
@@ -29,13 +30,14 @@ from src.users import user_profile_v1
 from src.users import user_setname_v1
 from src.users import user_profile_setemail_v1
 from src.users import user_profile_sethandle_v1
-from src.message import message_send_v1, message_remove_v1, message_edit_v1, message_senddm_v1
+from src.message import message_send_v1, message_remove_v1, message_edit_v1, message_senddm_v1, message_react_v1, message_unreact_v1, message_sendlater_v1, message_sendlaterdm_v1
 from src.message import message_pin_v1
 from src.message import message_unpin_v1
 from src.users import user_stats_v1, users_stats_v1
 from src.other import clear_v1
 from src.search import search_v1 
 from src.standup import standup_start_v1, standup_active_v1, standup_send_v1
+from src.helpers import write_savefile
 import time
 
 ###################### INITIAL SERVER SETUP ######################
@@ -43,6 +45,8 @@ import time
 def quit_gracefully(*args):
     '''For coverage'''
     exit(0)
+
+atexit.register(write_savefile)
 
 def defaultHandler(err):
     response = err.get_response()
@@ -260,7 +264,6 @@ def channel_messages():
     token = request.args.get('token')
     channel_id = request.args.get('channel_id')
     start = request.args.get('start')
-
     return dumps(channel_messages_v2(token, channel_id, start))
 
 # message/send/v1
@@ -278,7 +281,6 @@ def message_send():
 def message_remove():
     data = request.get_json()
     message_remove_v1(**data)
-
     return dumps({})
 
 # dm/messages/v1
@@ -287,7 +289,6 @@ def dm_messages():
     token = request.args.get('token')
     dm_id = request.args.get('dm_id')
     start = request.args.get('start')
-
     return dumps(dm_messages_v1(token, dm_id, start))
 
 # message/edit/v1
@@ -296,6 +297,44 @@ def message_edit():
     data = request.get_json()
     message_edit_v1(**data)
     return dumps({})
+
+# message/react/v1
+@APP.route("/message/react/v1", methods=['POST'])
+def react_message():
+    data = request.get_json()
+    token = data["token"]
+    react_id = data["react_id"]
+    message_id = data["message_id"]
+    return dumps(message_react_v1(token, message_id, react_id))
+
+# message/unreact/v1
+@APP.route("/message/unreact/v1", methods=['POST'])
+def unreact_message():
+    data = request.get_json()
+    token = data["token"]
+    react_id = data["react_id"]
+    message_id = data["message_id"]
+    return dumps(message_unreact_v1(token, message_id, react_id))
+
+# message/sendlater/v1
+@APP.route("/message/sendlater/v1", methods = ['POST'])
+def sendlater_message():
+    data = request.get_json()
+    token = data["token"]
+    channel_id = data["channel_id"]
+    message = data["message"]
+    time_sent = float(data["time_sent"])
+    return dumps(message_sendlater_v1(token, channel_id, message, time_sent))
+
+# message/sendlaterdm/v1
+@APP.route("/message/sendlaterdm/v1", methods = ['POST'])
+def sendlaterdm_message():
+    data = request.get_json()
+    token = data["token"]
+    dm_id = data["dm_id"]
+    message = data["message"]
+    time_sent = float(data["time_sent"])
+    return dumps(message_sendlaterdm_v1(token, dm_id, message, time_sent))
 
 ########################## Standup ###############################
 

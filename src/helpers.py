@@ -8,6 +8,7 @@ Module Description: This is a helper functions module
 import re
 import jwt
 import uuid
+import pickle
 import json
 import requests
 import hashlib
@@ -256,4 +257,10 @@ def is_global_owner(u_id):
             else:
                 return False
     return False
-    
+
+def write_savefile():
+    """
+    Saves data into pickle file, to ensure when server is restarted, data is not erased
+    """
+    with open('src/savefile.p', 'wb') as FILE:
+        pickle.dump(data_store, FILE)

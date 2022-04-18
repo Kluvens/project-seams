@@ -84,7 +84,7 @@ def test_channelmessages_more_than_thousand(dummy_data, create_route):
     assert ch1.status_code == 200
     ch1_dict = ch1.json()
 
-    message = 'hello'*500
+    message = 'hello'*5000
     response = send_message_request(user0['token'], ch1_dict['channel_id'], message)
     assert response.status_code == InputError.code
 

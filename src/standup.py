@@ -64,6 +64,10 @@ def standup_active_v1(token, channel_id):
                     'is_active': False,
                     'time_finish': None,
                 }
+            return {
+                'is_active': False,
+                'time_finish': None,
+            }
         return {
             'is_active': True,
             'time_finish': int(channel['standup']['time_finish']),

@@ -364,7 +364,7 @@ def test_send_standup(create_route, dummy_data, start, send):
     assert start.status_code == OKAY
     assert send.json() == {}
 
-def test_not_active_after_sleep(create_route, dummy_data, active, start):
+def test_multiple_active_requests(create_route, dummy_data, active, start):
     reset_call()
     
     user = dummy_data.register_users(num_of_users=1)
@@ -381,10 +381,13 @@ def test_not_active_after_sleep(create_route, dummy_data, active, start):
         'length': 0.1,
     }) 
     time.sleep(1)
-    active = requests.get(active, params = {
+    requests.get(active, params = {
         'token': users_return_dict['token'],
         'channel_id': ch1.json()['channel_id'],
     })
-
-    assert active.status_code == OKAY
-    assert active.json() == {'is_active': False, 'time_finish': None}
+    active2 = requests.get(active, params = {
+        'token': users_return_dict['token'],
+        'channel_id': ch1.json()['channel_id'],
+    })
+    assert active2.status_code == OKAY
+    assert active2.json()['is_active'] == False

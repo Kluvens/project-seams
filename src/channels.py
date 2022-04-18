@@ -139,7 +139,3 @@ def channels_create_v2(token, name, is_public):
     return {
         'channel_id': channel_id,
     }
-
-
-if __name__ == "__main__":
-    pass

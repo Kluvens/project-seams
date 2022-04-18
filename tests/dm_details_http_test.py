@@ -198,15 +198,15 @@ def test_invalid_dm_id_InputError(create_route, detail_route, dummy_data):
     requests.post(
         create_route, 
         json={
-        'token': user0['token'],
-        'u_ids': [user1["auth_user_id"]],
+            'token': user0['token'],
+            'u_ids': [user1["auth_user_id"]],
         }
     )
 
     # Input invalid dm_id
     detail = requests.get(detail_route, params={
-    'token': user1['token'],
-    'dm_id': 9921,
+        'token': user1['token'],
+        'dm_id': 9921,
     })
     assert detail.status_code == InputError.code
 
@@ -230,8 +230,8 @@ def test_unauthorised_user_AccessError(create_route, detail_route, dummy_data):
     dm_dict = response.json()
     # Input invalid user / user is not in dm
     detail = requests.get(detail_route, params={
-    'token': user2['token'],
-    'dm_id': dm_dict["dm_id"]
+        'token': user2['token'],
+        'dm_id': dm_dict["dm_id"]
     })
 
     assert detail.status_code == AccessError.code

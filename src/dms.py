@@ -86,9 +86,6 @@ def dm_details_v1(token, dm_id):
     dm_id = int(dm_id)
     users = data["users"]
     dms = data["dms"]
-
-    if not check_if_token_exists(token):
-        raise AccessError(description="Invalid token")
     
     auth_user_id = int(decode_token(token))
 

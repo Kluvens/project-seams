@@ -211,6 +211,45 @@ def test_send_over_1000(dummy_data):
         print_over_1000(),
     )
     assert send.status_code == InputError.code
+
+def test_active_invalid_token(dummy_data):
+    reset_call()
+
+    user = dummy_data.register_users(num_of_users=1)
+    users_return_dict = user[0]
+    
+    ch1 = create_request(users_return_dict['token'])
+    
+    start_request(
+        users_return_dict['token'], 
+        ch1.json()['channel_id'], 
+        5,
+    ) 
+    active = active_request(
+        ';sadfg', 
+        ch1.json()['channel_id'],
+    )
+    assert active.status_code == AccessError.code
+
+def test_send_invalid_token(dummy_data):
+    reset_call()
+
+    user = dummy_data.register_users(num_of_users=1)
+    users_return_dict = user[0]
+    
+    ch1 = create_request(users_return_dict['token'])
+    
+    start_request(
+        users_return_dict['token'], 
+        ch1.json()['channel_id'], 
+        5,
+    ) 
+    send = send_request(
+        'asdfkjhbasduifh', 
+        ch1.json()['channel_id'], 
+        'hello',
+    )
+    assert send.status_code == AccessError.code
 #=========================== Testing ===============================
 
 def test_active_standup(dummy_data):

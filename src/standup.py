@@ -7,7 +7,31 @@ import time
 from datetime import datetime, timedelta
 
 def standup_start_v1(token, channel_id, length):
+    '''
+    For a given channel, start the standup period whereby for the next 
+    "length" seconds if someone calls "standup/send" with a message, 
+    it is buffered during the X second window then at the end of the 
+    X second window a message will be added to the message queue in the 
+    channel from the user who started the standup.
 
+    Arguments:
+        <token> (str) 
+        <channel_id> (int)
+        <length> (int)
+
+    Exceptions:
+        AccessError -   Occurs when invalid token input
+        AccessError -   channel_id is valid and the authorised user 
+                        is not a member of the channel
+        InputError  -   channel_id does not refer to a valid channel
+        InputError  -   length is a negative integer
+        InputError  -   an active standup is currently running in the 
+                        channel
+
+    Return Value:
+        Returns {time_finish} where time_finish is the unix time of
+        when the standup ends
+    '''
     length = int(length)
     channel_id = int(channel_id)
     auth_user_id = int(decode_token(token))
@@ -39,7 +63,26 @@ def standup_start_v1(token, channel_id, length):
     }
 
 def standup_active_v1(token, channel_id):
+    '''
+    For a given channel, return whether a standup is active in it, 
+    and what time the standup finishes. If no standup is active, 
+    then time_finish returns None.
 
+    Arguments:
+        <token> (str) 
+        <channel_id> (int)
+
+    Exceptions:
+        AccessError -   Occurs when invalid token input
+        AccessError -   channel_id is valid and the authorised user 
+                        is not a member of the channel
+        InputError  -   channel_id does not refer to a valid channel
+
+    Return Value:
+        Returns {is_active, time_finish} where time_finish is 
+        the unix time of when the standup ends and is_active
+        is a boolean value of whether the standup is active
+    '''
     channel_id = int(channel_id)
     auth_user_id = int(decode_token(token))
     channel = find_channel(channel_id)
@@ -85,7 +128,26 @@ def standup_active_v1(token, channel_id):
     }
 
 def standup_send_v1(token, channel_id, message):
+    '''
+    Sending a message to get buffered in the standup queue, 
+    assuming a standup is currently active.
 
+    Arguments:
+        <token> (str) 
+        <channel_id> (int)
+        <message> (str)
+
+    Exceptions:
+        AccessError -   Occurs when invalid token input
+        AccessError -   channel_id is valid and the authorised user 
+                        is not a member of the channel
+        InputError  -   channel_id does not refer to a valid channel
+        InputError  -   length of message is over 1000 characters
+        InputError  -   an active standup is not currently running 
+                        in the channel
+    Return Value:
+        Returns {}
+    '''
     auth_user_id = int(decode_token(token))
     channel_id = int(channel_id)
     channel = find_channel(channel_id)

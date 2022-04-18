@@ -24,17 +24,21 @@ def dummy_data():
     return data_instance
 
 #======================= Testing  =================================
-def test_create_token_error(create_route, dummy_data):
+def test_create_token_error(create_route, dummy_data, detail_route):
     reset_call()
 
     users = dummy_data.register_users(num_of_users=2)
     u_ids = [users[1]['auth_user_id']]
 
-    dm_id_obj = requests.post(create_route, json={
+    requests.post(create_route, json={
         'token': 'invalidtoken',
         'u_ids': u_ids,
     })
-    assert dm_id_obj.status_code == AccessError.code
+    detail1 = requests.get(detail_route, params={
+        'token': 'sadgasdf',
+        'dm_id': 0,
+    })
+    assert detail1.status_code == AccessError.code
 
 def test_create_duplicate(create_route, dummy_data):
     reset_call()

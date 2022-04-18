@@ -186,7 +186,7 @@ def auth_logout_v1(token):
     '''
     
     if not check_if_token_exists(token):
-        raise AccessError(description="Invalid Token!")
+        raise AccessError(description="Invalid Token!!")
 
     users_list = data_store.get()["users"]
     u_id = decode_token(token)

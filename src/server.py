@@ -35,6 +35,8 @@ from src.message import message_unpin_v1
 from src.users import user_stats_v1, users_stats_v1
 from src.other import clear_v1
 from src.search import search_v1 
+from src.standup import standup_start_v1, standup_active_v1, standup_send_v1
+import time
 
 ###################### INITIAL SERVER SETUP ######################
 
@@ -59,6 +61,7 @@ CORS(APP)
 APP.config['TRAP_HTTP_EXCEPTIONS'] = True
 APP.register_error_handler(Exception, defaultHandler)
 
+
 #### NO NEED TO MODIFY ABOVE THIS POINT, EXCEPT IMPORTS
 
 ###################### Example ###################################
@@ -70,6 +73,7 @@ APP.register_error_handler(Exception, defaultHandler)
 #     return dumps({
 #         'data': data
 #     })
+
 
 ############################## AUTH ##############################
 @APP.route("/auth/register/v2", methods = ['POST'])
@@ -256,7 +260,7 @@ def channel_messages():
     token = request.args.get('token')
     channel_id = request.args.get('channel_id')
     start = request.args.get('start')
-    # write_savefile()
+
     return dumps(channel_messages_v2(token, channel_id, start))
 
 # message/send/v1
@@ -274,7 +278,7 @@ def message_send():
 def message_remove():
     data = request.get_json()
     message_remove_v1(**data)
-    # write_savefile()
+
     return dumps({})
 
 # dm/messages/v1
@@ -283,7 +287,7 @@ def dm_messages():
     token = request.args.get('token')
     dm_id = request.args.get('dm_id')
     start = request.args.get('start')
-    # write_savefile()
+
     return dumps(dm_messages_v1(token, dm_id, start))
 
 # message/edit/v1
@@ -291,10 +295,36 @@ def dm_messages():
 def message_edit():
     data = request.get_json()
     message_edit_v1(**data)
-    # write_savefile()
     return dumps({})
 
-# load_savefile()
+########################## Standup ###############################
+
+# standup/start/v1
+@APP.route("/standup/start/v1", methods=['POST'])
+def stand_start():
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    length = data['length']
+    return dumps(standup_start_v1(token, channel_id, length))
+
+# standup/active/v1
+@APP.route("/standup/active/v1", methods=['GET'])
+def stand_active():
+    token = request.args.get("token")
+    channel_id = request.args.get("channel_id")
+    return dumps(standup_active_v1(token, channel_id))
+
+# standup/send/v1
+@APP.route("/standup/send/v1", methods=['POST'])
+def stand_send():
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    message = data['message']
+    return dumps(standup_send_v1(token, channel_id, message))
+
+###################################################################
 
 @APP.route("/message/pin/v1", methods=['POST'])
 def message_pin_http():
@@ -320,6 +350,7 @@ def users_stats_http():
     token = request.args.get('token')
     return dumps(users_stats_v1(token))
 
+
 ############## Search and Notificaitons ###############
 @APP.route("/search/v1", methods=['GET'])
 def search_request():
@@ -329,7 +360,6 @@ def search_request():
 
 
 ####################### CLEARING/RESTTING ########################
-
 
 # clear/v1
 @APP.route("/clear/v1", methods=['DELETE'])

@@ -171,7 +171,7 @@ def user_profile_setemail_v1(token: str, email: str) -> Dict:
     '''
 
     if not check_if_token_exists(token):
-        raise AccessError(description="Invalid Token!!")
+        raise AccessError(description="Invalid Token!")
 
     
     u_id = decode_token(token)

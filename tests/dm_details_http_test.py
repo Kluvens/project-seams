@@ -18,23 +18,23 @@ def detail_route():
 def create_route():
     return url + '/dm/create/v1'
 
-@pytest.fixture()
-def dummy_data():
-    data_instance = GenerateTestData(url)
-    return data_instance
-
 #======================= Testing  =================================
-def test_create_token_error(create_route, dummy_data):
+def test_create_token_error(create_route, dummy_data, detail_route):
     reset_call()
 
     users = dummy_data.register_users(num_of_users=2)
+    owner = users[0]['token']
     u_ids = [users[1]['auth_user_id']]
 
-    dm_id_obj = requests.post(create_route, json={
-        'token': 'invalidtoken',
+    requests.post(create_route, json={
+        'token': owner,
         'u_ids': u_ids,
     })
-    assert dm_id_obj.status_code == AccessError.code
+    detail1 = requests.get(detail_route, params={
+        'token': 'sadgasdf',
+        'dm_id': 0,
+    })
+    assert detail1.status_code == AccessError.code
 
 def test_create_duplicate(create_route, dummy_data):
     reset_call()
@@ -200,15 +200,15 @@ def test_invalid_dm_id_InputError(create_route, detail_route, dummy_data):
     requests.post(
         create_route, 
         json={
-        'token': user0['token'],
-        'u_ids': [user1["auth_user_id"]],
+            'token': user0['token'],
+            'u_ids': [user1["auth_user_id"]],
         }
     )
 
     # Input invalid dm_id
     detail = requests.get(detail_route, params={
-    'token': user1['token'],
-    'dm_id': 9921,
+        'token': user1['token'],
+        'dm_id': 9921,
     })
     assert detail.status_code == InputError.code
 
@@ -232,8 +232,8 @@ def test_unauthorised_user_AccessError(create_route, detail_route, dummy_data):
     dm_dict = response.json()
     # Input invalid user / user is not in dm
     detail = requests.get(detail_route, params={
-    'token': user2['token'],
-    'dm_id': dm_dict["dm_id"]
+        'token': user2['token'],
+        'dm_id': dm_dict["dm_id"]
     })
 
     assert detail.status_code == AccessError.code

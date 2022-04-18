@@ -145,7 +145,3 @@ def channels_create_v2(token: str, name: str, is_public: bool) -> Dict[str, int]
     return {
         'channel_id': channel_id,
     }
-
-
-if __name__ == "__main__":
-    pass

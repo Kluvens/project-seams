@@ -165,7 +165,7 @@ def auth_register_v2(email: str, password: str, name_first: str, name_last: str)
     curr_user['sessions'] = [str(token)]
     curr_user['handle_str'] = handle
     curr_user['exist_status'] = True
-    curr_user['img_url'] = ''
+    curr_user['profile_img_url'] = ''
     
     # Dealing with first layer of permissions
     OWNER = 1

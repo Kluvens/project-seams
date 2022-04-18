@@ -99,7 +99,8 @@ def user_profile_v1(token: str, u_id: int) -> Dict[str, Dict]:
                 "email" : user["email"],
                 "name_first": user["name_first"],
                 "name_last" : user["name_last"],
-                "handle_str" : user["handle_str"]
+                "handle_str" : user["handle_str"],
+                "profile_img_url": user["profile_img_url"],
             }
 
     return {"user" : user_profile}

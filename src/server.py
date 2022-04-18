@@ -34,6 +34,7 @@ from src.message import message_pin_v1
 from src.message import message_unpin_v1
 from src.users import user_stats_v1, users_stats_v1
 from src.other import clear_v1
+from src.search import search_v1 
 
 ###################### INITIAL SERVER SETUP ######################
 
@@ -227,7 +228,7 @@ def profile():
     u_id = request.args.get("u_id")
     u_id = int(u_id)
 
-    return dumps(user_profile_v1(token, int(u_id)))
+    return dumps(user_profile_v1(token, u_id))
 
 # user/profile/setname/v1
 @APP.route('/user/profile/setname/v1', methods=['PUT'])
@@ -318,6 +319,14 @@ def user_stats_http():
 def users_stats_http():
     token = request.args.get('token')
     return dumps(users_stats_v1(token))
+
+############## Search and Notificaitons ###############
+@APP.route("/search/v1", methods=['GET'])
+def search_request():
+    token = request.args.get('token')
+    query_str = request.args.get('query_str')
+    return dumps(search_v1(token, query_str))
+
 
 ####################### CLEARING/RESTTING ########################
 

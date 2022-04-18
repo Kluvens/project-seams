@@ -45,7 +45,7 @@ def standup_start_v1(token, channel_id, length):
         raise InputError("an active standup is currently running in the channel")
     all_members_uids = [user['u_id'] for user in channel['all_members']]
     if not auth_user_id in all_members_uids:
-        raise AccessError ("channel_id is valid and the authorised user is not a member of the channel") 
+        raise AccessError("channel_id is valid and the authorised user is not a member of the channel") 
 
     time_finish = datetime.now() + timedelta(seconds=length)
     unix_time_finish = int(time_finish.timestamp())
@@ -91,10 +91,10 @@ def standup_active_v1(token, channel_id):
         raise InputError("channel_id does not refer to a valid channel")
     all_members_uids = [user['u_id'] for user in channel['all_members']]
     if not auth_user_id in all_members_uids:
-        raise AccessError ("channel_id is valid and the authorised user is not a member of the channel") 
+        raise AccessError("channel_id is valid and the authorised user is not a member of the channel") 
 
     if 'standup' in channel:
-        # if current time is less then finish time
+        # if current time > finish time
         if int(time.time()) > int(channel['standup']['time_finish']):
             # when standup_active is called the first time after standup finishes
             if channel['standup']['is_active'] == True:
@@ -116,7 +116,7 @@ def standup_active_v1(token, channel_id):
                 'is_active': False,
                 'time_finish': None,
             }
-        # if current time > finish time
+        # if current time < finish time
         return {
             'is_active': True,
             'time_finish': int(channel['standup']['time_finish']),
@@ -160,7 +160,7 @@ def standup_send_v1(token, channel_id, message):
         raise InputError("an active standup is not currently running in the channel")
     all_members_uids = [user['u_id'] for user in channel['all_members']]
     if not auth_user_id in all_members_uids:
-        raise AccessError ("channel_id is valid and the authorised user is not a member of the channel") 
+        raise AccessError("channel_id is valid and the authorised user is not a member of the channel") 
 
     standup_message = channel["standup"]['message']
     user = find_user(auth_user_id)

@@ -15,11 +15,6 @@ OKAY = 200
 def reset_call():
     requests.delete(url + 'clear/v1')
 
-@pytest.fixture()
-def dummy_data():
-    data_instance = GenerateTestData(url)
-    return data_instance
-
 def start_request(token, channel_id, length):
     return requests.post(url + '/standup/start/v1', json={
         'token': token,

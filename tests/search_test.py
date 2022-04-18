@@ -42,8 +42,10 @@ def setup(dummy_data):
         "channel_id" : ch0,
         "user0" : user0_token,
         "user1" : user1_token,
+        "user2" : users_list[2]["token"],
         "uid0" : users_list[0]["auth_user_id"],
-        "uid1" : users_list[1]["auth_user_id"]
+        "uid1" : users_list[1]["auth_user_id"],
+        "uid2" : users_list[2]["auth_user_id"]
     }
 
 @pytest.fixture
@@ -79,10 +81,10 @@ def is_this_user_reacted(message_id, messages_list):
                 return True
     return False
 
-# def get_react_dict(message_id, messages_list):
-#     for message in messages_list:
-#         if message["message_id"] == message_id:
-#             return message["reacts"]
+def get_react_dict(message_id, messages_list):
+    for message in messages_list:
+        if message["message_id"] == message_id:
+            return message["reacts"][0]
 #===================== Testing Exceptions ========================
 
 @pytest.mark.parametrize("query", [
@@ -196,44 +198,58 @@ def test_dms_no_reacts(
 
 
 
+@pytest.mark.parametrize("msg", ["hHH", "!", "u"])
+def test_dms_and_msgs(
+    route, dummy_messages, setup, msg, dummy_data):
+    ch0 = setup["channel_id"]
+    user0_token = setup["user0"]
+    user1_token = setup["user1"]
+    user2_token = setup["user2"]
 
+    dm_id = dummy_data.create_dm(user0_token, [setup["uid1"], setup["uid2"]])["dm_id"]
 
-# @pytest.mark.parametrize("msg", ["hHH", "!", "u"])
-# def test_dms_and_msgs(
-#     route, dummy_messages, setup, msg, dummy_data):
-#     ch0 = setup["channel_id"]
-#     user0_token = setup["user0"]
-#     user1_token = setup["user1"]
-
-#     dm_id = dummy_data.create_dm(user0_token, [setup["uid1"]])["dm_id"]
-
-#     msg1_dict = dummy_data.send_dm(user0_token, dm_id, dummy_messages[0])
-
-#     msg2_dict = dummy_data.send_message(user1_token, ch0, dummy_messages[1])
-#     dummy_data.pin_msg(user0_token, msg2_dict["message_id"])
-
-#     msg3_dict = dummy_data.send_dm(user0_token, dm_id, dummy_messages[2])
-#     dummy_data.react_to_message(user0_token, msg3["message_id"], 1)
-#     response = search_request(route, user0_token, msg)
-#     messages_list = response.json()["messages"]
-
-#     assert isinstance(messages_list, list)
-
-#     return_msg_ids = get_message_ids(messages_list)
-#     return_msg_ids.sort()
-#     expected = [msg1_dict["message_id"], msg2_dict["message_id"], msg3_dict["message_id"]]
-#     expected.sort()
+    msg1_dict = dummy_data.send_dm(user0_token, dm_id, dummy_messages[0])
     
-#     assert return_msg_ids == expected
+    msg2_dict = dummy_data.send_message(user1_token, ch0, dummy_messages[1])
+    dummy_data.pin_msg(user0_token, msg2_dict["message_id"])
+
+    msg3_dict = dummy_data.send_dm(user1_token, dm_id, dummy_messages[2])
+
+    dummy_data.react_to_message(user0_token, msg3_dict["message_id"], 1)
+    dummy_data.react_to_message(user1_token, msg3_dict["message_id"], 1)
     
-#     return_messages = get_messages(messages_list)
-#     for message in return_messages:
-#         assert message in dummy_messages
+    # Multiple search requests
+    search_request(route, user2_token, msg)
+    response = search_request(route, user0_token, msg)
+    messages_list = response.json()["messages"]
+    print(messages_list)
+    assert isinstance(messages_list, list)
 
-#     react_dict = get_react_dict(msg3_dict["message_id"], messages_list)
-#     assert react_dict["react_id"] == 1
-#     assert setup["uid0"] in react_dict["u_ids"]
-#     assert setup["uid1"] in react_dict["u_ids"]
-#     assert setup["is_this_user_reacted"]
+    return_msg_ids = get_message_ids(messages_list)
+    return_msg_ids.sort()
+    expected = [msg1_dict["message_id"], msg2_dict["message_id"], msg3_dict["message_id"]]
+    expected.sort()
+    
+    assert return_msg_ids == expected
+    
+    return_messages = get_messages(messages_list)
+  
+    for message in return_messages:
+        assert message in dummy_messages
 
-#     assert(is_this_message_pinned(msg2_dict["message_id"], messages_list))
+    react_dict = get_react_dict(msg3_dict["message_id"], messages_list)
+    print(react_dict)
+    assert react_dict["react_id"] == 1
+    assert setup["uid0"] in react_dict["u_ids"]
+    assert setup["uid1"] in react_dict["u_ids"]
+    assert react_dict["is_this_user_reacted"]
+
+    assert(is_this_message_pinned(msg2_dict["message_id"], messages_list))
+
+
+def test_dms_and_msgs_empty(route, setup):
+    user0_token = setup["user0"]
+
+    response = search_request(route, user0_token, "Hello")
+    assert response.json() == {"messages" : []}
+

@@ -38,7 +38,6 @@ def find_target_message(messages_list: list, query_str, u_id) -> dict:
     for idx, message_dict in enumerate(messages_list):
         if query_str.lower() in message_dict["message"].lower():
             target_messages_indicies.append(idx)
-
     if target_messages_indicies:
         return {"found" : True, "messages_indicies" : target_messages_indicies}
 
@@ -60,7 +59,6 @@ def filter_messages(target_messages, u_id):
         if "is_pinned" in message_dict:
             filtered_list[-1].update(
                 {"is_pinned" : message_dict["is_pinned"]})
-    
         # else:
         #     filtered_list[-1]["is_pinned"] = False
 
@@ -99,6 +97,7 @@ def is_user_reacted(u_ids, u_id):
     if u_id in u_ids:
         return True
     return False
+
 
 
 ###################### Function Implementations ###################
@@ -145,10 +144,9 @@ def search_v1(token: str, query_str: str) -> dict:
             target = find_target_message(
                 channel["messages"], query_str, u_id)
             if target["found"]:
-                target_messages = get_target_messages(
+                target_messages += get_target_messages(
                     channel["messages"], target["messages_indicies"])
 
-    
     if not target_messages:
         return_msg_list = target_messages
     else:
@@ -162,9 +160,10 @@ def search_v1(token: str, query_str: str) -> dict:
             target = find_target_message(
                 dm["messages"], query_str, u_id)
             if target["found"]:
-                target_dms = get_target_messages(
+                target_dms += get_target_messages(
                     dm["messages"], target["messages_indicies"])
-    
+
+
     if not target_dms:
         return_dm_list = target_dms
     else:
@@ -172,5 +171,5 @@ def search_v1(token: str, query_str: str) -> dict:
 
     return {"messages" : (return_msg_list + return_dm_list)}
 
-    
+
 ################## END OF FUNCTION IMPLEMENTATION ################

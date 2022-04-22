@@ -263,4 +263,4 @@ def notifications_get_v1(token):
     else:
         notifications = all_user_notifications.reverse()[0:19]
 
-    return {notifications}
+    return {'notiifcations' : notifications}

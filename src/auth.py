@@ -174,8 +174,7 @@ def auth_register_v2(email, password, name_first, name_last):
 
 
     data_store.set(data)
-    # DEBUG
-    print(f"==============\n{data}\n==========")
+
     return { "token" : token, "auth_user_id" : u_id }
 
 def auth_logout_v1(token):

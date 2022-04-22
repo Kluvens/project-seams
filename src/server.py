@@ -39,7 +39,8 @@ from src.search import search_v1
 from src.standup import standup_start_v1, standup_active_v1, standup_send_v1
 from src.helpers import write_savefile
 from src.message import message_share_v1
-import time
+from src.search import notifications_v1
+
 
 ###################### INITIAL SERVER SETUP ######################
 
@@ -403,6 +404,12 @@ def search_request():
     query_str = request.args.get('query_str')
     return dumps(search_v1(token, query_str))
 
+@APP.route("/notifications/get/v1", methods=['GET'])
+def notification_request():
+    token = request.args.get('token')
+    print(f"\n<<<<<<<< {token} >>>>>>>>>\n")
+    return dumps(notifications_v1(token))
+    # return dumps({"notifications" : []})
 
 ####################### CLEARING/RESTTING ########################
 

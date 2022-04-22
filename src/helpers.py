@@ -323,3 +323,96 @@ def find_channeldm_from_message(message_id):
         'is_dm': is_dm,
         'id': target_id,
     }
+
+
+# ============================ NOTIFICATIONS HELP ===============================================
+
+
+def find_handle_in_message(message):
+    words = message.split() 
+    at_words = [word.split('@').strip() for word in words if '@' in word]
+    users = data_store.get()['users']
+    existing_handles = [user['handle_str'] for user in users]
+    handles = []
+    for at_word in at_words:
+        contains_handle = any(existing_handle in at_word for existing_handle in existing_handles)
+        if contains_handle:
+            handle = re.split('\W+',at_word)[0]
+            handles.append(handle)
+    return handles
+
+## collect all the tags whic have the form of @ and ends with non-alphanumeric
+#  character
+## get rid of any duplicates
+## Check if handle exists
+## if it does, user index of the person being tagged
+## and create notification for the person tagged.
+## repeat this process for all the tags in the message
+## This 
+
+
+def find_message_sender(message_id,channel_id,dm_id):
+    
+    # Channels 
+    if dm_id == -1:
+        channels = data_store.get()['channels']
+        # risk of slicing none
+        channel = [channel for channel in channels if channel['channel_id'] == channel_id]
+        if channel:
+            channel = channel[0]
+            message_list = channel['messages']
+            sender_id = [message['message_id'] for message in message_list if message['message_id'] == message_id][0]
+
+    # DMS
+    if channel_id == -1:
+        dms = data_store.get()['dms']
+        dm = [dm for dm in dms if dm['dm_id'] == dm_id]
+        if dm:
+            dm = dm[0]
+            message_list = dm['messages']
+            sender_id = ([message['u_id'] for message in message_list
+                if message['message_id'] == message_id][0])
+
+    return sender_id 
+
+# get handle string
+def get_handle(u_id):
+    users = data_store.get()["users"]
+    handle = ""
+    for user in users:
+        if user["u_id"] == u_id:
+            handle = user["handle_str"]
+    return handle
+
+
+# create_notification(u_id, u_id2, channel_name, channel_id, -1)
+# generate notifcation dict
+def create_notification(u_id, inviter_u_id, channel_dm_name, channel_id, dm_id):
+    users = data_store.get()["users"]
+    user_idx = get_user_idx(users, u_id)
+    notification_message = f"{get_handle(inviter_u_id)} added you to {channel_dm_name}"
+
+    users[user_idx]["notifications"].append(
+        {
+        "channel_id" : channel_id,
+        "dm_id" : dm_id,
+        "notification_message" : notification_message
+        }
+    )
+
+
+# Assuming a message already exists when this is called
+def react_notification(u_id, usr_reacted_uid, channel_dm_name, channel_id, dm_id):
+    users = data_store.get()["users"]
+    user_idx = get_user_idx(users, u_id)
+    usr_handle = get_handle(usr_reacted_uid)
+    notification_message = f"{usr_handle} reacted to your message in {channel_dm_name}"
+
+    users[user_idx]["notifications"].append(
+        {
+        "channel_id" : channel_id,
+        "dm_id" : dm_id,
+        "notification_message" : notification_message
+        }
+    )
+

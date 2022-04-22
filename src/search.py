@@ -13,16 +13,16 @@ from src.error import InputError
 from src.data_store import data_store
 from src.helpers import check_if_token_exists
 from src.helpers import decode_token
+from src.helpers import get_user_idx
 
-
-################## paths for white box tests #################
+################## paths for white box tests #####################
 from src.auth import auth_register_v2
 from src.channels import channels_create_v2
 from src.message import message_send_v1
 from src.channel import channel_invite_v2
 
 
-###################### Helper functions ##########################
+############### Helper functions (only used in search) ###########
 
 def get_all_members_u_ids(all_members: list) -> list:
     memeber_u_ids = [member["u_id"] for member in all_members]
@@ -59,8 +59,6 @@ def filter_messages(target_messages, u_id):
         if "is_pinned" in message_dict:
             filtered_list[-1].update(
                 {"is_pinned" : message_dict["is_pinned"]})
-        # else:
-        #     filtered_list[-1]["is_pinned"] = False
 
         # Check if reacts key exits
         # change this to a list comprehension
@@ -75,6 +73,7 @@ def filter_messages(target_messages, u_id):
             filtered_list[-1]["reacts"] = []
 
     return filtered_list
+
 
 def get_target_messages(messages_list, target_messages_indicies):
     target_messages = []
@@ -173,3 +172,30 @@ def search_v1(token: str, query_str: str) -> dict:
 
 
 ################## END OF FUNCTION IMPLEMENTATION ################
+
+def notifications_v1(token):
+    '''
+    <<< INSERT DOC_STRINGS >>>
+    '''
+
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid Token")
+
+    u_id = decode_token(token)
+    users = data_store.get()['users']
+    user_idx = get_user_idx(users, u_id)
+
+    notifications = users[user_idx]["notifications"]
+
+    # returning if none is empty (to avoid slicing NoneType)
+    if not notifications:
+        return {"notifications" : notifications}
+
+    ###### DEBUG --> Remove if you're done testing ####    
+    print(data_store.get()["users"])
+    print(f"\n<<<<<<<<<<<<<{notifications} >>>>>>>>>.>>>\n")
+    
+    # in-place reverse
+    # getting 20 or less most recent messages
+    notifications = list(reversed(notifications))
+    return {"notifications" : notifications[:20]}

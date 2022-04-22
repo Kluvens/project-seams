@@ -7,6 +7,8 @@ from src.error import AccessError, InputError
 from src.helper import is_in_channel_owner, is_in_dm_owner
 from src.helper import find_channel_index, find_dm_index
 from src.helper import is_in_channel
+from src.helpers import react_notification
+from src.helpers import find_message_sender
 
 def message_senddm_v1(token, dm_id, message):
     '''
@@ -703,8 +705,14 @@ def message_react_v1(token, message_id, react_id):
 
     if result["dm"]:
         messages = dms[idx]["messages"]
+        dm_id = dms[idx]["dm_id"]
+        name = dms[idx]["name"]
+        channel_id = -1
     else:
         messages = channels[idx]["messages"]
+        channel_id = channels[idx]["channel_id"]
+        name = channels[idx]["name"]
+        dm_id = -1
 
     target_message = messages[result["msg_idx"]]
     if "reacts" in target_message and target_message["reacts"]:
@@ -721,6 +729,15 @@ def message_react_v1(token, message_id, react_id):
                 'u_ids' : [u_id]
             }
         ]
+    
+    sender_u_id = find_message_sender(message_id, channel_id, dm_id)
+    # making sure a notificaiton is not created if sender == user_reacted
+    # To jasmine --> if this the spec says otherwise, feel free to get rid of the if
+    # statement
+    if sender_u_id != u_id:
+        react_notification(
+            sender_u_id, u_id, name, channel_id, dm_id)
+    
     return {}
 
 def message_unreact_v1(token, message_id, react_id):

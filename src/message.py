@@ -9,6 +9,9 @@ from src.helper import find_channel_index, find_dm_index
 from src.helper import is_in_channel
 from src.helpers import react_notification
 from src.helpers import find_message_sender
+from src.helpers import extract_handles
+from src.helpers import find_u_ids_of_handles
+from src.helpers import create_tagging_notification
 
 def message_senddm_v1(token, dm_id, message):
     '''
@@ -50,7 +53,7 @@ def message_senddm_v1(token, dm_id, message):
     if not dm_exist:
         raise InputError(description="Error occurred, channel_id is not in database")
     
-    # Check user is a member in channel_id
+
     auth_user_id = int(decode_token(token))
 
     authorised_user = False
@@ -79,6 +82,15 @@ def message_senddm_v1(token, dm_id, message):
                 dm["messages"].append(messages_dict)
             else:
                 dm["messages"] = [messages_dict]
+    
+    ## Creating a tagging notificaiton
+    handles = extract_handles(message)
+    print(f"\n HANDLES {handles}>><<>><< \n")
+    if handles:
+        u_ids =find_u_ids_of_handles(handles)
+        create_tagging_notification(
+            auth_user_id, u_ids, message, -1, dm_id)
+
     return {
         'message_id': data['unique_message_id'],
     }
@@ -156,9 +168,18 @@ def message_send_v1(token, channel_id, message):
                 channel["messages"].append(messages_dict)
             else:
                 channel["messages"] = [messages_dict]
+    
+    ## Creating a tagging notificaiton
+    handles = extract_handles(message)
+    if handles:
+        u_ids =find_u_ids_of_handles(handles)
+        create_tagging_notification(
+            auth_user_id, u_ids, message, channel_id, -1)
+
     return {
         'message_id': data['unique_message_id'],
     }
+       
 
 def message_remove_v1(token, message_id):
     '''
@@ -693,6 +714,8 @@ def message_react_v1(token, message_id, react_id):
         raise AccessError(description="Error occured, Invalid Token!")
     u_id = decode_token(token)
 
+    reacted_user = u_id
+    
     if react_id != 1:
         raise InputError(description="Error occured, Invalid react_id")
 
@@ -726,17 +749,19 @@ def message_react_v1(token, message_id, react_id):
         target_message['reacts'] = [
             {
                 'react_id' : react_id,
-                'u_ids' : [u_id]
+                'u_ids' : [reacted_user]
             }
         ]
     
+    ### here is the problem dudeeeee
     sender_u_id = find_message_sender(message_id, channel_id, dm_id)
+    print(f"\n>>>>>> Here it is  sender{sender_u_id}\n")
     # making sure a notificaiton is not created if sender == user_reacted
     # To jasmine --> if this the spec says otherwise, feel free to get rid of the if
     # statement
-    if sender_u_id != u_id:
+    if sender_u_id != reacted_user:
         react_notification(
-            sender_u_id, u_id, name, channel_id, dm_id)
+            sender_u_id, reacted_user, name, channel_id, dm_id)
     
     return {}
 

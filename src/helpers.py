@@ -325,34 +325,68 @@ def find_channeldm_from_message(message_id):
     }
 
 
-# ============================ NOTIFICATIONS HELP ===============================================
+# =================== NOTIFICATIONS HELPERS ======================
 
-
-def find_handle_in_message(message):
-    words = message.split() 
-    at_words = [word.split('@').strip() for word in words if '@' in word]
-    users = data_store.get()['users']
-    existing_handles = [user['handle_str'] for user in users]
+## collect all the tags whic have the form of @ and ends
+#  with non-alphanumeric character
+## get rid of any duplicates
+def extract_handles(msg):
     handles = []
-    for at_word in at_words:
-        contains_handle = any(existing_handle in at_word for existing_handle in existing_handles)
-        if contains_handle:
-            handle = re.split('\W+',at_word)[0]
+    for idx, ch in enumerate(msg):
+        handle = ""
+        if ch == "@":
+            for ch in msg[idx + 1: ]:
+                # not checking for uppercase, left for handle checker
+                if ch.isalnum():
+                    handle += ch
+                else:
+                    break
             handles.append(handle)
+    ## Remove dupicates -> convert to dict and then list of keys
+    handles = list(dict.fromkeys(handles))
     return handles
 
-## collect all the tags whic have the form of @ and ends with non-alphanumeric
-#  character
-## get rid of any duplicates
+
 ## Check if handle exists
 ## if it does, user index of the person being tagged
-## and create notification for the person tagged.
-## repeat this process for all the tags in the message
-## This 
+def find_u_ids_of_handles(handles):
+    users = data_store.get()["users"]
+    return [user["u_id"] for user in users if user["handle_str"] in handles]
 
 
-def find_message_sender(message_id,channel_id,dm_id):
-    
+## Create notification for the all the users tagged in msg
+def create_tagging_notification(sender_u_id, uids, msg_str, channel_id, dm_id):
+    if uids:
+        users = data_store.get()["users"]
+        # Find handle of message sender
+        user_idx = get_user_idx(users, sender_u_id)
+        handle = users[user_idx]["handle_str"]
+        
+        # extracting the first 20 ch of the msg_str
+        msg_substr = msg_str[:20]
+        
+        # Determing the destination of this notification
+        if channel_id == -1:
+            destination = dm_id
+        else:
+            destination = channel_id
+
+        # Creating notifications for each user in uids list
+        for u_id in uids:
+            user_idx = get_user_idx(users, u_id)
+            
+            tag_msg_str = f"{handle} tagged in you {destination}: {msg_substr}"
+            users[user_idx]["notifications"].append(
+                {
+                    "channel_id" : channel_id,
+                    "dm_id" : dm_id,
+                    "notification_message" : tag_msg_str
+                }
+            )
+    return tag_msg_str
+
+
+def find_message_sender(message_id,channel_id,dm_id):    
     # Channels 
     if dm_id == -1:
         channels = data_store.get()['channels']
@@ -374,6 +408,7 @@ def find_message_sender(message_id,channel_id,dm_id):
                 if message['message_id'] == message_id][0])
 
     return sender_id 
+
 
 # get handle string
 def get_handle(u_id):
@@ -404,7 +439,9 @@ def create_notification(u_id, inviter_u_id, channel_dm_name, channel_id, dm_id):
 # Assuming a message already exists when this is called
 def react_notification(u_id, usr_reacted_uid, channel_dm_name, channel_id, dm_id):
     users = data_store.get()["users"]
+    print(f"\n>>>>>> Here it is {u_id}\n")
     user_idx = get_user_idx(users, u_id)
+    print(f"\n\n>>>>>>>>> {user_idx} \n\n")
     usr_handle = get_handle(usr_reacted_uid)
     notification_message = f"{usr_handle} reacted to your message in {channel_dm_name}"
 

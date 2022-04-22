@@ -193,7 +193,7 @@ def notifications_v1(token):
 
     ###### DEBUG --> Remove if you're done testing ####    
     print(data_store.get()["users"])
-    print(f"\n<<<<<<<<<<<<<{notifications} >>>>>>>>>.>>>\n")
+    print(f"\n<<<<<<<<<<<<<{users} >>>>>>>>>.>>>\n")
     
     # in-place reverse
     # getting 20 or less most recent messages

@@ -1,4 +1,5 @@
 import pickle
+from time import time
 # This module will imported by other functions 
 # and an instnace of the class defined below
 # will be used to store data 
@@ -12,6 +13,7 @@ initial_object = {
     'channels' : [],
     'dms': [],
     'unique_message_id': 0,
+    'time_setup': int(time()),
 }
 
 ## YOU ARE ALLOWED TO CHANGE THE BELOW IF YOU WISH

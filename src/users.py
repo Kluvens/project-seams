@@ -283,8 +283,8 @@ def user_stats_v1(token):
     # print(num_messages_exist)
     # print('messages exist')
 
-    if (len(num_channels_exist) + len(num_dms_exist) + len(num_messages_exist)) > 0:
-        involvement_rate = (len(num_channels_joined) + len(num_dms_joined) + len(num_messages_sent)) / (len(num_channels_exist) + len(num_dms_exist) + len(num_messages_exist))
+    if (len(num_channels_exist) + len(num_dms_exist) + len(num_messages_exist) - 3) > 0:
+        involvement_rate = (len(num_channels_joined) + len(num_dms_joined) + len(num_messages_sent) -3) / (len(num_channels_exist) + len(num_dms_exist) + len(num_messages_exist) -3)
     else:
         involvement_rate = 0
 

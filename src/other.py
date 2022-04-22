@@ -1,4 +1,5 @@
 from src.data_store import data_store
+from time import time
 
 def clear_v1():
     '''
@@ -14,4 +15,5 @@ def clear_v1():
     store['channels'] = []
     store['dms'] = []
     store['unique_message_id'] = 0
+    store['time_setup'] = int(time())
     data_store.set(store)

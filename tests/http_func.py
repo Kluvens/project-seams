@@ -1,6 +1,5 @@
 # # Helper functions for HTTP Testing
 
-# from lib2to3.pgen2 import token
 # import requests
 # import pytest
 # from src.config import url
@@ -97,24 +96,6 @@
 #         'message': message,
 #         'channel_id': channel_id,
 #         'dm_id': dm_id
-#     })
-
-# # =============== USER ======================================
-# upload_photo = url + 'user/profile/uploadphoto/v1'
-# def uploadphoto(token, img_url,x_start,y_start,x_end,y_end):
-#     return requests.post(upload_photo, json = {
-#         'token': token,
-#         'img_url':img_url,
-#         'x_start': x_start,
-#         'y_start':y_start,
-#         'x_end': x_end,
-#         'y_end': y_end,
-#     })
-
-# notifications_get = url + 'notifications/get/v1'
-# def notifications_http(token):
-#     return requests.get(notifications_get, json = {
-#         'token': token,
 #     })
 # # =============== FIXTURES ==================================
 

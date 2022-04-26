@@ -7,6 +7,10 @@ from src.error import AccessError, InputError
 from src.helper import is_in_channel_owner, is_in_dm_owner
 from src.helper import find_channel_index, find_dm_index
 from src.helper import is_in_channel
+from src.helpers import find_handle_in_message
+from src.helpers import find_channeldm_from_message  
+from src.helpers import find_message_sender 
+from src.helpers import find_message_from_message_id
 
 def message_senddm_v1(token, dm_id, message):
     '''
@@ -773,3 +777,71 @@ def message_unreact_v1(token, message_id, react_id):
 
     print(data_store.get())
     return {}
+
+# =============================================== MESSAGE SHARE ===========================================================
+def message_share_v1(token,og_message_id,message,channel_id,dm_id):
+
+    # Check if token is invalid
+    if not check_if_token_exists(token):
+        raise AccessError(description="ERROR: Token is invalid")
+
+    # Decode token to u_id
+    u_id = decode_token(token)['u_id']
+
+    # Check message is from channel or dm that authorized user belongs to
+    og_is_channel = find_channeldm_from_message(og_message_id)['is_channel']
+    og_is_dm = find_channeldm_from_message(og_message_id)['is_dm']
+
+    # If in channel, find the relevant channel id and check if token user is part of channel
+    channels = data_store.get()['channels']
+    if og_is_channel:
+        og_channel_id = find_channeldm_from_message(og_message_id)['id']
+        og_channel_members = [channel['all_members'] for channel in channels if channel['channel_id'] == og_channel_id][0]
+        og_channel_member_ids = [member['u_id'] for member in og_channel_members]
+        if not u_id in og_channel_member_ids:
+            raise InputError(description = 'ERROR: User does not have access to the message they are sharing')
+
+    # If in dm, find the relevant dm_id 
+    dms = data_store.get()['dms']
+    if og_is_dm:
+        og_dm_id = find_channeldm_from_message(og_message_id)['id']
+        og_dm_members = [dm['all_members'] for dm in dms if dm['dm_id'] == og_dm_id][0]
+        og_dm_member_ids = [member['u_id'] for member in og_dm_members]
+        if not u_id in og_dm_member_ids:
+            raise InputError(description = 'ERROR: User does not have access to the message they are sharing')
+
+    # Check at least one out of dm_id and channel_id are -1
+    if not dm_id == -1 and not channel_id == -1:
+        raise InputError(description= 'ERROR: Neither channel id nor dm id are -1 ')
+
+    # Check message length is less than 1000 characters
+    if len(message) > 1000:
+        raise InputError(description= 'ERROR: Appended message exceeds 1000 characters')
+    
+    # Find message from message id 
+    message_to_share = find_message_from_message_id(og_message_id)
+    # Check message exists 
+    if message_to_share is None:
+        raise InputError(description = 'ERROR: There is no message related to the given message id')
+
+    # Generate new message
+    new_message = "{}\n >>> {}".format(message_to_share,message)
+
+    # Check token user is part of channel or dm they are sharing to
+    if dm_id == -1:
+        channel_members = [channel['all_members'] for channel in channels if channel['channel_id'] == channel_id][0]
+        channel_members_ids = [member['u_ids'] for member in channel_members]
+        if not u_id in channel_members_ids:
+            raise AccessError(description= 'ERROR: Authorized user is not part of the channel they are sharing to')
+        # Send new message
+        shared_message_id = message_send_v1(token,channel_id,new_message)
+
+    if channel_id == -1:
+        dm_members = [dm['all_members'] for dm in dms if dm['dm_id'] == dm_id]
+        dm_members_ids = [member['u_ids'] for member in dm_members]
+        if not u_id in dm_members_ids:
+            raise AccessError(description= 'ERROR: Authorized user is not part of DM they are sharing to')
+        # Send new message
+        shared_message_id = message_senddm_v1(token, dm_id,new_message)
+
+    return {'shared_message_id': shared_message_id}

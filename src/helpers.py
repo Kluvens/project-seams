@@ -14,7 +14,7 @@ import requests
 import hashlib
 from src.data_store import data_store
 from src.error import AccessError
-
+import re
 
 ############ Used By Every Feature except auth_register ##########
 
@@ -264,3 +264,85 @@ def write_savefile():
     """
     with open('src/savefile.p', 'wb') as FILE:
         pickle.dump(data_store, FILE)
+
+# ========================================= FOR MESSAGE SHARE ===========================================
+
+def find_message_from_message_id(message_id):
+    message = None
+
+    # Channel 
+    channels = data_store.get()['channels']
+    for channel in channels:
+        messages = channel['messages']
+        message = [message['message'] for message in messages if message['message_id'] == message_id][0]
+        
+    # DM
+    dms = data_store.get()['dms']
+    for dm in dms:
+        messages = dm['messages']
+        message = [message['message'] for message in messages if message['message_id'] == message_id][0]
+        
+    return {
+        'message': message
+    }
+
+def find_channeldm_from_message(message_id):
+    id = None
+
+    # Channel 
+    channels = data_store.get()['channels']
+    for channel in channels:
+        messages = channel['messages']
+        message_ids = [message['message_id'] for message in messages]
+        if message_ids.count(message_id) > 0:
+            id = channel['channel_id']
+            is_channel = True
+            is_dm = False
+    
+    # DM
+    dms = data_store.get()['dms']
+    for dm in dms:
+        messages = dm['messages']
+        message_ids = [message['message_id'] for message in messages]
+        if message_ids.count(message_id) > 0:
+            id = dm['dm_id']
+            is_channel = False
+            is_dm = True
+        
+    return {
+        'is_channel': is_channel,
+        'is_dm': is_dm,
+        'id': id,
+    }
+
+def find_message_sender(message_id,channel_id,dm_id):
+    
+    # Channels 
+    if dm_id == -1:
+        channels = data_store.get()['channels']
+        channel = [channel for channel in channels if channel['channel_id '] == channel_id][0]
+        message_list = channel['messages']
+        sender_id = [message['u_id'] for message in message_list if message['message_id'] == message_id][0]
+
+    # DMS
+    if channel_id == -1:
+        dms = data_store.get()['dms']
+        dm = [dm for dm in dms if dm['dm_id'] == dm_id][0]
+        message_list = dm['messages']
+        sender_id = [message['u_id'] for message in message_list if message['message_id'] == message_id][0]      
+
+    return sender_id 
+
+def find_handle_in_message(message):
+    words = message.split() 
+    at_words = [word.split('@') for word in words if '@' in word]
+    users = data_store.get()['users']
+    existing_handles = [user['handle_str'] for user in users]
+    handles = []
+    for at_word in at_words:
+        contains_handle = any(existing_handle in at_word for existing_handle in existing_handles)
+        if contains_handle:
+            handle = re.split('\W+',at_word)[0]
+            handles.append(handle)
+    return handles
+

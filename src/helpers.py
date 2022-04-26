@@ -294,3 +294,37 @@ def find_channeldm_from_message(message_id):
         'is_dm': is_dm,
         'id': id,
     }
+
+def find_message_sender(message_id,channel_id,dm_id):
+    
+    # Channels 
+    if dm_id == -1:
+        channels = data_store.get()['channels']
+        channel = [channel for channel in channels if channel['channel_id '] == channel_id][0]
+        message_list = channel['messages']
+        sender_id = [message['u_id'] for message in message_list if message['message_id'] == message_id][0]
+
+    # DMS
+    if channel_id == -1:
+        dms = data_store.get()['dms']
+        dm = [dm for dm in dms if dm['dm_id'] == dm_id][0]
+        message_list = dm['messages']
+        sender_id = [message['u_id'] for message in message_list if message['message_id'] == message_id][0]      
+
+    return sender_id 
+
+import re
+
+def find_handle_in_message(message):
+    words = message.split() 
+    at_words = [word.split('@') for word in words if '@' in word]
+    users = data_store.get()['users']
+    existing_handles = [user['handle_str'] for user in users]
+    handles = []
+    for at_word in at_words:
+        contains_handle = any(existing_handle in at_word for existing_handle in existing_handles)
+        if contains_handle:
+            handle = re.split('\W+',at_word)[0]
+            handles.append(handle)
+    return handles
+

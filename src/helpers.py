@@ -264,3 +264,4 @@ def write_savefile():
     """
     with open('src/savefile.p', 'wb') as FILE:
         pickle.dump(data_store, FILE)
+

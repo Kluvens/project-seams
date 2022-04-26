@@ -490,7 +490,7 @@ def message_unpin_v1(token, message_id):
 
     return {}
 
-################ HELPER --> move to helpers if approved ##########
+################ HELPERS specifc to message send later ###########
 
 def validate_message_dm(message: str) -> bool:
     if not (1 <= len(message) <= 1000):
@@ -670,6 +670,7 @@ def message_sendlaterdm_v1(token, dm_id, message, time_sent):
 
     return {"message_id" : message_id}
     
+
 ############################### REACT ############################
 
 ########################## Helpers ##############################
@@ -692,7 +693,6 @@ def get_dm_channel_idx(channels, dms, message_id):
                     "dm" : True, "channel": False}
 
     return {"idx" : None}
-
 
 
 ############################ Implementation #############################
@@ -761,12 +761,12 @@ def message_react_v1(token, message_id, react_id):
             }
         ]
     
-    ### here is the problem dudeeeee
+    ### here is the problem dudeeeee 
     sender_u_id = find_message_sender(message_id, channel_id, dm_id)
-    print(f"\n>>>>>> Here it is  sender{sender_u_id}\n")
-    # making sure a notificaiton is not created if sender == user_reacted
+    print(f"\n>>>>>> Here it is  sender {sender_u_id}\n")
     # To jasmine --> if this the spec says otherwise, feel free to get rid of the if
     # statement
+    # making sure a notificaiton is not created if sender is user who reacted
     if sender_u_id != reacted_user:
         react_notification(
             sender_u_id, reacted_user, name, channel_id, dm_id)
@@ -779,16 +779,23 @@ def message_unreact_v1(token, message_id, react_id):
 
     Given a message_id, remove a react_id to the particular section of the message.
 
-    Arguments
-    token (string) - This is the token of a user.
-    message_id (integer) - This is the unique ID to identify which message will be reacted upon.
-    react_id (integer) - The react_id will be the reaction that will appear in the frontend.
+    Arguments:
+    -token (string) - This is the token of a user.
+    -message_id (integer) - This is the unique ID to 
+    identify which message will be reacted upon.
+    -react_id (integer) - The react_id will be the reaction 
+    that will appear in the frontend.
 
     Exceptions:
-    InputError - An input error is raised when the message_id does not refer to a valid message within a channel/DM that the authorised user has joined
-    or react_id is not valid, only react_id == 1 only exist for now (thumbs up), or there is already a react_id already present in the message.
+    InputError - An input error is raised when the message_id does not refer
+    to a valid message within a channel/DM that the authorised user has joined
+    or react_id is not valid, only react_id == 1 only exist 
+    for now (thumbs up), or there is already a react_id 
+    already present in the message.
 
-    AccessError - An access error is raised when the authorised user is either not a global owner or an owner member of the channel or the sender of the message_id.
+    AccessError - An access error is raised when the authorised user 
+    is either not a global owner or an owner member of the channel or 
+    the sender of the message_id.
 
     Return Value:
     This function returns an empty dictionary.
@@ -818,14 +825,14 @@ def message_unreact_v1(token, message_id, react_id):
         if u_id in u_ids:
             u_ids.remove(u_id)
         else:
-           raise InputError(description="Error occured, User has not reacted to this message")
+           raise InputError(
+               description="Error occured, User has not reacted to this message")
 
-    print(data_store.get())
     return {}
 
 
-def message_share_v1(token,og_message_id,message,channel_id,dm_id):
-    print(f"hahahahaha {type(og_message_id)} jajjaj\n\n")
+def message_share_v1(token, og_message_id, message, channel_id, dm_id):
+
     # Check if token is invalid
     if not check_if_token_exists(token):
         raise AccessError(description="ERROR: Token is invalid")
@@ -863,7 +870,7 @@ def message_share_v1(token,og_message_id,message,channel_id,dm_id):
     # Check message length is less than 1000 characters
     if len(message) > 1000:
         raise InputError(description= 'ERROR: Appended message exceeds 1000 characters')
-    
+
     # Find message from message id 
     message_to_share = find_message_from_message_id(og_message_id)
     # Check message exists 

@@ -3,17 +3,16 @@ Module Description: This is a helper functions module
 
 '''
 
-
 ########################### Import Paths #########################
-import re
-import jwt
-import uuid
-import pickle
-import json
-import requests
 import hashlib
-from src.data_store import data_store
+import json
+import jwt
+import pickle
+import re
+import requests
+import uuid
 from src.error import AccessError
+from src.data_store import data_store
 
 
 ############ Used By Every Feature except auth_register ##########
@@ -181,6 +180,7 @@ def return_exist_status(users, u_id):
             return user["exist_status"]
     return None
 
+
 ###################### Used By Multiple Feature Functions #########
 
 def check_handlestr_unique(users, handle_str):
@@ -236,8 +236,6 @@ def check_duplicate_u_ids(u_ids):
     return False
 
 
-
-
 def generate_dm_handle(owner_uid, u_ids, users):
     handles = []
     idx = get_user_idx(users, owner_uid) 
@@ -258,12 +256,16 @@ def is_global_owner(u_id):
                 return False
     return False
 
+########################## Data persistence ######################
+
 def write_savefile():
     """
-    Saves data into pickle file, to ensure when server is restarted, data is not erased
+    Saves data into pickle file, to ensure when server is restarted, 
+    data is not erased
     """
     with open('src/savefile.p', 'wb') as FILE:
         pickle.dump(data_store, FILE)
+
 
 ####################### MESSAGE SHARE ############################
 def find_message(messages, message_id):
@@ -325,11 +327,13 @@ def find_channeldm_from_message(message_id):
     }
 
 
-# =================== NOTIFICATIONS HELPERS ======================
+###################### NOTIFICATIONS HELPERS #####################
 
 ## collect all the tags whic have the form of @ and ends
 #  with non-alphanumeric character
 ## get rid of any duplicates
+## Note that there is a neater approach that uses the re mod
+## Didn't have time to implement it.
 def extract_handles(msg):
     handles = []
     for idx, ch in enumerate(msg):
@@ -386,16 +390,19 @@ def create_tagging_notification(sender_u_id, uids, msg_str, channel_id, dm_id):
     return tag_msg_str
 
 
-def find_message_sender(message_id,channel_id,dm_id):    
+def find_message_sender(message_id, channel_id, dm_id):    
     # Channels 
     if dm_id == -1:
         channels = data_store.get()['channels']
         # risk of slicing none
-        channel = [channel for channel in channels if channel['channel_id'] == channel_id]
+        channel = [channel for channel in channels 
+            if channel['channel_id'] == channel_id]
+
         if channel:
             channel = channel[0]
             message_list = channel['messages']
-            sender_id = [message['message_id'] for message in message_list if message['message_id'] == message_id][0]
+            sender_id = [message['u_id'] for message in message_list 
+                if message['message_id'] == message_id][0]
 
     # DMS
     if channel_id == -1:
@@ -410,7 +417,6 @@ def find_message_sender(message_id,channel_id,dm_id):
     return sender_id 
 
 
-# get handle string
 def get_handle(u_id):
     users = data_store.get()["users"]
     handle = ""
@@ -420,8 +426,8 @@ def get_handle(u_id):
     return handle
 
 
-# create_notification(u_id, u_id2, channel_name, channel_id, -1)
-# generate notifcation dict
+
+# Generate notifcation dict when user is added to a channel/dm
 def create_notification(u_id, inviter_u_id, channel_dm_name, channel_id, dm_id):
     users = data_store.get()["users"]
     user_idx = get_user_idx(users, u_id)
@@ -452,4 +458,3 @@ def react_notification(u_id, usr_reacted_uid, channel_dm_name, channel_id, dm_id
         "notification_message" : notification_message
         }
     )
-

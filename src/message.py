@@ -91,6 +91,12 @@ def message_senddm_v1(token, dm_id, message):
         create_tagging_notification(
             auth_user_id, u_ids, message, -1, dm_id)
 
+    for dm in data['dms']:
+        if dm_id == dm['dm_id']:
+            if 'messages' in dm:
+                dm["messages"].append(messages_dict)
+            else:
+                dm["messages"] = [messages_dict]
     return {
         'message_id': data['unique_message_id'],
     }
@@ -161,6 +167,29 @@ def message_send_v1(token, channel_id, message):
         'is_pinned': False,
         'reacts' : []
         }
+
+    # ============================================ NOTIFICATIONS INSERTION ===============================================================
+    # Get information needed, put into notification dictionary
+    channels = data_store.get()['channels']
+    sender_handle = [user['handle_str'] for user in users if user['token'] == token][0]
+    channel_name = [channel['channel_name'] for channel in channels if channel['channel_id'] == channel_id][0]
+    message_preview = message[0:19] 
+    notification_message = '{} tagged you in {}: {}'.format(sender_handle,channel_name,message_preview)
+    notification = {
+        'channel_id': channel_id,
+        'dm_id': '-1',
+        'notification_message': notification_message,
+    }
+
+    # Get handles of tagged users using helper function
+    handles = find_handle_in_message(message)
+
+    # Append notification to list of notifications specific to user
+    users = data_store.get()['users']
+    for handle in handles:
+        user_listof_notifications = [user['notifications'] for user in users if user['handle_str'] == handle][0]
+        user_listof_notifications.append(notification)
+    # ======================================================================================================================================
 
     for channel in data['channels']:
         if channel_id == channel['channel_id']:

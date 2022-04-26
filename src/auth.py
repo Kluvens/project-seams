@@ -63,10 +63,8 @@ def auth_login_v2(email, password):
     token = str(generate_session_token(u_id))
     users_list[u_id]['sessions'].append(token)
 
-    #### debug
-    print(data_store.get()["users"])
-
     return {'token' : token, 'auth_user_id': u_id}
+
 
 def auth_register_v2(email, password, name_first, name_last):
     '''

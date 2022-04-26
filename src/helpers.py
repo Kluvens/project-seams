@@ -330,10 +330,8 @@ def find_channeldm_from_message(message_id):
 ###################### NOTIFICATIONS HELPERS #####################
 
 ## collect all the tags whic have the form of @ and ends
-#  with non-alphanumeric character
-## get rid of any duplicates
+#  with non-alphanumeric character get rid of any duplicates
 ## Note that there is a neater approach that uses the re mod
-## Didn't have time to implement it.
 def extract_handles(msg):
     handles = []
     for idx, ch in enumerate(msg):
@@ -426,7 +424,6 @@ def get_handle(u_id):
     return handle
 
 
-
 # Generate notifcation dict when user is added to a channel/dm
 def create_notification(u_id, inviter_u_id, channel_dm_name, channel_id, dm_id):
     users = data_store.get()["users"]
@@ -447,7 +444,6 @@ def react_notification(u_id, usr_reacted_uid, channel_dm_name, channel_id, dm_id
     users = data_store.get()["users"]
 
     user_idx = get_user_idx(users, u_id)
-    print(f"\n\n>>>>>>>>> {user_idx} \n\n")
     usr_handle = get_handle(usr_reacted_uid)
     notification_message = f"{usr_handle} reacted to your message in {channel_dm_name}"
 

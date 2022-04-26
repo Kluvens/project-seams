@@ -85,7 +85,7 @@ def message_senddm_v1(token, dm_id, message):
     
     ## Creating a tagging notificaiton
     handles = extract_handles(message)
-    print(f"\n HANDLES {handles}>><<>><< \n")
+
     if handles:
         u_ids =find_u_ids_of_handles(handles)
         create_tagging_notification(
@@ -505,9 +505,6 @@ def send_scheduled_message(message_dict, channel_idx):
     for message_dict_idx, message in enumerate(send_later_list):
         if message["u_id"] == message_dict["u_id"]:
             send_later_list.pop(message_dict_idx)
-        ##### debug
-        print("Thread has terminated!")
-        print(data_store.get()["channels"])
 
 
 def send_scheduled_message_dm(message_dict, dm_idx):
@@ -545,8 +542,8 @@ def message_sendlater_v1(token, channel_id, message, time_sent):
     This function returns message_id (integer), which is a completely unique ID.
 
     '''
-    ### Double check order of exceptions
 
+    ### Double check order of exceptions
     if not check_if_token_exists(token):
         raise AccessError(description="Invalid Token!")
      
@@ -761,17 +758,17 @@ def message_react_v1(token, message_id, react_id):
             }
         ]
     
-    ### here is the problem dudeeeee 
+
     sender_u_id = find_message_sender(message_id, channel_id, dm_id)
-    print(f"\n>>>>>> Here it is  sender {sender_u_id}\n")
     # To jasmine --> if this the spec says otherwise, feel free to get rid of the if
     # statement
     # making sure a notificaiton is not created if sender is user who reacted
     if sender_u_id != reacted_user:
         react_notification(
             sender_u_id, reacted_user, name, channel_id, dm_id)
-    
+
     return {}
+
 
 def message_unreact_v1(token, message_id, react_id):
     '''

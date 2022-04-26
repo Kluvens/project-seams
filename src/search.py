@@ -1,8 +1,7 @@
 '''
 This module contains the implementaiton of the
-search route functionality.
+search and notifications routes
 
-Almost complete ===== Require react and pin to test 
 
 Kais Alzubaidi, z524621
 
@@ -190,10 +189,6 @@ def notifications_v1(token):
     # returning if none is empty (to avoid slicing NoneType)
     if not notifications:
         return {"notifications" : notifications}
-
-    ###### DEBUG --> Remove if you're done testing ####    
-    print(data_store.get()["users"])
-    print(f"\n<<<<<<<<<<<<<{users} >>>>>>>>>.>>>\n")
     
     # in-place reverse
     # getting 20 or less most recent messages

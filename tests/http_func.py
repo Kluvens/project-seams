@@ -1,5 +1,9 @@
 # Helper functions for HTTP Testing
 
+<<<<<<< HEAD
+=======
+from lib2to3.pgen2 import token
+>>>>>>> origin/notifications_get_v1
 import requests
 import pytest
 from src.config import url

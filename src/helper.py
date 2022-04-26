@@ -80,8 +80,11 @@ def get_user_idx(users, u_id):
 
 def count_number_channels_joined(auth_user_id):
     data = data_store.get()
-    result = []
-    sum = 0
+    result = [{
+        "num_channels_joined": 0,
+        "time_stamp": data['time_setup'],
+    }]
+    sum = 1
 
     for channel in data['channels']:
         for member in channel['all_members']:
@@ -96,8 +99,11 @@ def count_number_channels_joined(auth_user_id):
 
 def count_number_dms_joined(auth_user_id):
     data = data_store.get()
-    result = []
-    sum = 0
+    result = [{
+        "num_dms_joined": 0,
+        "time_stamp": data['time_setup'],
+    }]
+    sum = 1
 
     for dm in data['dms']:
         for member in dm['all_members']:
@@ -114,7 +120,7 @@ def count_number_messages_sent(auth_user_id):
     data = data_store.get()
     temp_result = []
     result = []
-    sum = 0
+    sum = 1
 
     for channel in data['channels']:
         for message in channel['messages']:
@@ -136,12 +142,20 @@ def count_number_messages_sent(auth_user_id):
             })
             sum += 1
 
+    result.insert(0, {
+        "num_messages_sent": 0,
+        "time_stamp": data['time_setup'],
+    })
+
     return result
 
 def count_number_channels_exist():
     data = data_store.get()
-    result = []
-    sum = 0
+    result = [{
+        "num_channels_exist": 0,
+        "time_stamp": data['time_setup'],
+    }]
+    sum = 1
 
     for channel in data['channels']:
         result.append({
@@ -154,8 +168,11 @@ def count_number_channels_exist():
 
 def count_number_dms_exist():
     data = data_store.get()
-    result = []
-    sum = 0
+    result = [{
+        "num_dms_exist": 0,
+        "time_stamp": data['time_setup'],
+    }]
+    sum = 1
 
     for dm in data['dms']:
         result.append({
@@ -170,15 +187,17 @@ def count_number_messages_exist():
     data = data_store.get()
     temp_result = []
     result = []
-    sum = 0
+    sum = 1
 
     for channel in data['channels']:
         for message in channel['messages']:
-            temp_result.append(message)
+            if data['users'][get_user_idx(data['users'], message['u_id'])]['exist_status']:
+                temp_result.append(message)
 
     for dm in data['dms']:
         for message in dm['messages']:
-            temp_result.append(message)
+            if data['users'][get_user_idx(data['users'], message['u_id'])]['exist_status']:
+                temp_result.append(message)
 
     temp_result.sort(key=lambda x: x.get('time_sent'))
 
@@ -190,6 +209,11 @@ def count_number_messages_exist():
             })
             sum += 1
 
+    result.insert(0, {
+        "num_messages_exist": 0,
+        "time_stamp": data['time_setup'],
+    })
+    
     return result
 
 def count_users_joined():

@@ -372,6 +372,8 @@ def message_pin_v1(token, message_id):
             can_change = True
             if message['message_id'] == message_id:
                 valid_message = True
+                if not is_in_channel(auth_user_id, channel):
+                    raise InputError(description="user not in channel")
                 if is_global_owner(auth_user_id) or is_in_channel_owner(auth_user_id, channel):               
                     user_has_permission = True
                 else:
@@ -388,7 +390,9 @@ def message_pin_v1(token, message_id):
             can_change = True
             if message['message_id'] == message_id:
                 valid_message = True
-                if is_global_owner(auth_user_id) or is_in_dm_owner(auth_user_id, dm):               
+                if not is_in_dm(auth_user_id, dm):
+                    raise InputError(description="user not in dm")
+                if is_in_dm_owner(auth_user_id, dm):               
                     user_has_permission = True
                 else:
                     can_change = False
@@ -445,6 +449,8 @@ def message_unpin_v1(token, message_id):
             can_change = True
             if message['message_id'] == message_id:
                 valid_message = True
+                if not is_in_channel(auth_user_id, channel):
+                    raise InputError(description="user not in channel")
                 if is_global_owner(auth_user_id) or is_in_channel_owner(auth_user_id, channel):               
                     user_has_permission = True
                 else:
@@ -461,7 +467,9 @@ def message_unpin_v1(token, message_id):
             can_change = True
             if message['message_id'] == message_id:
                 valid_message = True
-                if is_global_owner(auth_user_id) or is_in_dm_owner(auth_user_id, dm):               
+                if not is_in_dm(auth_user_id, dm):
+                    raise InputError(description="user not in dm")
+                if is_in_dm_owner(auth_user_id, dm):               
                     user_has_permission = True
                 else:
                     can_change = False

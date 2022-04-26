@@ -439,7 +439,7 @@ def create_notification(u_id, inviter_u_id, channel_dm_name, channel_id, dm_id):
 # Assuming a message already exists when this is called
 def react_notification(u_id, usr_reacted_uid, channel_dm_name, channel_id, dm_id):
     users = data_store.get()["users"]
-    print(f"\n>>>>>> Here it is {u_id}\n")
+
     user_idx = get_user_idx(users, u_id)
     print(f"\n\n>>>>>>>>> {user_idx} \n\n")
     usr_handle = get_handle(usr_reacted_uid)

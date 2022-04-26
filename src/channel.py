@@ -107,6 +107,7 @@ def channel_invite_v2(token, channel_id, u_id):
 
     return {}
 
+
 def channel_details_v2(token, channel_id):
     '''
     This function is given by token which refers to a 

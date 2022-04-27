@@ -265,7 +265,7 @@ def write_savefile():
     with open('src/savefile.p', 'wb') as FILE:
         pickle.dump(data_store, FILE)
 
-# ========================================= FOR MESSAGE SHARE ===========================================
+# ========================================= FOR MESSAGE SHARE/NOTIFICATIONS GET/UPLOAD PHOTO ===========================================
 
 def find_message_from_message_id(message_id):
     message = None

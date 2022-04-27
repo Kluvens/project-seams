@@ -335,3 +335,24 @@ def users_stats_v1(token):
     }
 
     return {'workspace_stats': workspace_stats}
+
+# ======================================= NOTIFICATIONS GET ==========================================
+
+# SEE src/message/message_senddm_v1 (line 69-91)
+# SEE src/message/message_send_v1 (line 171-193)
+# SEE src/message/message_react_v1 ()
+def notifications_get_v1(token):
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid Token")
+
+    users = data_store.get()['users']
+
+    all_user_notifications = [user['notifications'] for user in users if user['token'] == token][0]
+    num_of_notifications = len(all_user_notifications)
+
+    if num_of_notifications < 20:
+        notifications = all_user_notifications.reverse()
+    else:
+        notifications = all_user_notifications.reverse()[0:19]
+
+    return {'notiifcations' : notifications}

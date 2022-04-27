@@ -65,6 +65,31 @@ def message_senddm_v1(token, dm_id, message):
 
     # Ensuring message_id will be unique
     data['unique_message_id'] += 1
+
+    # ====================================================== NOTIFICATIONS INSERTION ===============================================================
+    # Get information needed, put into notification dictionary
+    u_id = decode_token(token)
+    sender_handle = [user['handle_str'] for user in users if user['u_id'] == u_id][0]
+    dms = data_store.get()['dms']
+    dm_name = [dm['dm_name'] for dm in dms if dm['dm_id'] == dm_id][0]
+    message_preview = message[0:19] 
+    notification_message = '{} tagged you in {}: {}'.format(sender_handle,dm_name,message_preview)
+    notification = {
+        'channel_id': '-1',
+        'dm_id': dm_id,
+        'notification_message': notification_message,
+    }
+
+    # Get handles of tagged users using helper function
+    handles = find_handle_in_message(message)
+
+    # Append notification to list of notifications specific to user
+    users = data_store.get()['users']
+    for handle in handles:
+        user_listof_notifications = [user['notifications'] for user in users if user['handle_str'] == handle][0]
+        user_listof_notifications.append(notification)
+    # ================================================================================================================================================
+
     
     messages_dict = {
         'message_id': data['unique_message_id'],
@@ -142,6 +167,31 @@ def message_send_v1(token, channel_id, message):
 
     # Ensuring message_id will be unique
     data['unique_message_id'] += 1
+
+    # ============================================ NOTIFICATIONS INSERTION ===============================================================
+    # Get information needed, put into notification dictionary
+    channels = data_store.get()['channels']
+    u_id = decode_token(token)
+    sender_handle = [user['handle_str'] for user in users if user['u_id'] == u_id][0]
+    channel_name = [channel['channel_name'] for channel in channels if channel['channel_id'] == channel_id][0]
+    message_preview = message[0:19] 
+    notification_message = '{} tagged you in {}: {}'.format(sender_handle,channel_name,message_preview)
+    notification = {
+        'channel_id': channel_id,
+        'dm_id': '-1',
+        'notification_message': notification_message,
+    }
+
+    # Get handles of tagged users using helper function
+    handles = find_handle_in_message(message)
+
+    # Append notification to list of notifications specific to user
+    users = data_store.get()['users']
+    for handle in handles:
+        user_listof_notifications = [user['notifications'] for user in users if user['handle_str'] == handle][0]
+        user_listof_notifications.append(notification)
+    # ======================================================================================================================================
+
     
     messages_dict = {
         'message_id': data['unique_message_id'],
@@ -691,9 +741,11 @@ def message_react_v1(token, message_id, react_id):
     Return Value:
     This function returns an empty dictionary.
     '''
+    u_id = None 
     if not check_if_token_exists(token):
         raise AccessError(description="Error occured, Invalid Token!")
-    u_id = decode_token(token)
+    else:
+        u_id = decode_token(token)
 
     if react_id != 1:
         raise InputError(description="Error occured, Invalid react_id")
@@ -710,11 +762,13 @@ def message_react_v1(token, message_id, react_id):
     else:
         messages = channels[idx]["messages"]
 
+    user_already_reacted = False
     target_message = messages[result["msg_idx"]]
     if "reacts" in target_message and target_message["reacts"]:
         u_ids = target_message["reacts"][0]["u_ids"]
         if u_id in u_ids:
             raise InputError(description="Error occured, User already reacted to this message")
+            user_already_reacted = True
         else:
             u_ids.append(u_id)
 
@@ -725,6 +779,47 @@ def message_react_v1(token, message_id, react_id):
                 'u_ids' : [u_id]
             }
         ]
+
+    # ================================================== NOTIFICATIONS INSERTION ==============================================================
+
+    # Check react_id = 1, u_id is not None, idx is not None, Check user already reacted is False
+    if react_id == 1 and u_id is not None and idx is not None and user_already_reacted is False:
+
+        # Find if message is in channel or in dm
+        is_channel = find_channeldm_from_message(message_id)['is_channel']
+        is_dm = find_channeldm_from_message(message_id)['is_dm']
+
+        # If in channel, find the relevant channel id and channel_name
+        if is_channel:
+            channel_id = find_channeldm_from_message(message_id)['id']
+            dm_id = -1
+            channeldm_name = [channel['channel_name'] for channel in channels if channel['channel_id'] == channel_id][0]
+
+        # If in dm, find the relevant dm_id and dm_name    
+        if is_dm:
+            dm_id = find_channeldm_from_message(message_id)['id']
+            channel_id = -1
+            channeldm_name = [dm['dm_name'] for dm in dms if dm['dm_id'] == dm_id][0]
+
+        # Find the person who originally sent the message that is being reacted to, i.e. the person to notify
+        user_to_notify = find_message_sender(message_id,channel_id,dm_id)
+        # Find handle of the user reacting to the message
+        users = data_store.get()['users']
+        reactor_handle = [user['handle_str'] for user in users if user['u_id'] == u_id][0]
+        # Generate notification message
+        notification_message = '{} reacted to your message in {}'.format(reactor_handle,channeldm_name)
+        notification = {
+            'channel_id': channel_id,
+            'dm_id': dm_id,
+            'notification_message': notification_message,
+        }
+
+        # Append notification to list of notifications under the the person who originally sent the message
+        user_listof_notifications = [user['notifications'] for user in users if user['u_id'] == user_to_notify][0]
+        user_listof_notifications.append(notification)
+
+    # ===============================================================================================================================
+
     return {}
 
 def message_unreact_v1(token, message_id, react_id):

@@ -174,7 +174,8 @@ def auth_register_v2(email, password, name_first, name_last):
 
 
     data_store.set(data)
-  
+    # DEBUG
+    print(f"==============\n{data}\n==========")
     return { "token" : token, "auth_user_id" : u_id }
 
 def auth_logout_v1(token):
@@ -235,7 +236,7 @@ def get_corresponding_user_id(users_list, email):
     for user_index, user in enumerate(users_list):
         if user['email'] == email:
             return user_index
-    return None
+
 
 
 # ====================END OF HELPER FUNCTIONS SECTION ===================

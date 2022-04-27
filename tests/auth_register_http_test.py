@@ -11,8 +11,9 @@ import pytest
 from src.config import url
 from tests.http_helpers import GenerateTestData
 from src.error import InputError
-
-
+from tests.http_helpers import user_profile_request
+from tests.http_helpers import reg_new
+from tests.http_helpers import reg_new_email
 #====================== Helper functions / Fixtures ===============
 
 def reset_call():
@@ -31,17 +32,6 @@ def route():
 
 
 #======================= Testing Returned Data ===================
-
-
-def test_return_type(dummy_data):
-
-    reset_call()
-    user = dummy_data.register_users(num_of_users=1)
-    users_return_dict = user[0]
-
-    assert isinstance(users_return_dict['auth_user_id'] , int)
-    assert isinstance(users_return_dict['token'] , str)
-
 
 
 def test_return_id_one_user(dummy_data):
@@ -77,6 +67,28 @@ def test_return_id_multiple_users(dummy_data):
 
         assert register_id == login_id
 
+
+def test_return_type_and_handle(route, dummy_data):
+
+    reset_call()
+    user = dummy_data.register_users(num_of_users=1)
+    users_return_dict = user[0]
+
+    assert isinstance(users_return_dict['auth_user_id'] , int)
+    assert isinstance(users_return_dict['token'] , str)
+
+    user_dict0 = reg_new(route, "Jake", "Renzella")
+    assert isinstance(user_dict0 , dict)
+
+    user_dict = reg_new_email(
+        route,
+        "Jakee11eeeeeeeeeeeeeeeee", 
+        "IHaveAveryLongNameByTheWaySoVeryVeryVEryLo")
+    print(user_dict)
+    response = user_profile_request(user_dict["token"], user_dict["auth_user_id"])
+    profile = response.json()["user"]
+
+    assert profile["handle_str"] == "jakee11eeeeeeeeeeeee"
 
 # ====================Testing Exceptions==========================
 

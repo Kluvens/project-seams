@@ -22,6 +22,15 @@ def send_message_request(token, channel_id, message):
         })
     return response
 
+def send_dm_message_request(token, dm_id, message):
+    response = requests.post(url + "/message/senddm/v1", 
+        json={
+            "token" : token,
+            "dm_id" : dm_id,
+            "message" : message,
+        })
+    return response
+
 @pytest.fixture
 def create_route():
     return url + "channels/create/v2"
@@ -31,6 +40,15 @@ def get_channel_messages(token, channel_id, start):
         params={
             "token" : token,
             "channel_id" : channel_id,
+            "start" : start,
+        })
+    return response
+
+def get_dm_messages(token, dm_id, start):
+    response = requests.get(url + "/dm/messages/v1",
+        params={
+            "token" : token,
+            "dm_id" : dm_id,
             "start" : start,
         })
     return response
@@ -190,6 +208,36 @@ def test_channel_messages_edit_working(dummy_data, create_route):
 
     # get_channel_messages will output a dictionary containing a message array.
     messages_output = get_channel_messages(user0['token'], ch1_dict["channel_id"], 0).json()
+
+    assert messages_output['messages'][1]['message'] == message_three
+    assert messages_output['messages'][0]['message'] == message_four
+
+def test_dm_messages_edit_working(dummy_data):
+    reset_call()
+    
+    users_list = dummy_data.register_users(num_of_users=2)
+    user0 = users_list[0]
+    user1 = users_list[1]
+    dm_dict = dummy_data.create_dm(user0['token'], [users_list[1]['auth_user_id']])
+
+    message_one = "hello world"
+    message_two = "bye world"
+
+    response1 = send_dm_message_request(user0['token'], dm_dict['dm_id'], message_one)
+    response2 = send_dm_message_request(user1['token'], dm_dict['dm_id'], message_two)
+ 
+    send_message_one = response1.json()
+    send_message_two = response2.json()
+
+    # Edit messages from channel
+    message_three = "alpha"
+    message_four = "beta"
+    
+    put_message_edit(user0["token"], send_message_one['message_id'], message_three)
+    put_message_edit(user1["token"], send_message_two['message_id'], message_four)
+
+    # get_channel_messages will output a dictionary containing a message array.
+    messages_output = get_dm_messages(user0['token'], dm_dict["dm_id"], 0).json()
 
     assert messages_output['messages'][1]['message'] == message_three
     assert messages_output['messages'][0]['message'] == message_four

@@ -85,8 +85,16 @@ def dm_messages_v1(token, dm_id, start):
             'u_id': found_messages[index].get('u_id'),
             'message': found_messages[index].get('message'),
             'time_sent': found_messages[index].get('time_sent'),
+            'reacts': found_messages[index].get('reacts'),
             'is_pinned': found_messages[index].get('is_pinned'),
         })
+
+        last_message = message_array[-1]
+        if last_message['reacts']:
+            if auth_user_id in last_message['reacts'][0]["u_ids"]:
+                last_message['reacts'][0]["is_this_user_reacted"] = True
+            else:
+                last_message['reacts'][0]["is_this_user_reacted"] = False
 
     if num < 50:
         end = -1

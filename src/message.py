@@ -1,8 +1,9 @@
-from time import time
 import threading
+from time import time
 from src.dms import find_dm_index, is_in_dm
 from src.data_store import data_store
-from src.helpers import check_if_token_exists, decode_token, is_global_owner, find_message_from_message_id, find_channeldm_from_message
+from src.helpers import check_if_token_exists, decode_token, is_global_owner
+from src.helpers import find_message_from_message_id, find_channeldm_from_message
 from src.error import AccessError, InputError
 from src.helper import is_in_channel_owner, is_in_dm_owner
 from src.helper import find_channel_index, find_dm_index
@@ -12,6 +13,7 @@ from src.helpers import find_message_sender
 from src.helpers import extract_handles
 from src.helpers import find_u_ids_of_handles
 from src.helpers import create_tagging_notification
+
 
 def message_senddm_v1(token, dm_id, message):
     '''
@@ -52,7 +54,7 @@ def message_senddm_v1(token, dm_id, message):
             dm_exist = True
     if not dm_exist:
         raise InputError(description="Error occurred, channel_id is not in database")
-    
+
 
     auth_user_id = int(decode_token(token))
 
@@ -83,11 +85,12 @@ def message_senddm_v1(token, dm_id, message):
             else:
                 dm["messages"] = [messages_dict]
     
+
     ## Creating a tagging notificaiton
     handles = extract_handles(message)
     print(f"\n HANDLES {handles}>><<>><< \n")
     if handles:
-        u_ids =find_u_ids_of_handles(handles)
+        u_ids = find_u_ids_of_handles(handles)
         create_tagging_notification(
             auth_user_id, u_ids, message, -1, dm_id)
 
@@ -823,9 +826,8 @@ def message_unreact_v1(token, message_id, react_id):
     print(data_store.get())
     return {}
 
-
-def message_share_v1(token,og_message_id,message,channel_id,dm_id):
-    print(f"hahahahaha {type(og_message_id)} jajjaj\n\n")
+def message_share_v1(token, og_message_id, message, channel_id, dm_id):
+    print(data_store.get()["channels"])
     # Check if token is invalid
     if not check_if_token_exists(token):
         raise AccessError(description="ERROR: Token is invalid")
@@ -839,22 +841,23 @@ def message_share_v1(token,og_message_id,message,channel_id,dm_id):
     og_is_dm = result['is_dm']
 
     # If in channel, find the relevant channel id and check if token user is part of channel
+    channels = data_store.get()['channels']
     if og_is_channel:
-        channels = data_store.get()['channels']
         og_channel_id = result['id']
         og_channel_members = [channel['all_members'] for channel in channels if channel['channel_id'] == og_channel_id][0]
         og_channel_member_ids = [member['u_id'] for member in og_channel_members]
         if not u_id in og_channel_member_ids:
-            raise InputError(description = 'ERROR: User does not have access to the message they are sharing')
+            ## this was inputError --> changed to AccessError (please double check this)
+            raise AccessError(description = 'ERROR: User does not have access to the message they are sharing')
 
     # If in dm, find the relevant dm_id 
+    dms = data_store.get()['dms']
     if og_is_dm:
-        dms = data_store.get()['dms']
         og_dm_id = result['id']
         og_dm_members = [dm['all_members'] for dm in dms if dm['dm_id'] == og_dm_id][0]
         og_dm_member_ids = [member['u_id'] for member in og_dm_members]
         if not u_id in og_dm_member_ids:
-            raise InputError(description = 'ERROR: User does not have access to the message they are sharing')
+            raise AccessError(description = 'ERROR: User does not have access to the message they are sharing')
 
     # Check at least one out of dm_id and channel_id are -1
     if dm_id != -1 and channel_id != -1:
@@ -863,7 +866,7 @@ def message_share_v1(token,og_message_id,message,channel_id,dm_id):
     # Check message length is less than 1000 characters
     if len(message) > 1000:
         raise InputError(description= 'ERROR: Appended message exceeds 1000 characters')
-    
+
     # Find message from message id 
     message_to_share = find_message_from_message_id(og_message_id)
     # Check message exists 

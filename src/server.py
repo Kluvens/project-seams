@@ -1,5 +1,5 @@
 '''
-This file contains all the server functionality for seams.
+This file contains all the server functionality for the Seams.
 '''
 
 
@@ -70,17 +70,6 @@ APP.register_error_handler(Exception, defaultHandler)
 
 #### NO NEED TO MODIFY ABOVE THIS POINT, EXCEPT IMPORTS
 
-###################### Example ###################################
-# @APP.route("/echo", methods=['GET'])
-# def echo():
-#     data = request.args.get('data')
-#     if data == 'echo':
-#    	    raise InputError(description='Cannot echo "echo"')
-#     return dumps({
-#         'data': data
-#     })
-
-
 ############################## AUTH ##############################
 @APP.route("/auth/register/v2", methods = ['POST'])
 def auth_register_http():
@@ -88,12 +77,14 @@ def auth_register_http():
 
     return dumps(auth_register_v2(**register_dict))
 
+
 @APP.route("/auth/login/v2", methods = ['POST'])
 def auth_login_http():
     login_dict = request.get_json()
 
     token = auth_login_v2(**login_dict)
     return dumps(token)
+
 
 @APP.route("/auth/logout/v1", methods = ['POST'])
 def auth_logout_http():
@@ -120,15 +111,15 @@ def reset_password():
 def channel_invite_http():
     invite_dict = request.get_json()
     channel_invite_v2(**invite_dict)
-    
     return dumps({})
+
 
 @APP.route("/channel/details/v2", methods = ['GET'])
 def channel_details_http():
     token = request.args.get('token')
     channel_id = request.args.get('channel_id')
-
     return dumps(channel_details_v2(token, channel_id))
+
 
 @APP.route("/channel/join/v2", methods = ['POST'])
 def channel_join_http():
@@ -139,8 +130,8 @@ def channel_join_http():
 @APP.route("/channel/leave/v1", methods = ['POST'])
 def channel_leave_https():
     return_list = request.get_json()
-
     return dumps(channel_leave_v1(**return_list))
+
 
 @APP.route("/channel/addowner/v1", methods = ['POST'])
 def channel_addowner_http():
@@ -149,6 +140,7 @@ def channel_addowner_http():
 
     return dumps({})
 
+
 @APP.route("/channel/removeowner/v1", methods = ['POST'])
 def channel_removeowner_http():
     return_list = request.get_json()
@@ -156,21 +148,24 @@ def channel_removeowner_http():
 
     return dumps({})
 
+
 @APP.route("/channels/list/v2", methods = ['GET'])
 def channels_list_http():
     token = request.args.get('token')
     return dumps(channels_list_v2(token))
+
 
 @APP.route("/channels/listall/v2", methods = ['GET'])
 def channels_listall_http():
     token = request.args.get('token')
     return dumps(channels_listall_v2(token))
 
+
 @APP.route("/channels/create/v2", methods = ['POST'])
 def channels_create_http():
     create_dict = request.get_json()
-
     return dumps(channels_create_v2(**create_dict))
+
 
 ############################## DMS ##############################
 # dm/list/v1
@@ -179,6 +174,7 @@ def dm_list_http():
     token = request.args.get('token')
     return dumps(dm_list_v1(token))
 
+
 # dm/create/v1 route
 @APP.route("/dm/create/v1", methods=['POST'])
 def dm_create_http():
@@ -186,6 +182,7 @@ def dm_create_http():
     u_ids = data['u_ids']
     token = data['token']
     return dumps(dm_create_v1(token, u_ids))
+
 
 @APP.route("/dm/remove/v1", methods=['DELETE'])
 def dm_remove_http():
@@ -205,6 +202,7 @@ def dm_leave_http():
     return_list = request.get_json()
     return dumps(dm_leave_v1(**return_list))
 
+
 @APP.route("/message/senddm/v1", methods=['POST'])
 def message_senddm_http():
     message_info = request.get_json()
@@ -213,16 +211,19 @@ def message_senddm_http():
     message = message_info['message']
     return dumps(message_senddm_v1(token, dm_id, message))
 
+
 ############################# Admin #############################
 @APP.route("/admin/user/remove/v1", methods=['DELETE'])
 def admin_user_remove_http():
     return_dict = request.get_json()
     return dumps(admin_user_remove_v1(**return_dict))
 
+
 @APP.route("/admin/userpermission/change/v1", methods=['POST'])
 def admin_userpermission_change_http():
     return_dict = request.get_json()
     return dumps(admin_userpermission_change_v1(**return_dict))
+
 
 ############################# Users #############################
 # user/all/v1
@@ -230,6 +231,7 @@ def admin_userpermission_change_http():
 def get_all_users():
     token = request.args.get("token")
     return dumps(users_all_v1(token))
+
 
 # user/profile/v1
 @APP.route('/user/profile/v1', methods=['GET'])
@@ -240,17 +242,20 @@ def profile():
 
     return dumps(user_profile_v1(token, u_id))
 
+
 # user/profile/setname/v1
 @APP.route('/user/profile/setname/v1', methods=['PUT'])
 def set_name():
     parameters = request.get_json()
     return dumps(user_setname_v1(**parameters))
 
+
 # user/profile/setemail/v1
 @APP.route('/user/profile/setemail/v1', methods=['PUT'])
 def set_email():
     parameters = request.get_json()
     return dumps(user_profile_setemail_v1(**parameters))
+
 
 # user/profile/sethandle/v1
 @APP.route('/user/profile/sethandle/v1', methods=['PUT'])
@@ -268,6 +273,7 @@ def channel_messages():
     start = request.args.get('start')
     return dumps(channel_messages_v2(token, channel_id, start))
 
+
 # message/send/v1
 @APP.route("/message/send/v1", methods=['POST'])
 def message_send():
@@ -278,12 +284,14 @@ def message_send():
     message = data["message"]
     return dumps(message_send_v1(token, channel_id, message))
 
+
 # message/remove/v1
 @APP.route("/message/remove/v1", methods=['DELETE'])
 def message_remove():
     data = request.get_json()
     message_remove_v1(**data)
     return dumps({})
+
 
 # dm/messages/v1
 @APP.route("/dm/messages/v1", methods=['GET'])
@@ -293,12 +301,14 @@ def dm_messages():
     start = request.args.get('start')
     return dumps(dm_messages_v1(token, dm_id, start))
 
+
 # message/edit/v1
 @APP.route("/message/edit/v1", methods=['PUT'])
 def message_edit():
     data = request.get_json()
     message_edit_v1(**data)
     return dumps({})
+
 
 # message/react/v1
 @APP.route("/message/react/v1", methods=['POST'])
@@ -309,6 +319,7 @@ def react_message():
     message_id = data["message_id"]
     return dumps(message_react_v1(token, message_id, react_id))
 
+
 # message/unreact/v1
 @APP.route("/message/unreact/v1", methods=['POST'])
 def unreact_message():
@@ -317,6 +328,7 @@ def unreact_message():
     react_id = data["react_id"]
     message_id = data["message_id"]
     return dumps(message_unreact_v1(token, message_id, react_id))
+
 
 # message/sendlater/v1
 @APP.route("/message/sendlater/v1", methods = ['POST'])
@@ -328,6 +340,7 @@ def sendlater_message():
     time_sent = float(data["time_sent"])
     return dumps(message_sendlater_v1(token, channel_id, message, time_sent))
 
+
 # message/sendlaterdm/v1
 @APP.route("/message/sendlaterdm/v1", methods = ['POST'])
 def sendlaterdm_message():
@@ -338,10 +351,12 @@ def sendlaterdm_message():
     time_sent = float(data["time_sent"])
     return dumps(message_sendlaterdm_v1(token, dm_id, message, time_sent))
 
+
 @APP.route("/message/share/v1", methods = ['POST'])
 def share_message():
     data = request.get_json()
     return dumps(message_share_v1(**data))
+
 
 ########################## Standup ###############################
 
@@ -370,7 +385,8 @@ def stand_send():
     message = data['message']
     return dumps(standup_send_v1(token, channel_id, message))
 
-###################################################################
+
+##################################################################
 
 @APP.route("/message/pin/v1", methods=['POST'])
 def message_pin_http():
@@ -407,9 +423,8 @@ def search_request():
 @APP.route("/notifications/get/v1", methods=['GET'])
 def notification_request():
     token = request.args.get('token')
-    print(f"\n<<<<<<<< {token} >>>>>>>>>\n")
     return dumps(notifications_v1(token))
-    # return dumps({"notifications" : []})
+
 
 ####################### CLEARING/RESTTING ########################
 
@@ -422,10 +437,7 @@ def reset():
 ###################### END OF SERVER ROUTES SECTION ################
 
 
-
 #### NO NEED TO MODIFY BELOW THIS POINT
-
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
     APP.run(port=config.port) # Do not edit this port
-

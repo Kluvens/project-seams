@@ -295,7 +295,8 @@ def find_message_from_message_id(message_id):
 
 def find_channeldm_from_message(message_id):
     target_id = None
-
+    is_channel = None
+    is_dm = None
     # Channel 
     channels = data_store.get()['channels']
     for channel in channels:

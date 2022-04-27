@@ -1,69 +1,132 @@
-# from pickle import TRUE
-# import requests
-# import pytest
-# from src.config import url
-# from tests.http_helpers import GenerateTestData
-# from src.error import InputError, AccessError
+from pickle import TRUE
+from turtle import reset
+import requests
+import pytest
+from src.config import url
+from tests.channel_leave_http_test import reset_call
+from tests.http_helpers import GenerateTestData
+from src.error import InputError, AccessError
 
-# from http_func import channels_create_v2_http, channel_details_v2_http, channels_list_v2_http, channel_leave_v1_http
-# from http_func import dm_create_v1_http, dm_list_v1_http, dm_details_v1_http, dm_remove_v1_http
-# from http_func import message_remove_v1_http, message_send_v1_http, message_senddm_v1_http,message_share_v1_http
-# from http_func import setup
+from tests.http_func import channels_create_v2_http, channel_details_v2_http, channels_list_v2_http, channel_leave_v1_http
+from tests.http_func import dm_create_v1_http, dm_list_v1_http, dm_details_v1_http, dm_remove_v1_http
+from tests.http_func import message_remove_v1_http, message_send_v1_http, message_senddm_v1_http,message_share_v1_http
+from tests.http_func import setup
 
-# OKAY = 200
+OKAY = 200
 
-# # ======================================= SETUP =============================================
+# ======================================= SETUP =============================================
+# s = setup()
+# tokens = s['tokens'] 
+# channel_id = s['channel_id']
+# dm_id = s['dm_id']
 
-# def channel_dm():
-#     '''
-#     CHANNEL TO DM
-#     In this setup there are 3 users - The global owner, A and B. 
-#     The global owner creates a dm to B ONLY and A and B are in a public channel together.
-#     A message is written in the channel (that includes A and B) by A.
-#     B will share the message to the DM.
-#     '''
-#     s = setup()
-#     tokens = s['tokens'] 
-#     channel_id = s['channel_id']
+def channel_dm(token,channel_id):
+    '''
+    CHANNEL TO DM
+    In this setup there are 3 users - The global owner, A and B. 
+    The global owner creates a dm to B ONLY and A and B are in a public channel together.
+    A message is written in the channel (that includes A and B) by A.
+    B will share the message to the DM.
+    '''
 
-#     message_obj = message_send_v1_http(tokens[1],channel_id, 'testing from A channel')
-#     message_info = message_obj.json()
-#     message_id = message_info['message_id']
-#     return {'message_id': message_id}
+    message_obj = message_send_v1_http(token,channel_id, 'testing from A channel')
+    message_info = message_obj.json()
+    message_id = message_info['message_id']
+    return {'message_id': message_id}
 
 
-# def dm_channel():
+def dm_channel(token,dm_id):
 
-#     '''
-#     DM TO CHANNEL
-#     In this setup there are 3 users - The global owner, A and B. 
-#     The global owner creates a dm to B ONLY and A and B are in a public channel together.
-#     A message is written in the DM by B. 
-#     B will share the message to the channel
-#     '''
-#     s = setup()
-#     tokens = s['tokens'] 
-#     dm_id = s['dm_id']
+    '''
+    DM TO CHANNEL
+    In this setup there are 3 users - The global owner, A and B. 
+    The global owner creates a dm to B ONLY and A and B are in a public channel together.
+    A message is written in the DM by B. 
+    B will share the message to the channel
+    '''
 
-#     message_obj = message_senddm_v1_http(tokens[2],dm_id,'testing from B DM')
-#     message_info = message_obj.json()
-#     message_id = message_info['message_id']
-#     return {'message_id': message_id}
+    message_obj = message_senddm_v1_http(token,dm_id,'testing from B DM')
+    message_info = message_obj.json()
+    message_id = message_info['message_id']
+    return {'message_id': message_id}
 
-# # ======================================= HTTP TESTS =========================================================
+# ======================================= GENERATE USERS ====================================================
+
+# Create user base
+@pytest.fixture()
+def dummy_data():
+    data_instance = GenerateTestData(url)
+    return data_instance
+
+@pytest.fixture
+def register_test_users(num_of_users):
+    dummy_data = GenerateTestData(url)
+    dummy_data.register_users(num_of_users)
+
+# ======================================== OLD HTTP METHOD ==================================================
+# # invalid channel_id
+# def test_invalid_channel_id(create_route,leave_route,dummy_data):
+#     reset_call()
+
+#     user = dummy_data.register_users(num_of_users=1)[0]['token']
+
+#     channel_id_obj = requests.post(create_route, json = {
+#         'token':user,
+#         'name': 'hello I am a channel',
+#         'is_public':True,
+#     })
+#     channel_info = channel_id_obj.json()
+#     channel_id = channel_info['channel_id']
+
+#     response = requests.post(leave_route, json = {
+#         'token':user,
+#         'channel_id': channel_id+1000
+#     })
+#     assert response.status_code == InputError.code
+
+def test_invalid_channel_old(dummy_data):
+    reset_call()
+
+    # Create Owner, A and B
+    users = dummy_data.register_users(num_of_users=3)
+    owner = users[0]
+    A = users[1]
+    B = users[2]
+
+    # Create Channel
+    channel_obj = channels_create_v2_http(A['token'],'test_channel',True)
+    channel_info = channel_obj.json()
+    channel_id = channel_info['channel_id']
+
+    # Create DM
+    u_ids = [B['auth_user_id']]
+    dm_obj = dm_create_v1_http(owner['token'], u_ids)
+    dm_info = dm_obj.json()
+    dm_id = dm_info['dm_id']
+
+    og_message_id = dm_channel(A['token'],dm_id)
+    response = message_share_v1_http(B['token'],og_message_id,'invalid channel test',12345,-1)
+    assert response.status_code == InputError.code
+    
+# ======================================= HTTP TESTS =========================================================
 
 # # input: Invalid channel 
 # def test_invalid_channel():
-#     token = setup()['tokens'][2]
-#     og_message_id = dm_channel()
-#     response = message_share_v1_http(token,og_message_id,'invalid channel test','12345','-1')
+#     s = setup(dummy_data)
+#     token_A = s['tokens'][1]
+#     dm_id = s['dm_id']
+#     token_B = s['tokens'][2]
+#     og_message_id = dm_channel(token_A,dm_id)
+#     response = message_share_v1_http(token_B,og_message_id,'invalid channel test','12345','-1')
 #     assert response.status_code == InputError.code
 
 # # input: Invalid dm 
 # def test_invalid_dm():
-#     token = setup()['tokens'][2]
-#     og_message_id = channel_dm()
-#     response = message_share_v1_http(token,og_message_id,'invalid dm test','-1','12345')
+#     s = setup(dummy_data)
+#     channel_id = s['channel_id']
+#     token_B = s['tokens'][2]
+#     og_message_id = channel_dm(token_B,channel_id)
+#     response = message_share_v1_http(token_B,og_message_id,'invalid dm test','-1','12345')
 #     assert response.status_code == InputError.code
 
 # # input: Both channel and dm id is not -1

@@ -122,4 +122,5 @@ def test_users_request_profile(dummy_data, user_idx):
         user_uid
     )
 
+    user_details_dict.pop("profile_img_url")
     assert user_details_dict == expected_user_det

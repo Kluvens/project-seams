@@ -185,7 +185,7 @@ def test_profile_after_remove(setup):
     )
 
     user_profile = obj.json()["user"]
-
+    user_profile.pop("profile_img_url")
     expected_output = {
         "u_id" : user2_dict["auth_user_id"],
         "email" : "hellounsw@gmail.com",

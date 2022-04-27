@@ -2,10 +2,9 @@
 This module contains the implementaiton of the
 search and notifications routes
 
-
 Kais Alzubaidi, z524621
-
 '''
+
 ####################### Import Statements ########################
 from src.error import AccessError
 from src.error import InputError
@@ -191,6 +190,7 @@ def notifications_v1(token):
         return {"notifications" : notifications}
     
     # in-place reverse
-    # getting 20 or less most recent messages
     notifications = list(reversed(notifications))
+
+    # returning 20 or less most recent messages
     return {"notifications" : notifications[:20]}

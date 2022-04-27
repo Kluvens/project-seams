@@ -4,11 +4,12 @@ This file contains all the server functionality for seams.
 
 
 ########################## Import Statements #####################
+import os
 import sys
 import signal
 import atexit
 from json import dumps
-from flask import Flask, request
+from flask import Flask, request, send_from_directory, send_file
 from flask_cors import CORS
 from src.error import InputError
 from src import config
@@ -40,8 +41,10 @@ from src.standup import standup_start_v1, standup_active_v1, standup_send_v1
 from src.helpers import write_savefile
 from src.message import message_share_v1
 from src.search import notifications_v1
+from src.users import user_profile_uploadphoto_v1
+from os.path import join, dirname, realpath
 
-
+# x = join(dirname(realpath(__file__)), '/src/profile_images/cropped/')
 ###################### INITIAL SERVER SETUP ######################
 
 def quit_gracefully(*args):
@@ -258,6 +261,16 @@ def set_handle():
     parameters = request.get_json()
     return dumps(user_profile_sethandle_v1(**parameters))
 
+@APP.route("/user/profile/uploadphoto/v1", methods=['POST'])
+def user_uploadphoto_http():
+    data = request.get_json()
+    return dumps(user_profile_uploadphoto_v1(**data))
+
+@APP.route('/src/profile_images/cropped/<path:filename>', methods=['GET'])
+def get_photo(filename):
+    print(f"\n<<<<<<{os.getcwd()}>>>>>\n")
+    print(f"\n<<<<<<{filename}>>>>>\n")
+    return send_from_directory('profile_images/cropped/', filename)
 ########################## Messages ##########################
 
 # channel/messages/v2
@@ -407,9 +420,8 @@ def search_request():
 @APP.route("/notifications/get/v1", methods=['GET'])
 def notification_request():
     token = request.args.get('token')
-    print(f"\n<<<<<<<< {token} >>>>>>>>>\n")
     return dumps(notifications_v1(token))
-    # return dumps({"notifications" : []})
+
 
 ####################### CLEARING/RESTTING ########################
 

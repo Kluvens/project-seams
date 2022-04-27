@@ -116,6 +116,7 @@ def standup_active_v1(token, channel_id):
                     'time_finish': None,
                 }
             # when standup_active has been called more than once after standup has finished
+            channel['standup']['is_active'] = False
             return {
                 'is_active': False,
                 'time_finish': None,

@@ -1,6 +1,5 @@
 '''
-FILE DESCRIPTION : This file contains the implementations of all the user
-routes
+FILE DESCRIPTION :
 '''
 
 ############################### Import Statements ################
@@ -19,11 +18,6 @@ from src.helpers import check_u_id_exists
 from src.helpers import return_exist_status
 from src.helper import count_number_channels_exist, count_number_dms_exist, count_number_messages_sent, count_number_dms_joined, count_number_channels_joined, count_number_messages_exist
 from src.helper import count_users_joined, count_number_users
-from src.config import url
-import urllib
-from PIL import Image
-import uuid
-import os
 
 ##################### User Function Implementations ##############
 def users_all_v1(token):
@@ -54,8 +48,7 @@ def users_all_v1(token):
                 "email" : user["email"],
                 "name_first": user["name_first"],
                 "name_last" : user["name_last"],
-                "handle_str" : user["handle_str"],
-                "profile_img_url" : user["profile_img_url"]
+                "handle_str" : user["handle_str"]
             })
 
     return {"users" : users_details}
@@ -103,8 +96,7 @@ def user_profile_v1(token, u_id):
                 "email" : user["email"],
                 "name_first": user["name_first"],
                 "name_last" : user["name_last"],
-                "handle_str" : user["handle_str"],
-                "profile_img_url" : user["profile_img_url"]
+                "handle_str" : user["handle_str"]
             }
 
     return {"user" : user_profile}
@@ -343,64 +335,3 @@ def users_stats_v1(token):
     }
 
     return {'workspace_stats': workspace_stats}
-
-
-    # ============= USER PROFILE UPLOAD PHOTO ==============
-def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
-
-    # Check if token is invalid
-    if not check_if_token_exists(token):
-        raise AccessError(description="ERROR: Token is invalid")
-
-    # Check if url is valid
-    #### commented this to debug
-    # if not 'http://' in img_url:
-        # raise InputError(description= 'ERROR: Image url is invalid')
-
-
-    # Check image is a jpg file / assuming no white space at the end of str
-    # can jpg be uppercase? -> to jasmine
-    print(f"\n<<<<<<{img_url}>>>>>\n")
-
-    if not img_url.endswith('.jpg') and not img_url.endswith('.JPG'):
-        print(img_url.endswith('.jpg')) 
-        raise InputError(description= 'ERROR: Uploaded image is not a jpg file')
-
-    # I'm assuming we already have an dir to store profile photos (because we have a default img)
-    auth_user_id = decode_token(token)
-    users = data_store.get()['users']
-    user_handle = [user['handle_str'] for user in users if user['u_id'] == auth_user_id][0]
-    
-    # Download and save image to src/profile_images
-    ## uuid.uuid4() might need this to debug potetnial problem
-    file_path = 'src/profile_images/{}_{}.jpg'.format(user_handle, uuid.uuid4())
-    print(f"\n<<<<<<{os.getcwd()}>>>>>\n")
-    # Check if x range or y range is impossible 
-    if x_end <= x_start or y_end <= y_start:
-        raise InputError(description="x_end is less than or equal to x_start or y_end is less than or equal to y_start")
-
-    try:
-        urllib.request.urlretrieve(img_url, file_path)
-    except InputError:
-            print(description="img_url returns an HTTP status other than 200")
-    
-    
-
-
-    # Check x and y values are within image 
-    image = Image.open(file_path)
-    width, height = image.size
-    print(f"\n ----- {image.size} ----\n")
-    if x_end > width or y_end > height or x_start < 0 or y_start < 0:
-        raise InputError(description= 'ERROR: Selection is outside original image size')
-
-    # Save cropped image 
-    cropped_image = image.crop((x_start, y_start, x_end, y_end))
-    cropped_file_path = 'src/profile_images/cropped/{}__{}.jpg'.format(user_handle, uuid.uuid4())
-    cropped_image.save(cropped_file_path)
-
-    # Store url in user dictionary
-    user_idx = get_user_idx(users, auth_user_id)
-    users[user_idx]['profile_img_url'] = url + cropped_file_path
-
-    return {}

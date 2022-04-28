@@ -53,25 +53,6 @@ def test_invalid_token(leave_route, create_route, dummy_data):
         json = {'token': 'hello am not a token', 'channel_id': channel_id})
     assert response.status_code == AccessError.code
 
-# invalid user 
-def test_invalid_user(leave_route, create_route, dummy_data):
-    reset_call()
-
-    user = dummy_data.register_users(num_of_users=1)[0]['token']
-
-    channel_id_obj = requests.post(create_route, json = {
-        'token':user,
-        'name': 'hello I am a channel',
-        'is_public':True,
-    })
-    channel_info = channel_id_obj.json()
-    channel_id = channel_info['channel_id']
-
-    response = requests.post(
-        leave_route, 
-        json = {'token': 1, 'channel_id': channel_id})
-    assert response.status_code == AccessError.code
-
 # invalid channel_id
 def test_invalid_channel_id(create_route,leave_route,dummy_data):
     reset_call()

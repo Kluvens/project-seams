@@ -62,7 +62,9 @@ def auth_login_v2(email, password):
     u_id = get_corresponding_user_id(users_list, email)
     token = str(generate_session_token(u_id))
     users_list[u_id]['sessions'].append(token)
+
     return {'token' : token, 'auth_user_id': u_id}
+
 
 def auth_register_v2(email, password, name_first, name_last):
     '''
@@ -163,6 +165,7 @@ def auth_register_v2(email, password, name_first, name_last):
     curr_user['sessions'] = [str(token)]
     curr_user['handle_str'] = handle
     curr_user['exist_status'] = True
+    curr_user['notifications'] = []
     
     # Dealing with first layer of permissions
     OWNER = 1
@@ -174,8 +177,7 @@ def auth_register_v2(email, password, name_first, name_last):
 
 
     data_store.set(data)
-    # DEBUG
-    print(f"==============\n{data}\n==========")
+
     return { "token" : token, "auth_user_id" : u_id }
 
 def auth_logout_v1(token):

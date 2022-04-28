@@ -7,6 +7,8 @@ from src.error import AccessError, InputError
 from src.helper import is_in_channel_owner, is_in_dm_owner
 from src.helper import find_channel_index, find_dm_index
 from src.helper import is_in_channel
+from src.helpers import find_message_from_message_id
+from src.helpers import find_channeldm_from_message
 
 def message_senddm_v1(token, dm_id, message):
     '''
@@ -42,8 +44,10 @@ def message_senddm_v1(token, dm_id, message):
 
     # Check whether channel_id exist in the database
     dm_exist = False
-    for dm in data['dms']:
+    dm_idx = None
+    for idx, dm in enumerate(data['dms']):
         if dm['dm_id'] == dm_id:
+            dm_idx = idx
             dm_exist = True
     if not dm_exist:
         raise InputError(description="Error occurred, channel_id is not in database")
@@ -71,12 +75,12 @@ def message_senddm_v1(token, dm_id, message):
         'reacts' : []
         }
 
-    for dm in data['dms']:
-        if dm_id == dm['dm_id']:
-            if 'messages' in dm:
-                dm["messages"].append(messages_dict)
-            else:
-                dm["messages"] = [messages_dict]
+    dm = data['dms'][dm_idx]
+    if 'messages' in dm and isinstance(dm["messages"], list):
+        dm["messages"].append(messages_dict)
+    else:
+        dm["messages"] = [messages_dict]
+
     return {
         'message_id': data['unique_message_id'],
     }
@@ -197,7 +201,7 @@ def message_remove_v1(token, message_id):
                 message_exist = True
                 # Checking if member is authorised to delete message
                 for owner in channel['owner_members']:
-                    if auth_user_id == owner['u_id']:
+                    if auth_user_id == owner['u_id'] or is_global_owner(auth_user_id):
                         authorised_user = True
                         channel['messages'].remove(message)
                     elif auth_user_id == message['u_id']:
@@ -219,6 +223,8 @@ def message_remove_v1(token, message_id):
                         elif auth_user_id == message['u_id']:
                             authorised_user = True
                             dm['messages'].remove(message)
+                        elif is_global_owner(auth_user_id):
+                            authorised_user = False
 
     if not message_exist:
         raise InputError(
@@ -281,7 +287,7 @@ def message_edit_v1(token, message_id, message):
                 message_exist = True
                 # Checking if member is authorised to edit message
                 for owner in channel['owner_members']:
-                    if auth_user_id == owner['u_id']:
+                    if auth_user_id == owner['u_id'] or is_global_owner(auth_user_id):
                         authorised_user = True
                         message_dict['message'] = new_message
                     elif auth_user_id == message_dict["u_id"]:
@@ -302,6 +308,8 @@ def message_edit_v1(token, message_id, message):
                         elif auth_user_id == message_dict["u_id"]:
                             authorised_user = True
                             message_dict['message'] = new_message
+                        elif is_global_owner(auth_user_id):
+                            authorised_user = False
 
     if not message_exist:
         raise InputError(
@@ -773,3 +781,72 @@ def message_unreact_v1(token, message_id, react_id):
 
     print(data_store.get())
     return {}
+
+def message_share_v1(token, og_message_id, message, channel_id, dm_id):
+
+    # Check if token is invalid
+    if not check_if_token_exists(token):
+        raise AccessError(description="ERROR: Token is invalid")
+
+    # Decode token to u_id
+    u_id = decode_token(token)
+
+    # Check message is from channel or dm that authorized user belongs to
+    result = find_channeldm_from_message(og_message_id)
+    og_is_channel = result['is_channel']
+    og_is_dm = result['is_dm']
+
+    # If in channel, find the relevant channel id and check if token user is part of channel
+    channels = data_store.get()['channels']
+    if og_is_channel:
+        og_channel_id = result['id']
+        og_channel_members = [channel['all_members'] for channel in channels if channel['channel_id'] == og_channel_id][0]
+        og_channel_member_ids = [member['u_id'] for member in og_channel_members]
+        if u_id not in og_channel_member_ids:
+            ## this was inputError --> changed to AccessError (please double check this)
+            raise AccessError(description = 'ERROR: User does not have access to the message they are sharing')
+
+    # If in dm, find the relevant dm_id 
+    dms = data_store.get()['dms']
+    if og_is_dm:
+        og_dm_id = result['id']
+        og_dm_members = [dm['all_members'] for dm in dms if dm['dm_id'] == og_dm_id][0]
+        og_dm_member_ids = [member['u_id'] for member in og_dm_members]
+        if u_id not in og_dm_member_ids:
+            raise AccessError(description = 'ERROR: User does not have access to the message they are sharing')
+
+    # Check at least one out of dm_id and channel_id are -1
+    if dm_id != -1 and channel_id != -1:
+        raise InputError(description= 'ERROR: Neither channel id nor dm id are -1 ')
+
+    # Check message length is less than 1000 characters
+    if len(message) > 1000:
+        raise InputError(description= 'ERROR: Appended message exceeds 1000 characters')
+
+    # Find message from message id 
+    message_to_share = find_message_from_message_id(og_message_id)['message']
+    # Check message exists 
+    if message_to_share is None:
+        raise InputError(description = 'ERROR: There is no message related to the given message id')
+
+    # Generate new message
+    new_message = "{}\n >>> {}".format(message_to_share,message)
+
+    # Check token user is part of channel or dm they are sharing to
+    if dm_id == -1:
+        channel_members = [channel['all_members'] for channel in channels if channel['channel_id'] == channel_id][0]
+        channel_members_ids = [member['u_id'] for member in channel_members]
+        if u_id not in channel_members_ids:
+            raise AccessError(description= 'ERROR: Authorized user is not part of the channel they are sharing to')
+        # Send new message
+        shared_message_id = message_send_v1(token, channel_id, new_message)
+
+    if channel_id == -1:
+        dm_members = [dm['all_members'] for dm in dms if dm['dm_id'] == dm_id][0]
+        dm_members_ids = [member['u_id'] for member in dm_members]
+        if u_id not in dm_members_ids:
+            raise AccessError(description= 'ERROR: Authorized user is not part of DM they are sharing to')
+        # Send new message
+        shared_message_id = message_senddm_v1(token, dm_id, new_message)
+
+    return {'shared_message_id': shared_message_id}

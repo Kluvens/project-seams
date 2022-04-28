@@ -264,3 +264,64 @@ def write_savefile():
     """
     with open('src/savefile.p', 'wb') as FILE:
         pickle.dump(data_store, FILE)
+    
+####################### MESSAGE SHARE ############################
+def find_message(messages, message_id):
+    for message in messages:
+        if message["message_id"] == message_id:
+            return message["message"]
+    return None
+
+
+def find_message_from_message_id(message_id):
+    message_str = None
+
+    channels = data_store.get()['channels']
+    for channel in channels:
+        messages = channel['messages']
+        message_str = find_message(messages, message_id)
+
+    if message_str is not None:
+        return {'message' : message_str}
+
+    dms = data_store.get()['dms']
+    for dm in dms:
+        messages = dm['messages']
+        message_str = find_message(messages, message_id)
+    
+    return {'message' : message_str}
+
+
+def find_channeldm_from_message(message_id):
+    target_id = None
+    is_channel = None
+    is_dm = None
+    # Channel 
+    channels = data_store.get()['channels']
+    for channel in channels:
+        messages = channel['messages']
+        message_ids = [message['message_id'] for message in messages]
+        
+        if message_id in message_ids:
+            target_id = channel['channel_id']
+            is_channel = True
+            is_dm = False
+    
+    # DM
+    dms = data_store.get()['dms']
+    for dm in dms:
+        messages = dm['messages']
+        message_ids = [message['message_id'] for message in messages]
+        
+        if message_id in message_ids:
+            target_id = dm['dm_id']
+            is_channel = False
+            is_dm = True
+
+    return {
+        'is_channel': is_channel,
+        'is_dm': is_dm,
+        'id': target_id,
+    }
+
+

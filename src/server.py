@@ -38,6 +38,7 @@ from src.other import clear_v1
 from src.search import search_v1 
 from src.standup import standup_start_v1, standup_active_v1, standup_send_v1
 from src.helpers import write_savefile
+from src.message import message_share_v1
 import time
 
 ###################### INITIAL SERVER SETUP ######################
@@ -335,6 +336,12 @@ def sendlaterdm_message():
     message = data["message"]
     time_sent = float(data["time_sent"])
     return dumps(message_sendlaterdm_v1(token, dm_id, message, time_sent))
+
+@APP.route("/message/share/v1", methods = ['POST'])
+def share_message():
+    data = request.get_json()
+    return dumps(message_share_v1(**data))
+
 
 ########################## Standup ###############################
 

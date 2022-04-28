@@ -42,6 +42,9 @@ def print_over_1000():
     letters = string.ascii_letters
     return (''.join(random.choice(letters) for i in range(1002)))
 
+@pytest.fixture
+def logout():
+    return url + "auth/logout/v1"
 #======================== Error Testing ============================
 def test_start_no_channel(dummy_data):
     reset_call()
@@ -207,7 +210,7 @@ def test_send_over_1000(dummy_data):
     )
     assert send.status_code == InputError.code
 
-def test_active_invalid_token(dummy_data):
+def test_active_invalid_token(dummy_data, logout):
     reset_call()
 
     user = dummy_data.register_users(num_of_users=1)
@@ -219,14 +222,15 @@ def test_active_invalid_token(dummy_data):
         users_return_dict['token'], 
         ch1.json()['channel_id'], 
         5,
-    ) 
+    )
+    requests.post(logout, json={"token" : users_return_dict["token"]})
     active = active_request(
-        ';sadfg', 
+        users_return_dict["token"], 
         ch1.json()['channel_id'],
     )
     assert active.status_code == AccessError.code
 
-def test_send_invalid_token(dummy_data):
+def test_send_invalid_token(dummy_data, logout):
     reset_call()
 
     user = dummy_data.register_users(num_of_users=1)
@@ -239,14 +243,16 @@ def test_send_invalid_token(dummy_data):
         ch1.json()['channel_id'], 
         5,
     ) 
+    requests.post(logout, json={"token" : users_return_dict["token"]})
+
     send = send_request(
-        'asdfkjhbasduifh', 
+        users_return_dict['token'], 
         ch1.json()['channel_id'], 
         'hello',
     )
     assert send.status_code == AccessError.code
 
-def test_start_invalid_token(dummy_data):
+def test_start_invalid_token(dummy_data, logout):
     reset_call()
 
     user = dummy_data.register_users(num_of_users=1)
@@ -254,8 +260,10 @@ def test_start_invalid_token(dummy_data):
     
     ch1 = create_request(users_return_dict['token'])
     
+    requests.post(logout, json={"token" : users_return_dict["token"]})
+
     start = start_request(
-        'invalid_token', 
+        users_return_dict['token'], 
         ch1.json()['channel_id'], 
         5,
     ) 

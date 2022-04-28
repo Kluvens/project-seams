@@ -243,6 +243,7 @@ def test_dm_messages_edit_working(dummy_data):
     assert messages_output['messages'][0]['message'] == message_four
 
 
+
 def test_short_message(dummy_data, create_route): 
     reset_call()
 
@@ -262,3 +263,18 @@ def test_short_message(dummy_data, create_route):
     message = ""
     response = put_message_edit(user0['token'], ch1_dict["channel_id"], message)
     assert response.status_code == InputError.code
+
+def test_dm_owner_can_edit(dummy_data):
+    reset_call()
+
+    users_list = dummy_data.register_users(num_of_users=2)
+    user0 = users_list[0]
+    user1 = users_list[1]
+    dm_dict = dummy_data.create_dm(user0['token'], [user1['auth_user_id']])
+
+    message = "hello world"
+    send_message = send_dm_message_request(user0['token'], dm_dict['dm_id'], message)
+    send_message = send_message.json()
+    response = put_message_edit(user0["token"], send_message['message_id'], message + " bye world")
+
+    assert response.status_code == OKAY

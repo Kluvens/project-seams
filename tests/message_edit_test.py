@@ -278,3 +278,19 @@ def test_dm_owner_can_edit(dummy_data):
     response = put_message_edit(user0["token"], send_message['message_id'], message + " bye world")
 
     assert response.status_code == OKAY
+
+def test_global_owener_cant_edit_dm_msg(dummy_data):
+    reset_call()
+
+    users_list = dummy_data.register_users(num_of_users=3)
+    global_owner = users_list[0]
+    user1 = users_list[1]
+    user2 = users_list[2]
+    dm_dict = dummy_data.create_dm(user1['token'], [user2['auth_user_id']])
+
+    message = "global owner can't edit me"
+    send_message = send_dm_message_request(user1['token'], dm_dict['dm_id'], message)
+    send_message = send_message.json()
+    response = put_message_edit(global_owner["token"], send_message['message_id'], "really")
+
+    assert response.status_code == AccessError.code

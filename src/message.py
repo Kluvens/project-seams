@@ -271,7 +271,8 @@ def message_edit_v1(token, message_id, message):
     auth_user_id = int(decode_token(token))
 
     # Check if user is authorised to edit message and message_id is valid
-    authorised_user = is_global_owner(auth_user_id)
+    # authorised_user = is_global_owner(auth_user_id)
+    authorised_user = False
     message_exist = False
     new_message = message
 
@@ -306,7 +307,7 @@ def message_edit_v1(token, message_id, message):
     if not message_exist:
         raise InputError(
             description="Error occurred, message_id is not in database")
-
+    print(f"\n{authorised_user} >>>>>>>>>>>>>>\n")
     if not authorised_user:
         raise AccessError(
             description="Error occured, user does not have access to edit this message_id")

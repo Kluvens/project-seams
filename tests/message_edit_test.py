@@ -241,3 +241,24 @@ def test_dm_messages_edit_working(dummy_data):
 
     assert messages_output['messages'][1]['message'] == message_three
     assert messages_output['messages'][0]['message'] == message_four
+
+
+def test_short_message(dummy_data, create_route): 
+    reset_call()
+
+    users_list = dummy_data.register_users(num_of_users=4)
+    user0 = users_list[0]
+    ch1 = requests.post(create_route, json={
+        'token': user0["token"],
+        'name': 'ch1',
+        'is_public': True
+    })
+    assert ch1.status_code == OKAY
+    ch1_dict = ch1.json()
+
+    message_one = "hello world"
+    send_message_request(user0['token'], ch1_dict['channel_id'], message_one)
+
+    message = ""
+    response = put_message_edit(user0['token'], ch1_dict["channel_id"], message)
+    assert response.status_code == InputError.code

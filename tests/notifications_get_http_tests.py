@@ -35,7 +35,7 @@ def test_invalid_token_tag(setup):
     message = 'Hey @{}'.format(handle_B)
     message_senddm_v1_http(token_A,dm_id,message)
 
-    token = 12345
+    token = '12345'
     response = notifications_get_http(token)
     assert response.status_code == AccessError.code
 
@@ -56,7 +56,7 @@ def test_invalid_token_react(setup):
     # B reacts to A's message in dm 
     message_react_v1_http(token_B,message_id,1)
 
-    token = 12345
+    token = '12345'
     response = notifications_get_http(token)
     assert response.status_code == AccessError.code
 
@@ -71,7 +71,7 @@ def test_invalid_token_invite(setup):
     # A invites B to channel
     channel_invite_v2_http(token_A,channel_id,u_id_B)
 
-    token = 12345
+    token = '12345'
     response = notifications_get_http(token)
     assert response.status_code == AccessError.code
 
@@ -140,5 +140,12 @@ def test_working_invite(setup):
     assert ret_obj["notifications"][0]["notification_message"] == "{} added you to {}".format(handle_A,channel_name)
     assert response.status_code == OKAY
 
+# Working : empty list of notifications
+def test_working_no_notifications(setup):
+    setup_dict = setup
+    token_A = setup_dict['tokens'][1]
+
+    response = notifications_get_http(token_A)
+    assert response.status_code == OKAY
 
 

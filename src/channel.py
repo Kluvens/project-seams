@@ -7,7 +7,7 @@ from src.helper import  count_number_owner, is_in_channel_owner
 from src.helper import global_owner_check, get_user_idx
 from src.helpers import decode_token, check_if_token_exists
 from src.helper import channel_details_members_return
-
+from src.helpers import create_notification
 
 def channel_invite_v2(token, channel_id, u_id):
     '''
@@ -101,7 +101,15 @@ def channel_invite_v2(token, channel_id, u_id):
         new_member = {'u_id': u_id}
         member_list.append(new_member)
 
+    channel_name = get_channel_name(channel_id)
+    create_notification(u_id, u_id2, channel_name, channel_id, -1)
+
     return {}
+
+def get_channel_name(channel_id):
+    channels = data_store.get()['channels']
+    channel_name = [channel['name'] for channel in channels if channel['channel_id'] == channel_id][0]
+    return channel_name
 
 def channel_details_v2(token, channel_id):
     '''

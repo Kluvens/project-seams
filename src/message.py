@@ -42,8 +42,10 @@ def message_senddm_v1(token, dm_id, message):
 
     # Check whether channel_id exist in the database
     dm_exist = False
-    for dm in data['dms']:
+    dm_idx = None
+    for idx, dm in enumerate(data['dms']):
         if dm['dm_id'] == dm_id:
+            dm_idx = idx
             dm_exist = True
     if not dm_exist:
         raise InputError(description="Error occurred, channel_id is not in database")
@@ -71,12 +73,12 @@ def message_senddm_v1(token, dm_id, message):
         'reacts' : []
         }
 
-    for dm in data['dms']:
-        if dm_id == dm['dm_id']:
-            if 'messages' in dm:
-                dm["messages"].append(messages_dict)
-            else:
-                dm["messages"] = [messages_dict]
+    dm = data['dms'][dm_idx]
+    if 'messages' in dm and isinstance(dm["messages"], list):
+        dm["messages"].append(messages_dict)
+    else:
+        dm["messages"] = [messages_dict]
+
     return {
         'message_id': data['unique_message_id'],
     }
@@ -197,7 +199,7 @@ def message_remove_v1(token, message_id):
                 message_exist = True
                 # Checking if member is authorised to delete message
                 for owner in channel['owner_members']:
-                    if auth_user_id == owner['u_id']:
+                    if auth_user_id == owner['u_id'] or is_global_owner(auth_user_id):
                         authorised_user = True
                         channel['messages'].remove(message)
                     elif auth_user_id == message['u_id']:
@@ -219,6 +221,8 @@ def message_remove_v1(token, message_id):
                         elif auth_user_id == message['u_id']:
                             authorised_user = True
                             dm['messages'].remove(message)
+                        elif is_global_owner(auth_user_id):
+                            authorised_user = False
 
     if not message_exist:
         raise InputError(
@@ -281,7 +285,7 @@ def message_edit_v1(token, message_id, message):
                 message_exist = True
                 # Checking if member is authorised to edit message
                 for owner in channel['owner_members']:
-                    if auth_user_id == owner['u_id']:
+                    if auth_user_id == owner['u_id'] or is_global_owner(auth_user_id):
                         authorised_user = True
                         message_dict['message'] = new_message
                     elif auth_user_id == message_dict["u_id"]:
@@ -302,6 +306,8 @@ def message_edit_v1(token, message_id, message):
                         elif auth_user_id == message_dict["u_id"]:
                             authorised_user = True
                             message_dict['message'] = new_message
+                        elif is_global_owner(auth_user_id):
+                            authorised_user = False
 
     if not message_exist:
         raise InputError(

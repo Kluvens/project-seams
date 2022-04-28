@@ -179,3 +179,22 @@ def test_dm_messages_working_complex(dummy_data):
     assert dm_messages_output['messages'][0]['u_id'] == user1['auth_user_id']
     assert dm_messages_output['messages'][1]['message'] == message_one
     assert dm_messages_output['messages'][0]['message'] == message_two
+
+# # Testing case when dm messages is working with multiple user and multiple messages
+# def test_dm_one_message(dummy_data):
+#     reset_call()
+
+#     users_list = dummy_data.register_users(num_of_users=2)
+#     user0 = users_list[0]
+#     user1 = users_list[1]
+
+    
+#     dm_channel = post_dm_create(user0["token"], [user1["auth_user_id"]])
+#     new_dm = dm_channel.json()
+
+#     start_number = 0
+#     message_one = "hello world"
+ 
+    
+#     # send_dm_request() will output unique message_id
+#     send_dm_one = send_dm_request(user0['token'], new_dm['dm_id'], message_one)

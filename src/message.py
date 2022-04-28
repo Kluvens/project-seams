@@ -827,7 +827,7 @@ def message_unreact_v1(token, message_id, react_id):
     return {}
 
 def message_share_v1(token, og_message_id, message, channel_id, dm_id):
-    print(data_store.get()["channels"])
+
     # Check if token is invalid
     if not check_if_token_exists(token):
         raise AccessError(description="ERROR: Token is invalid")
@@ -846,7 +846,7 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
         og_channel_id = result['id']
         og_channel_members = [channel['all_members'] for channel in channels if channel['channel_id'] == og_channel_id][0]
         og_channel_member_ids = [member['u_id'] for member in og_channel_members]
-        if not u_id in og_channel_member_ids:
+        if u_id not in og_channel_member_ids:
             ## this was inputError --> changed to AccessError (please double check this)
             raise AccessError(description = 'ERROR: User does not have access to the message they are sharing')
 
@@ -856,7 +856,7 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
         og_dm_id = result['id']
         og_dm_members = [dm['all_members'] for dm in dms if dm['dm_id'] == og_dm_id][0]
         og_dm_member_ids = [member['u_id'] for member in og_dm_members]
-        if not u_id in og_dm_member_ids:
+        if u_id not in og_dm_member_ids:
             raise AccessError(description = 'ERROR: User does not have access to the message they are sharing')
 
     # Check at least one out of dm_id and channel_id are -1

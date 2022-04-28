@@ -82,7 +82,6 @@ def test_neither_neg1_valid_ids(setup):
     response = message_share_v1_http(token,og_message_id,'neither -1,both valid',channel_id,dm_id)
     assert response.status_code == InputError.code 
 
-
 def test_neither_neg1_invalid_ids(setup):
     setup_dict = setup
     token = setup_dict['tokens'][1]
@@ -96,7 +95,7 @@ def test_invalid_message_id_channeltodm(setup):
     token = setup_dict['tokens'][1]
     og_message_id = channel_dm(setup_dict)["message_id"]
     dm_id = setup_dict['dm_id']
-    response = message_share_v1_http(token,12345,'invalid message id','-1',dm_id)
+    response = message_share_v1_http(token, 12345,'invalid message id','-1',dm_id)
     assert response.status_code == InputError.code
 
 def test_invalid_message_id_dmtochannel(setup):
@@ -153,7 +152,7 @@ def test_message_over_1000_dmtochannel(setup, message):
 # access: Auth user not part of channel/dm they are sharing TO
 def test_user_not_member_channeltodm(setup):
     setup_dict = setup
-    token = setup_dict['tokens'][2]
+    token = setup_dict['tokens'][0]
     og_message_id = channel_dm(setup_dict)["message_id"]
     dm_id = setup_dict['dm_id']
     response = message_share_v1_http(token,og_message_id,'not member of dm to share to',-1,dm_id)

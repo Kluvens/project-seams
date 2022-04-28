@@ -281,16 +281,12 @@ def find_message_from_message_id(message_id):
         messages = channel['messages']
         message_str = find_message(messages, message_id)
 
-        if message_str is not None:
-            return {'message' : message_str}
-
     dms = data_store.get()['dms']
     for dm in dms:
         messages = dm['messages']
         message_str = find_message(messages, message_id)
 
-        if message_str is not None:
-            return {'message' : message_str}
+    return {'message' : message_str}
 
 
 def find_channeldm_from_message(message_id):

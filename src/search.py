@@ -174,8 +174,6 @@ def notifications_get_v1(token):
     '''
     <<< INSERT DOC_STRINGS >>>
     '''
-    x = data_store.get()["dms"]
-    print(f"\n{x} >>>>\n")
     
     if not check_if_token_exists(token):
         raise AccessError(description="Invalid Token")
@@ -187,10 +185,11 @@ def notifications_get_v1(token):
     notifications = users[user_idx]["notifications"]
     
     # returning if none is empty (to avoid slicing NoneType)
-    if not notifications:
+    if notifications == []:
         return {"notifications" : notifications}
     
     # in-place reverse
     # getting 20 or less most recent messages
-    notifications = list(reversed(notifications))
-    return {"notifications" : notifications[:20]}
+    else:
+        notifications = list(reversed(notifications))
+        return {"notifications" : notifications[:20]}

@@ -166,7 +166,7 @@ def auth_register_v2(email, password, name_first, name_last):
     curr_user['handle_str'] = handle
     curr_user['exist_status'] = True
     curr_user['notifications'] = []
-    
+    curr_user['profile_img_url'] = "/"
     # Dealing with first layer of permissions
     OWNER = 1
     MEMBER = 2

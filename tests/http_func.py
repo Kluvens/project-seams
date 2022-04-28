@@ -188,6 +188,7 @@ def setup(dummy_data):
     owner_info = user_profile_request(owner['token'],owner['auth_user_id'])
     owner_details = json.loads(owner_info.text)["user"]
     owner_handle = owner_details['handle_str']
+    
     user_A_info = user_profile_request(owner['token'],A['auth_user_id'])
     user_A_details = json.loads(user_A_info.text)["user"]
     handle_A = user_A_details['handle_str']

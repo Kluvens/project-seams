@@ -381,9 +381,8 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
 
     try:
         urllib.request.urlretrieve(img_url, file_path)
-    except Exception:
-        raise InputError(
-            description="img_url returns an HTTP status other than 200")
+    except InputError:
+            print(description="img_url returns an HTTP status other than 200")
     
     
 

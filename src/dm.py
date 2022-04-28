@@ -75,7 +75,7 @@ def dm_messages_v1(token, dm_id, start):
     end = start + 50
     message_array = []
     
-    for num in range(51):
+    for num in range(50):
         index = start + num
         if index >= num_messages or index >= end:
             break

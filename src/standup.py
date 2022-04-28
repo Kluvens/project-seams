@@ -46,6 +46,8 @@ def standup_start_v1(token, channel_id, length):
     all_members_uids = [user['u_id'] for user in channel['all_members']]
     if not auth_user_id in all_members_uids:
         raise AccessError("channel_id is valid and the authorised user is not a member of the channel") 
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid token")
 
     time_finish = datetime.now() + timedelta(seconds=length)
     unix_time_finish = int(time_finish.timestamp())
@@ -92,6 +94,8 @@ def standup_active_v1(token, channel_id):
     all_members_uids = [user['u_id'] for user in channel['all_members']]
     if not auth_user_id in all_members_uids:
         raise AccessError("channel_id is valid and the authorised user is not a member of the channel") 
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid token")
 
     if 'standup' in channel:
         # if current time > finish time
@@ -112,6 +116,7 @@ def standup_active_v1(token, channel_id):
                     'time_finish': None,
                 }
             # when standup_active has been called more than once after standup has finished
+            channel['standup']['is_active'] = False
             return {
                 'is_active': False,
                 'time_finish': None,
@@ -161,6 +166,8 @@ def standup_send_v1(token, channel_id, message):
     all_members_uids = [user['u_id'] for user in channel['all_members']]
     if not auth_user_id in all_members_uids:
         raise AccessError("channel_id is valid and the authorised user is not a member of the channel") 
+    if not check_if_token_exists(token):
+        raise AccessError(description="Invalid token")
 
     standup_message = channel["standup"]['message']
     user = find_user(auth_user_id)

@@ -253,10 +253,10 @@ def user_stats_v1(token):
 
     Return:
         Dictionary of shape {
-         channels_joined: [{num_channels_joined, time_stamp}],
-         dms_joined: [{num_dms_joined, time_stamp}], 
-         messages_sent: [{num_messages_sent, time_stamp}], 
-         involvement_rate 
+        channels_joined: [{num_channels_joined, time_stamp}],
+        dms_joined: [{num_dms_joined, time_stamp}], 
+        messages_sent: [{num_messages_sent, time_stamp}], 
+        involvement_rate 
         }
     '''
     if check_if_token_exists(token) == False:
@@ -309,10 +309,10 @@ def users_stats_v1(token):
 
     Return:
         Dictionary of shape {
-         channels_exist: [{num_channels_exist, time_stamp}], 
-         dms_exist: [{num_dms_exist, time_stamp}], 
-         messages_exist: [{num_messages_exist, time_stamp}], 
-         utilization_rate 
+        channels_exist: [{num_channels_exist, time_stamp}], 
+        dms_exist: [{num_dms_exist, time_stamp}], 
+        messages_exist: [{num_messages_exist, time_stamp}], 
+        utilization_rate 
         }
     '''
     if check_if_token_exists(token) == False:

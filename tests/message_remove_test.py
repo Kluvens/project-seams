@@ -252,7 +252,7 @@ def test_dm_global_owner_cant_remove(dummy_data):
     users_list = dummy_data.register_users(num_of_users=3)
     user0 = users_list[0]
     user1 = users_list[1]
-    user2 = users_list[2]
+
     dm_dict = dummy_data.create_dm(user1['token'], [users_list[0]['auth_user_id']])
 
     message_one = "hello world"

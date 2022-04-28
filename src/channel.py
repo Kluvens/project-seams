@@ -1,6 +1,7 @@
+import token
 from src.data_store import data_store
 from src.error import AccessError, InputError
-from src.helpers import decode_token
+from src.helpers import decode_token, is_global_owner
 from src.helpers import check_if_token_exists
 from src.helper import find_channel_index, is_in_channel
 from src.helper import  count_number_owner, is_in_channel_owner
@@ -360,14 +361,41 @@ def channel_join_v2(token, channel_id):
     if not channel_access and not global_owner_check(u_id):
         raise AccessError ("ERROR: You do not have access to this private channel")
         
+    global_owner = global_owner_check(u_id)
     # Append member if all conditions met
-    if channel_to_join != None and (channel_access or global_owner_check(u_id)) and not user_in_channel and token_exists and user_exists:
+    check_conditions = check_channel_join_conditions(channel_to_join,channel_access,global_owner,user_in_channel,token_exists,user_exists)
+    if check_conditions:
         member_list = channel_to_join['all_members']
         new_member = {'u_id':u_id}
         member_list.append(new_member)
 
     data_store.set(store)
     return {}
+
+import math
+def check_channel_join_conditions(channel_to_join,channel_access,global_owner,user_in_channel,token_exists,user_exists):
+    a = b = c = d = e = f = 0
+
+    if channel_to_join != None:
+        a = 1
+    if channel_access:
+        b = 1
+    if global_owner:
+        c = 1
+    if not user_in_channel:
+        d = 1
+    if token_exists:
+        e = 1
+    if user_exists:
+        f = 1
+
+    checks = [a,b,c,d,e,f]
+    result_int = math.prod(checks)
+    if result_int == 1:
+        return True
+    else:
+        return False
+
 
 
 def channel_addowner_v1(token, channel_id, u_id):

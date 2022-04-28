@@ -86,7 +86,6 @@ def test_dms_no_uid(detail_route, dummy_data, create_route):
                     'handle_str': 'jakerenzella',
                     'name_first': 'Jake',
                     'name_last': 'Renzella',
-                    'profile_img_url': '/',
                     'u_id': 0}],
     }
 
@@ -115,13 +114,11 @@ def test_dms_one_uid(detail_route, dummy_data, create_route):
                     'handle_str': 'jakerenzella',
                     'name_first': 'Jake',
                     'name_last': 'Renzella',
-                    'profile_img_url': '/',
                     'u_id': 0},
                     {'email': 'dummy1@seams.com',
                     'handle_str': 'testfirst1testlast1',
                     'name_first': 'testfirst1',
                     'name_last': 'testlast1',
-                    'profile_img_url': '/',
                     'u_id': 1}],
         }
 
@@ -150,19 +147,16 @@ def test_dms_two_uid(detail_route, dummy_data, create_route):
                     'handle_str': 'jakerenzella',
                     'name_first': 'Jake',
                     'name_last': 'Renzella',
-                    'profile_img_url': '/',
                     'u_id': 0},
                     {'email': 'dummy1@seams.com',
                     'handle_str': 'testfirst1testlast1',
                     'name_first': 'testfirst1',
                     'name_last': 'testlast1',
-                    'profile_img_url': '/',
                     'u_id': 1},
                     {'email': 'dummy2@seams.com',
                     'handle_str': 'testfirst2testlast2',
                     'name_first': 'testfirst2',
                     'name_last': 'testlast2',
-                    'profile_img_url': '/',
                     'u_id': 2}],
         }
 
@@ -192,7 +186,6 @@ def test_two_dms(detail_route, dummy_data, create_route):
                     'handle_str': 'jakerenzella',
                     'name_first': 'Jake',
                     'name_last': 'Renzella',
-                    'profile_img_url': '/',
                     'u_id': 0}],
     }
 

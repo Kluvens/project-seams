@@ -1,19 +1,12 @@
-import threading
 from time import time
+import threading
 from src.dms import find_dm_index, is_in_dm
 from src.data_store import data_store
 from src.helpers import check_if_token_exists, decode_token, is_global_owner
-from src.helpers import find_message_from_message_id, find_channeldm_from_message
 from src.error import AccessError, InputError
 from src.helper import is_in_channel_owner, is_in_dm_owner
 from src.helper import find_channel_index, find_dm_index
 from src.helper import is_in_channel
-from src.helpers import react_notification
-from src.helpers import find_message_sender
-from src.helpers import extract_handles
-from src.helpers import find_u_ids_of_handles
-from src.helpers import create_tagging_notification
-
 
 def message_senddm_v1(token, dm_id, message):
     '''
@@ -54,8 +47,8 @@ def message_senddm_v1(token, dm_id, message):
             dm_exist = True
     if not dm_exist:
         raise InputError(description="Error occurred, channel_id is not in database")
-
-
+    
+    # Check user is a member in channel_id
     auth_user_id = int(decode_token(token))
 
     authorised_user = False
@@ -84,16 +77,6 @@ def message_senddm_v1(token, dm_id, message):
                 dm["messages"].append(messages_dict)
             else:
                 dm["messages"] = [messages_dict]
-    
-
-    ## Creating a tagging notificaiton
-    handles = extract_handles(message)
-    print(f"\n HANDLES {handles}>><<>><< \n")
-    if handles:
-        u_ids = find_u_ids_of_handles(handles)
-        create_tagging_notification(
-            auth_user_id, u_ids, message, -1, dm_id)
-
     return {
         'message_id': data['unique_message_id'],
     }
@@ -171,18 +154,9 @@ def message_send_v1(token, channel_id, message):
                 channel["messages"].append(messages_dict)
             else:
                 channel["messages"] = [messages_dict]
-    
-    ## Creating a tagging notificaiton
-    handles = extract_handles(message)
-    if handles:
-        u_ids =find_u_ids_of_handles(handles)
-        create_tagging_notification(
-            auth_user_id, u_ids, message, channel_id, -1)
-
     return {
         'message_id': data['unique_message_id'],
     }
-       
 
 def message_remove_v1(token, message_id):
     '''
@@ -508,20 +482,16 @@ def send_scheduled_message(message_dict, channel_idx):
     for message_dict_idx, message in enumerate(send_later_list):
         if message["u_id"] == message_dict["u_id"]:
             send_later_list.pop(message_dict_idx)
-        ##### debug
-        print("Thread has terminated!")
-        print(data_store.get()["channels"])
-
 
 def send_scheduled_message_dm(message_dict, dm_idx):
-    target_dm = data_store.get()["dms"][dm_idx]
-    target_dm["messages"].append(message_dict)
+    target_channel = data_store.get()["dms"][dm_idx]
+    target_channel["messages"].append(message_dict)
     
-    send_later_list = target_dm["send_later"]
+    send_later_list = target_channel["send_later"]
     for message_dict_idx, message in enumerate(send_later_list):
         if message["u_id"] == message_dict["u_id"]:
             send_later_list.pop(message_dict_idx)
-
+    
 ###################### Function Implementation ###################
 
 
@@ -586,9 +556,7 @@ def message_sendlater_v1(token, channel_id, message, time_sent):
             'message_id': message_id,
             'u_id': u_id,
             'message': message,
-            'time_sent': time_sent,
-            'is_pinned' : False,
-            'reacts' : []
+            'time_sent': time_sent
         }
 
     target_channel["send_later"].append(message_dict)
@@ -660,9 +628,7 @@ def message_sendlaterdm_v1(token, dm_id, message, time_sent):
             'message_id': message_id,
             'u_id': u_id,
             'message': message,
-            'time_sent': time_sent,
-            'is_pinned' : False,
-            'reacts' : []
+            'time_sent': time_sent
         }
 
     target_dm["send_later"].append(message_dict)
@@ -725,8 +691,6 @@ def message_react_v1(token, message_id, react_id):
         raise AccessError(description="Error occured, Invalid Token!")
     u_id = decode_token(token)
 
-    reacted_user = u_id
-    
     if react_id != 1:
         raise InputError(description="Error occured, Invalid react_id")
 
@@ -739,14 +703,8 @@ def message_react_v1(token, message_id, react_id):
 
     if result["dm"]:
         messages = dms[idx]["messages"]
-        dm_id = dms[idx]["dm_id"]
-        name = dms[idx]["name"]
-        channel_id = -1
     else:
         messages = channels[idx]["messages"]
-        channel_id = channels[idx]["channel_id"]
-        name = channels[idx]["name"]
-        dm_id = -1
 
     target_message = messages[result["msg_idx"]]
     if "reacts" in target_message and target_message["reacts"]:
@@ -760,20 +718,9 @@ def message_react_v1(token, message_id, react_id):
         target_message['reacts'] = [
             {
                 'react_id' : react_id,
-                'u_ids' : [reacted_user]
+                'u_ids' : [u_id]
             }
         ]
-    
-    ### here is the problem dudeeeee
-    sender_u_id = find_message_sender(message_id, channel_id, dm_id)
-    print(f"\n>>>>>> Here it is  sender{sender_u_id}\n")
-    # making sure a notificaiton is not created if sender == user_reacted
-    # To jasmine --> if this the spec says otherwise, feel free to get rid of the if
-    # statement
-    if sender_u_id != reacted_user:
-        react_notification(
-            sender_u_id, reacted_user, name, channel_id, dm_id)
-    
     return {}
 
 def message_unreact_v1(token, message_id, react_id):
@@ -818,6 +765,7 @@ def message_unreact_v1(token, message_id, react_id):
     target_message = messages[result["msg_idx"]]
     if "reacts" in target_message and target_message["reacts"]:
         u_ids = target_message["reacts"][0]["u_ids"]
+        print(f"###############  {u_ids}  ###################")
         if u_id in u_ids:
             u_ids.remove(u_id)
         else:
@@ -825,72 +773,3 @@ def message_unreact_v1(token, message_id, react_id):
 
     print(data_store.get())
     return {}
-
-def message_share_v1(token, og_message_id, message, channel_id, dm_id):
-    print(data_store.get()["channels"])
-    # Check if token is invalid
-    if not check_if_token_exists(token):
-        raise AccessError(description="ERROR: Token is invalid")
-
-    # Decode token to u_id
-    u_id = decode_token(token)
-
-    # Check message is from channel or dm that authorized user belongs to
-    result = find_channeldm_from_message(og_message_id)
-    og_is_channel = result['is_channel']
-    og_is_dm = result['is_dm']
-
-    # If in channel, find the relevant channel id and check if token user is part of channel
-    channels = data_store.get()['channels']
-    if og_is_channel:
-        og_channel_id = result['id']
-        og_channel_members = [channel['all_members'] for channel in channels if channel['channel_id'] == og_channel_id][0]
-        og_channel_member_ids = [member['u_id'] for member in og_channel_members]
-        if not u_id in og_channel_member_ids:
-            ## this was inputError --> changed to AccessError (please double check this)
-            raise AccessError(description = 'ERROR: User does not have access to the message they are sharing')
-
-    # If in dm, find the relevant dm_id 
-    dms = data_store.get()['dms']
-    if og_is_dm:
-        og_dm_id = result['id']
-        og_dm_members = [dm['all_members'] for dm in dms if dm['dm_id'] == og_dm_id][0]
-        og_dm_member_ids = [member['u_id'] for member in og_dm_members]
-        if not u_id in og_dm_member_ids:
-            raise AccessError(description = 'ERROR: User does not have access to the message they are sharing')
-
-    # Check at least one out of dm_id and channel_id are -1
-    if dm_id != -1 and channel_id != -1:
-        raise InputError(description= 'ERROR: Neither channel id nor dm id are -1 ')
-
-    # Check message length is less than 1000 characters
-    if len(message) > 1000:
-        raise InputError(description= 'ERROR: Appended message exceeds 1000 characters')
-
-    # Find message from message id 
-    message_to_share = find_message_from_message_id(og_message_id)
-    # Check message exists 
-    if message_to_share is None:
-        raise InputError(description = 'ERROR: There is no message related to the given message id')
-
-    # Generate new message
-    new_message = "{}\n >>> {}".format(message_to_share,message)
-
-    # Check token user is part of channel or dm they are sharing to
-    if dm_id == -1:
-        channel_members = [channel['all_members'] for channel in channels if channel['channel_id'] == channel_id][0]
-        channel_members_ids = [member['u_id'] for member in channel_members]
-        if not u_id in channel_members_ids:
-            raise AccessError(description= 'ERROR: Authorized user is not part of the channel they are sharing to')
-        # Send new message
-        shared_message_id = message_send_v1(token, channel_id, new_message)
-
-    if channel_id == -1:
-        dm_members = [dm['all_members'] for dm in dms if dm['dm_id'] == dm_id][0]
-        dm_members_ids = [member['u_id'] for member in dm_members]
-        if not u_id in dm_members_ids:
-            raise AccessError(description= 'ERROR: Authorized user is not part of DM they are sharing to')
-        # Send new message
-        shared_message_id = message_senddm_v1(token, dm_id, new_message)
-
-    return {'shared_message_id': shared_message_id}

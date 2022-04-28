@@ -209,6 +209,26 @@ def test_sendlater_unauthorised_user_AccessError(dummy_data, create_route):
     response = message_sendlater_request(user1['token'], ch1_dict['channel_id'], message, time_sent)
     assert response.status_code == AccessError.code
 
+def test_sendlater_success_channel(dummy_data, create_route):
+    reset_call()
+
+    users_list = dummy_data.register_users(num_of_users=2)
+    user0 = users_list[0]
+    ch1 = requests.post(create_route, json={
+        'token': user0["token"],
+        'name': 'ch1',
+        'is_public': True
+    })
+    assert ch1.status_code == 200
+    ch1_dict = ch1.json()
+
+    time = datetime.datetime.now().replace(microsecond=0) + datetime.timedelta(0, 5)
+    time_sent = time.timestamp()
+    message = "hello world bye world"
+
+    response = message_sendlater_request(user0['token'], ch1_dict['channel_id'], message, time_sent)
+    assert response.status_code == OKAY
+
 ################################# message_send_later_dm #################################
 
 '''
@@ -328,3 +348,4 @@ def test_sendlaterdm_success(dummy_data):
 
     response = message_sendlaterdm_request(user1['token'], dm_dict['dm_id'], message, time_sent)
     assert response.status_code == OKAY
+

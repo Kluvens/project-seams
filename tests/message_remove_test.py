@@ -245,4 +245,22 @@ def test_dm_messages_remove_working(dummy_data):
     messages_output = messages_output.json()
     
     assert messages_output['messages'][0]['message'] == message_three
-    
+
+def test_dm_global_owner_cant_remove(dummy_data):
+    reset_call()
+
+    users_list = dummy_data.register_users(num_of_users=3)
+    user0 = users_list[0]
+    user1 = users_list[1]
+    user2 = users_list[2]
+    dm_dict = dummy_data.create_dm(user1['token'], [users_list[0]['auth_user_id']])
+
+    message_one = "hello world"
+    # Send message from owner of dm
+    response1 = send_dm_message_request(user1['token'], dm_dict['dm_id'], message_one)
+    send_message_one = response1.json()
+
+    # Remove messages 1 and 2 from dm
+    response = delete_message_remove(user0['token'], send_message_one["message_id"])
+
+    assert response.status_code == AccessError.code

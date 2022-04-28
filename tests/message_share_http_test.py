@@ -96,7 +96,7 @@ def test_invalid_message_id_channeltodm(setup):
     token = setup_dict['tokens'][1]
     og_message_id = channel_dm(setup_dict)["message_id"]
     dm_id = setup_dict['dm_id']
-    response = message_share_v1_http(token,'12345','invalid message id','-1',dm_id)
+    response = message_share_v1_http(token,12345,'invalid message id','-1',dm_id)
     assert response.status_code == InputError.code
 
 def test_invalid_message_id_dmtochannel(setup):
@@ -188,8 +188,10 @@ def test_working_share_channeltodm(setup):
     setup_dict = setup
 
     token = setup_dict['tokens'][1]
-    og_message_id = channel_dm(setup_dict)["message_id"]
+    # create message in dm
+    og_message_id = dm_channel(setup_dict)["message_id"]
     channel_id = setup_dict['channel_id']
+    # Share to channel
     response = message_share_v1_http(token, og_message_id, 'Working DM share to channel', channel_id, -1)
     assert response.status_code == OKAY
 
@@ -198,7 +200,8 @@ def test_working_share_dmtochannel(setup):
     setup_dict = setup
 
     token = setup_dict['tokens'][1]
-    og_message_id = dm_channel(setup_dict)["message_id"]
-    channel_id = setup_dict['channel_id']
-    response = message_share_v1_http(token, og_message_id, 'Working DM share to channel', channel_id, -1)
+    # Create message in channel
+    og_message_id = channel_dm(setup_dict)["message_id"]
+    dm_id = setup_dict['dm_id']
+    response = message_share_v1_http(token, og_message_id, 'Working DM share to channel', -1, dm_id)
     assert response.status_code == OKAY

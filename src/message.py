@@ -868,7 +868,7 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
         raise InputError(description= 'ERROR: Appended message exceeds 1000 characters')
 
     # Find message from message id 
-    message_to_share = find_message_from_message_id(og_message_id)
+    message_to_share = find_message_from_message_id(og_message_id)['message']
     # Check message exists 
     if message_to_share is None:
         raise InputError(description = 'ERROR: There is no message related to the given message id')
@@ -880,7 +880,7 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     if dm_id == -1:
         channel_members = [channel['all_members'] for channel in channels if channel['channel_id'] == channel_id][0]
         channel_members_ids = [member['u_id'] for member in channel_members]
-        if not u_id in channel_members_ids:
+        if u_id not in channel_members_ids:
             raise AccessError(description= 'ERROR: Authorized user is not part of the channel they are sharing to')
         # Send new message
         shared_message_id = message_send_v1(token, channel_id, new_message)
@@ -888,7 +888,7 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     if channel_id == -1:
         dm_members = [dm['all_members'] for dm in dms if dm['dm_id'] == dm_id][0]
         dm_members_ids = [member['u_id'] for member in dm_members]
-        if not u_id in dm_members_ids:
+        if u_id not in dm_members_ids:
             raise AccessError(description= 'ERROR: Authorized user is not part of DM they are sharing to')
         # Send new message
         shared_message_id = message_senddm_v1(token, dm_id, new_message)

@@ -4,11 +4,12 @@ This file contains all the server functionality for seams.
 
 
 ########################## Import Statements #####################
+import os
 import sys
 import signal
 import atexit
 from json import dumps
-from flask import Flask, request
+from flask import Flask, request, send_from_directory, send_file
 from flask_cors import CORS
 from src.error import InputError
 from src import config
@@ -38,8 +39,12 @@ from src.other import clear_v1
 from src.search import search_v1 
 from src.standup import standup_start_v1, standup_active_v1, standup_send_v1
 from src.helpers import write_savefile
-import time
+from src.message import message_share_v1
+from src.search import notifications_v1
+from src.users import user_profile_uploadphoto_v1
+from os.path import join, dirname, realpath
 
+# x = join(dirname(realpath(__file__)), '/src/profile_images/cropped/')
 ###################### INITIAL SERVER SETUP ######################
 
 def quit_gracefully(*args):
@@ -256,6 +261,16 @@ def set_handle():
     parameters = request.get_json()
     return dumps(user_profile_sethandle_v1(**parameters))
 
+@APP.route("/user/profile/uploadphoto/v1", methods=['POST'])
+def user_uploadphoto_http():
+    data = request.get_json()
+    return dumps(user_profile_uploadphoto_v1(**data))
+
+@APP.route('/src/profile_images/cropped/<path:filename>', methods=['GET'])
+def get_photo(filename):
+    print(f"\n<<<<<<{os.getcwd()}>>>>>\n")
+    print(f"\n<<<<<<{filename}>>>>>\n")
+    return send_from_directory('profile_images/cropped/', filename)
 ########################## Messages ##########################
 
 # channel/messages/v2
@@ -336,6 +351,11 @@ def sendlaterdm_message():
     time_sent = float(data["time_sent"])
     return dumps(message_sendlaterdm_v1(token, dm_id, message, time_sent))
 
+@APP.route("/message/share/v1", methods = ['POST'])
+def share_message():
+    data = request.get_json()
+    return dumps(message_share_v1(**data))
+
 ########################## Standup ###############################
 
 # standup/start/v1
@@ -396,6 +416,11 @@ def search_request():
     token = request.args.get('token')
     query_str = request.args.get('query_str')
     return dumps(search_v1(token, query_str))
+
+@APP.route("/notifications/get/v1", methods=['GET'])
+def notification_request():
+    token = request.args.get('token')
+    return dumps(notifications_v1(token))
 
 
 ####################### CLEARING/RESTTING ########################

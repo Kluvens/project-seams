@@ -82,6 +82,10 @@ def test_users_all_request(route, dummy_data):
     assert response.status_code == OKAY
 
     users_details_dict = json.loads(response.text)["users"]
+    
+ 
+    for user_dict in users_details_dict:
+        user_dict.pop("profile_img_url")
 
     # This is still blackbox, as we're only testing http server interface
     expected_user0_det = user_expected_details(
@@ -90,9 +94,8 @@ def test_users_all_request(route, dummy_data):
     )
 
     expected_user1_det = user_expected_details(
-    dummy_data.data_dummy1(), 
-    user1_u_id
-    )
+    dummy_data.data_dummy1(), user1_u_id)
 
     expected_output = [expected_user0_det, expected_user1_det]
+    
     assert users_details_dict == expected_output

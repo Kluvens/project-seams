@@ -312,3 +312,19 @@ def test_sendlaterdm_unauthorised_user_AccessError(dummy_data):
     response = message_sendlaterdm_request(user2['token'], dm_dict['dm_id'], message, time_sent)
     assert response.status_code == AccessError.code
 
+
+# Testing case when authorised user is not a member of the valid channel_id
+def test_sendlaterdm_success(dummy_data):
+    reset_call()
+
+    users_list = dummy_data.register_users(num_of_users=3)
+    user0 = users_list[0]
+    user1 = users_list[1]
+    dm_dict = dummy_data.create_dm(user0['token'], [users_list[1]['auth_user_id']])
+
+    time = datetime.datetime.now().replace(microsecond=0) + datetime.timedelta(0, 5)
+    time_sent = time.timestamp()
+    message = "hello world bye world"
+
+    response = message_sendlaterdm_request(user1['token'], dm_dict['dm_id'], message, time_sent)
+    assert response.status_code == OKAY

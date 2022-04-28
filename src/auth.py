@@ -163,7 +163,8 @@ def auth_register_v2(email, password, name_first, name_last):
     curr_user['sessions'] = [str(token)]
     curr_user['handle_str'] = handle
     curr_user['exist_status'] = True
-    
+    curr_user['notifications'] = []
+ 
     # Dealing with first layer of permissions
     OWNER = 1
     MEMBER = 2

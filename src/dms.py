@@ -8,6 +8,7 @@ from src.helpers import find_dm_index
 from src.helpers import is_in_dm
 from src.helpers import check_u_id_exists
 from src.helpers import check_duplicate_u_ids
+from src.helpers import create_notification
 from time import time
 
 def dm_list_v1(token):
@@ -175,6 +176,9 @@ def dm_create_v1(token, u_ids):
         'messages': []
     })
     
+    for u_id in u_ids:
+        create_notification(u_id, owner_uid, name, -1, dm_id)
+
     data_store.set(data)
 
     return {
